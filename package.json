@@ -11,6 +11,12 @@
     "url": "git+https://github.com/LynxyssCZ/flemeth-daemon.git"
   },
   "author": "LynxyssCZ",
+  "contributors":[
+    { "name" : "Martin Petak",
+      "email" : "martin.petak@gmail.com",
+      "url" : ""
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/LynxyssCZ/flemeth-daemon/issues"

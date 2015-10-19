@@ -11,10 +11,11 @@
     "url": "git+https://github.com/LynxyssCZ/flemeth-daemon.git"
   },
   "author": "LynxyssCZ",
-  "contributors":[
-    { "name" : "Martin Petak",
-      "email" : "martin.petak@gmail.com",
-      "url" : ""
+  "contributors": [
+    {
+      "name": "Martin Petak",
+      "email": "martin.petak@gmail.com",
+      "url": ""
     }
   ],
   "license": "MIT",
@@ -34,5 +35,9 @@
     "onoff": "^1.0.3",
     "sequelize": "^3.12.0",
     "serialport": "^2.0.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "jshint": "^2.8.0"
   }
 }

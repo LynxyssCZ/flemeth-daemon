@@ -52,7 +52,7 @@ DRF5150Sensor.prototype = Object.create({
 		var frame = {
 			groupId: data.readUInt8(0),
 			sensorId: data.readUInt8(1),
-			value: data.readUInt16BE(2)
+			value: data.readUInt16LE(2)
 		};
 
 		this.log.debug(frame);

@@ -50,17 +50,21 @@ DRF5150Sensor.prototype = Object.create({
 	},
 	onDataRead: function(data) {
 		var sensorId = DRF5150Sensor.properties.prefix + '-' + data.readUInt8(0) + '-' + data.readUInt8(1);
-		var frame = {
-			id: sensorId,
-			type: DRF5150Sensor.properties.type,
-			value: (data.readUInt16LE(2) / 16),
-			vbat: (data.readUInt8(4) / 100) + 2,
-			rssi: data.readUInt8(5),
-			time: Date.now()
-		};
 
-		this.dispatchFrame(frame);
-	}
+		this.dispatchFrame({
+			reader: DRF5150Sensor.properties.prefix,
+			samples: [
+				{
+					id: sensorId,
+					type: DRF5150Sensor.properties.type,
+					value: (data.readUInt16LE(2) / 16),
+					vbat: (data.readUInt8(4) / 100) + 2,
+					rssi: data.readUInt8(5),
+					time: Date.now()
+				}
+			]
+		});
+	},
 });
 
 module.exports = DRF5150Sensor;

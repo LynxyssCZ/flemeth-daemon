@@ -52,10 +52,10 @@ DS18B20Sensor.prototype = Object.create({
 				return;
 			}
 
-			self.dispatchFrame(self._parseTempObject(tempObj));
+			self.dispatchFrame(self.parseTempObj(tempObj));
 		});
 	},
-	_parseTempObject: function(tempObj) {
+	parseTempObj: function(tempObj) {
 		return {
 			reader: DS18B20Sensor.properties.prefix,
 			samples: this._createSamples(tempObj)

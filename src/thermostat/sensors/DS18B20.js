@@ -35,6 +35,7 @@ DS18B20Sensor.prototype = Object.create({
 
 		sensor.isDriverLoaded(function(err, isLoaded) {
 			if (!err && isLoaded) {
+				log.debug('Starting reader');
 				self.intervalId = setInterval(self._readValues, self.options.interval);
 			}
 			else {
@@ -47,6 +48,7 @@ DS18B20Sensor.prototype = Object.create({
 
 		sensor.getAll(function(err, tempObj) {
 			if (!err) {
+				log.debug('No values');
 				return;
 			}
 

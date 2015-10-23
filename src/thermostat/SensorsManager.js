@@ -2,11 +2,9 @@ var bunyan = require('bunyan');
 var sensors = require('./sensors');
 
 
-var log = bunyan.createLogger({name: 'SensorsManager', level: process.env.LOG_LEVEL});
-
-
 var SensorsManager = function(options) {
 	this.options = options;
+	this.log = options.logger ? options.logger.child({component: 'SensorsManager'}) : bunyan.createLogger({name: 'SensorsManager', level: process.env.LOG_LEVEL});
 	this.sensors = {};
 };
 
@@ -16,7 +14,7 @@ SensorsManager.prototype = Object.create({
 		var SensorClass = sensors[type];
 
 		if (!SensorClass) {
-			log.warn('Unknown reader type ' + type);
+			this.log.warn('Unknown reader type ' + type);
 		}
 
 		options = Object.create(options);
@@ -37,21 +35,21 @@ SensorsManager.prototype = Object.create({
 		delete sensors[name];
 	},
 	start: function() {
-		log.debug('Starting sensors manager');
+		this.log.debug('Starting sensors manager');
 
 		for (var sensorName in this.sensors) {
 			if (this.sensors.hasOwnProperty(sensorName)) {
-				log.debug('Starting sensor ' + sensorName);
+				this.log.debug('Starting sensor ' + sensorName);
 				this.sensors[sensorName].start();
 			}
 		}
 	},
 	stop: function() {
-		log.debug('Stoping sensors manager');
+		this.log.debug('Stoping sensors manager');
 
 		for (var sensorName in this.sensors) {
 			if (this.sensors.hasOwnProperty(sensorName)) {
-				log.debug('Stoping sensor ' + sensorName);
+				this.log.debug('Stoping sensor ' + sensorName);
 				this.sensors[sensorName].stop();
 			}
 		}

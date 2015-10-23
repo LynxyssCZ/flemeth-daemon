@@ -17,6 +17,7 @@ var clear = function() {
 
 var start = function() {
 	manager = new SensorsManager({
+		logger: log,
 		callback: function (name, value) {
 			log.info(value, 'Sensor values');
 		}

@@ -52,14 +52,13 @@ DS18B20Sensor.prototype = Object.create({
 				return;
 			}
 
-			self.dispatchFrame(self.parseTempObj(tempObj));
+			var samples = self._createSamples(tempObj);
+
+			self.dispatchFrame({
+				reader: DS18B20Sensor.properties.prefix,
+				samples: samples
+			});
 		});
-	},
-	parseTempObj: function(tempObj) {
-		return {
-			reader: DS18B20Sensor.properties.prefix,
-			samples: this._createSamples(tempObj)
-		};
 	},
 	_createSamples: function(tempObj) {
 		return Object.keys(tempObj).map(function(id) {

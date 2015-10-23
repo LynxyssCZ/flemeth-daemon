@@ -1,8 +1,8 @@
 var SensorsManager = require('./src/thermostat/SensorsManager');
 
 var manager = new SensorsManager({
-	callback: function (argument) {
-		console.log(argument);
+	callback: function (name, value) {
+		console.log(name, value);
 	}
 });
 

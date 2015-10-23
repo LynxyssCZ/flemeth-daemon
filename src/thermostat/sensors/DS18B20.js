@@ -33,11 +33,15 @@ DS18B20Sensor.prototype = Object.create({
 		this.options.dispatchCallback(this.options.name, frame);
 	},
 	onDriversLoad: function(err, isLoaded) {
+		var self = this;
 		if (!err && isLoaded) {
 			this.log.debug('Starting sensor');
 
 			this.intervalId = setInterval(function() {
-				sensor.getAll(this.parseTempObj);
+				sensor.getAll(function(err, tempObj) {
+					self.log.info(tempObj);
+					self.parseTempObj(err, tempObj);
+				});
 			}, this.options.interval);
 		}
 		else {

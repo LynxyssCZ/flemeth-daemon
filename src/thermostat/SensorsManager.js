@@ -2,7 +2,7 @@ var bunyan = require('bunyan');
 var sensors = require('./sensors');
 
 
-var log = bunyan.createLogger({name: 'SensorsManager'});
+var log = bunyan.createLogger({name: 'SensorsManager', level: process.env.LOG_LEVEL});
 
 
 var SensorsManager = function(options) {

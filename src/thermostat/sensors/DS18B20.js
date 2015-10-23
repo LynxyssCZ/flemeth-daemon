@@ -36,7 +36,10 @@ DS18B20Sensor.prototype = Object.create({
 		sensor.isDriverLoaded(function(err, isLoaded) {
 			if (!err && isLoaded) {
 				log.debug('Starting reader');
-				self.intervalId = setInterval(self._readValues, self.options.interval);
+
+				self.intervalId = setInterval(function() {
+					self._readValues();
+				}, self.options.interval);
 			}
 			else {
 				log.error('Modules not loaded');

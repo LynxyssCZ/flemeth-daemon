@@ -27,6 +27,11 @@ var start = function() {
 		interval: 5000
 	});
 
+	manager.addSensor('DRF', 'DRF5150', {
+		tty: '/dev/ttyAMA0',
+		enable: 17
+	});
+
 	manager.start();
 };
 process.on('SIGINT', clear);

@@ -3,7 +3,7 @@ var bunyan = require('bunyan');
 var sensor = require('ds18x20');
 
 
-var log = bunyan.createLogger({name: 'DS18B20Sensor', level: 'debug'});
+var log = bunyan.createLogger({name: 'DS18B20Sensor', level: process.env.LOG_LEVEL});
 
 
 var DS18B20Sensor = function (options) {

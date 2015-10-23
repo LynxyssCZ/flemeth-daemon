@@ -1,4 +1,8 @@
+require('dotenv').load();
+
+
 var SensorsManager = require('./src/thermostat/SensorsManager');
+
 
 var manager = new SensorsManager({
 	callback: function (name, value) {

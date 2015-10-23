@@ -1,7 +1,11 @@
 require('dotenv').load();
+var bunyan = require('bunyan');
 
 
 var SensorsManager = require('./src/thermostat/SensorsManager');
+
+
+var log = bunyan.createLogger({name: 'root', level: process.env.LOG_LEVEL});
 
 
 var manager;
@@ -14,7 +18,7 @@ var clear = function() {
 var start = function() {
 	manager = new SensorsManager({
 		callback: function (name, value) {
-			console.log(name, value);
+			log.info('Read values', value);
 		}
 	});
 

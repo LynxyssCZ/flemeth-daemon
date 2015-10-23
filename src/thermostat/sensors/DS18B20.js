@@ -38,9 +38,7 @@ DS18B20Sensor.prototype = Object.create({
 			this.log.debug('Starting sensor');
 
 			this.intervalId = setInterval(function() {
-				sensor.getAll(function(err, tempObj) {
-					self.parseTempObj(err, tempObj);
-				});
+				sensor.getAll(self.parseTempObj);
 			}, this.options.interval);
 		}
 		else {

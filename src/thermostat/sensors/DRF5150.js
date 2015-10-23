@@ -49,7 +49,13 @@ DRF5150Sensor.prototype = Object.create({
 		this.options.dispatchCallback(this.options.name, frame);
 	},
 	onDataRead: function(data) {
-		console.log(data);
+		var frame = {
+			groupId: data.readUInt8(0),
+			sensorId: data.readUInt8(1),
+			value: data.readUInt16BE(2)
+		};
+
+		this.log.debug(frame);
 	}
 });
 

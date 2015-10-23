@@ -2,17 +2,14 @@ require('dotenv').load();
 var bunyan = require('bunyan');
 var DataStore = require('nedb');
 
-var db = {
-	sensorsValues: new DataStore({filename: './sensors.db', autoload: true})
-};
-
 
 var SensorsManager = require('./src/thermostat/SensorsManager');
 
 
+var db = {
+	sensorsValues: new DataStore({filename: './sensors.db', autoload: true})
+};
 var log = bunyan.createLogger({name: 'Flemeth', level: process.env.LOG_LEVEL});
-
-
 var manager;
 
 var clear = function() {
@@ -25,7 +22,7 @@ var start = function() {
 		logger: log,
 		callback: function (name, value) {
 			log.info(value, 'Sensor values');
-			db.insert(value);
+			db.sensorsValues.insert(value);
 		}
 	});
 

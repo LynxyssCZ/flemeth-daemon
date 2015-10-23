@@ -3,7 +3,7 @@ var bunyan = require('bunyan');
 var Bluebird = require('bluebird');
 var serialport = Bluebird.promisifyAll(require('serialport'));
 var SerialPort = serialport.SerialPort;
-var Gpio = Bluebird.promisifyAll(require('onoff').Gpio);
+var Gpio = Bluebird.promisifyAll(require('onoff')).Gpio;
 
 
 var DRF5150Sensor = function (options) {
@@ -36,7 +36,7 @@ DRF5150Sensor.prototype = Object.create({
 
 		this.enable.writeAsync(true)
 			.bind(this).then(function() {
-				return this.serialPort.open();
+				return this.serialPort.openAsync();
 			})
 			.catch(function(err) {
 				this.log.err({error: err}, 'Error while starting sensor');

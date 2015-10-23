@@ -24,8 +24,7 @@ DRF5150Sensor.properties = {
 	type: 'temp',
 	options: {
 		tty: 'string',
-		enable: 'number',
-		group: 'number'
+		enable: 'number'
 	}
 };
 
@@ -44,6 +43,9 @@ DRF5150Sensor.prototype = Object.create({
 	},
 	stop: function() {
 		this.log.debug('Stoping sensor');
+		this.enable.writeSync(false);
+		this.enable.unexport();
+		this.serialPort.close();
 	},
 	dispatchFrame: function(frame) {
 		this.options.dispatchCallback(this.options.name, frame);

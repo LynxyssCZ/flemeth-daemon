@@ -6,6 +6,9 @@ var sensor = require('ds18x20');
 var DS18B20Sensor = function (options) {
 	this.options = options;
 	this.log = options.logger ? options.logger.child({component: 'DS18B20Sensor'}) : bunyan.createLogger({name: 'DS18B20Sensor'});
+
+	this.parseTempObj = this.parseTempObj.bind(this);
+	this.onDriversLoad = this.onDriversLoad.bind(this);
 };
 
 DS18B20Sensor.properties = {
@@ -19,60 +22,50 @@ DS18B20Sensor.properties = {
 DS18B20Sensor.prototype = Object.create({
 	constructor: DS18B20Sensor,
 	start: function() {
-		this._startReading();
+		sensor.isDriverLoaded(this.onDriversLoad);
 	},
 	stop: function() {
+		this.log.debug('Stoping sensor');
 		clearInterval(this.intervalId);
 		delete this.intervalId;
 	},
 	dispatchFrame: function(frame) {
 		this.options.dispatchCallback(this.options.name, frame);
 	},
-	_startReading: function() {
-		var self = this;
+	onDriversLoad: function(err, isLoaded) {
+		if (!err && isLoaded) {
+			this.log.debug('Starting sensor');
 
-		sensor.isDriverLoaded(function(err, isLoaded) {
-			if (!err && isLoaded) {
-				self.log.debug('Starting reader');
+			this.intervalId = setInterval(function() {
+				sensor.getAll(this.parseTempObj);
+			}, this.options.interval);
+		}
+		else {
+			this.log.error('Modules not loaded');
+		}
+	},
+	parseTempObj: function(err, tempObj) {
+		if (err) {
+			this.log.debug('No values');
+			return;
+		}
 
-				self.intervalId = setInterval(function() {
-					self._readValues();
-				}, self.options.interval);
-			}
-			else {
-				self.log.error('Modules not loaded');
-			}
+		var samples = this.createSamples(tempObj);
+
+		this.dispatchFrame({
+			reader: DS18B20Sensor.properties.prefix,
+			samples: samples
 		});
 	},
-	_readValues: function() {
-		var self = this;
-
-		sensor.getAll(function(err, tempObj) {
-			if (err) {
-				self.log.debug('No values');
-				return;
-			}
-
-			var samples = self._createSamples(tempObj);
-
-			self.dispatchFrame({
-				reader: DS18B20Sensor.properties.prefix,
-				samples: samples
-			});
-		});
-	},
-	_createSamples: function(tempObj) {
+	createSamples: function(tempObj) {
 		return Object.keys(tempObj).map(function(id) {
-			return this._createSample(id, tempObj[id]);
+			return {
+				id: DS18B20Sensor.properties.prefix + '-' + id,
+				type: DS18B20Sensor.properties.type,
+				value: tempObj[id],
+				time: Date.now()
+			};
 		}, this);
-	},
-	_createSample: function(id, value) {
-		return {
-			id: DS18B20Sensor.properties.prefix + '-' + id,
-			type: DS18B20Sensor.properties.type,
-			value: value,
-			time: Date.now()
-		};
 	}
 });
 

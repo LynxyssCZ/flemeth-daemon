@@ -57,7 +57,7 @@ DRF5150Sensor.prototype = Object.create({
 			reader: DRF5150Sensor.properties.prefix,
 			samples: [
 				{
-					id: sensorId,
+					sensorId: sensorId,
 					type: DRF5150Sensor.properties.type,
 					value: (data.readUInt16LE(2) / 16),
 					vbat: (data.readUInt8(4) / 100) + 2,

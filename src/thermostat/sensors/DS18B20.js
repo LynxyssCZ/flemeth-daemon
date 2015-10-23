@@ -61,7 +61,7 @@ DS18B20Sensor.prototype = Object.create({
 	createSamples: function(tempObj) {
 		return Object.keys(tempObj).map(function(id) {
 			return {
-				id: DS18B20Sensor.properties.prefix + '-' + id,
+				sensorId: DS18B20Sensor.properties.prefix + '-' + id,
 				type: DS18B20Sensor.properties.type,
 				value: tempObj[id],
 				time: Date.now()

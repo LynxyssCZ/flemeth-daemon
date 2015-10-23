@@ -4,7 +4,7 @@ var sensors = require('./sensors');
 
 var SensorsManager = function(options) {
 	this.options = options;
-	this.log = options.logger ? options.logger.child({component: 'SensorsManager'}) : bunyan.createLogger({name: 'SensorsManager', level: process.env.LOG_LEVEL});
+	this.log = options.logger ? options.logger.child({component: 'SensorsManager'}) : bunyan.createLogger({name: 'SensorsManager'});
 	this.sensors = {};
 };
 
@@ -19,6 +19,7 @@ SensorsManager.prototype = Object.create({
 
 		options = Object.create(options);
 		options.name = name;
+		options.logger = this.options.logger;
 		options.dispatchCallback = this.options.callback;
 
 		var sensor = new SensorClass(options);

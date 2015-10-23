@@ -5,7 +5,7 @@ var bunyan = require('bunyan');
 var SensorsManager = require('./src/thermostat/SensorsManager');
 
 
-var log = bunyan.createLogger({name: 'root', level: process.env.LOG_LEVEL});
+var log = bunyan.createLogger({name: 'Flemeth', level: process.env.LOG_LEVEL});
 
 
 var manager;

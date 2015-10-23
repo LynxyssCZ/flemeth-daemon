@@ -3,11 +3,9 @@ var bunyan = require('bunyan');
 var sensor = require('ds18x20');
 
 
-var log = bunyan.createLogger({name: 'DS18B20Sensor', level: process.env.LOG_LEVEL});
-
-
 var DS18B20Sensor = function (options) {
 	this.options = options;
+	this.log = options.logger ? options.logger.child({component: 'DS18B20Sensor'}) : bunyan.createLogger({name: 'DS18B20Sensor'});
 };
 
 DS18B20Sensor.properties = {
@@ -35,14 +33,14 @@ DS18B20Sensor.prototype = Object.create({
 
 		sensor.isDriverLoaded(function(err, isLoaded) {
 			if (!err && isLoaded) {
-				log.debug('Starting reader');
+				self.log.debug('Starting reader');
 
 				self.intervalId = setInterval(function() {
 					self._readValues();
 				}, self.options.interval);
 			}
 			else {
-				log.error('Modules not loaded');
+				self.log.error('Modules not loaded');
 			}
 		});
 	},
@@ -51,7 +49,7 @@ DS18B20Sensor.prototype = Object.create({
 
 		sensor.getAll(function(err, tempObj) {
 			if (err) {
-				log.debug('No values');
+				self.log.debug('No values');
 				return;
 			}
 

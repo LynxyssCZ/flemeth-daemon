@@ -27,7 +27,7 @@ var start = function() {
 	});
 
 	manager.addSensor('DS18B20', 'DS18B20', {
-		interval: 5000
+		interval: 60000
 	});
 
 	manager.addSensor('DRF', 'DRF5150', {

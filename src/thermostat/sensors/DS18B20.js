@@ -3,7 +3,7 @@ var bunyan = require('bunyan');
 var sensor = require('ds18x20');
 
 
-var log = bunyan.createLogger({name: 'DS18B20Sensor'});
+var log = bunyan.createLogger({name: 'DS18B20Sensor', level: 'debug'});
 
 
 var DS18B20Sensor = function (options) {
@@ -47,7 +47,7 @@ DS18B20Sensor.prototype = Object.create({
 		var self = this;
 
 		sensor.getAll(function(err, tempObj) {
-			if (!err) {
+			if (err) {
 				log.debug('No values');
 				return;
 			}

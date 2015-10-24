@@ -54,6 +54,7 @@ DRF5150Sensor.prototype = Object.create({
 		var sensorId = DRF5150Sensor.properties.prefix + '-' + data.readUInt8(0) + '-' + data.readUInt8(1);
 
 		if(data.length !== 6) {
+			this.log.warn(buffer, 'Buffer is not the expected length');
 			return;
 		}
 

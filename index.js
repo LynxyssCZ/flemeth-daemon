@@ -22,7 +22,7 @@ var start = function() {
 		logger: log,
 		callback: function (name, value) {
 			log.info(value, 'Sensor values');
-			db.sensorsValues.insert(value.samples);
+//			db.sensorsValues.insert(value.samples);
 		}
 	});
 

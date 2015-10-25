@@ -23,8 +23,8 @@ ZonesManager.prototype.updateZonesValues = function () {
 
 	var sensors = state.Sensors.map(function(sensor) {
 		return {
-			id: sensor.sensorId,
-			value: mean(sensor.values)
+			id: sensor.get('sensorId'),
+			value: mean(sensor.get('values'))
 		};
 	});
 

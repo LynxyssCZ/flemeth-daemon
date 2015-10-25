@@ -13,8 +13,6 @@ var SensorsManager = function(options) {
 			this.addSensor(spec.name, spec.type, spec.options);
 		}, this);
 	}
-
-	this.dispatchFrame = this.dispatchFrame.bind(this);
 }; SensorsManager.prototype.constructor = SensorsManager;
 module.exports = SensorsManager;
 
@@ -43,8 +41,7 @@ SensorsManager.prototype.stop = function() {
 
 SensorsManager.prototype.addSensor = function(name, type, options) {
 	var SensorClass = sensors[type];
-	var dispatchCallback = this.dispatchFrame;
-	var logger = this.logger;
+	var self = this;
 
 	if (!SensorClass) {
 		this.logger.error('Unknown reader type ', type);
@@ -54,8 +51,10 @@ SensorsManager.prototype.addSensor = function(name, type, options) {
 
 	var sensor = new SensorClass(assign({
 		name: name,
-		logger: logger,
-		dispatchCallback: dispatchCallback
+		logger: this.logger,
+		dispatchCallback: function(reader, frame) {
+			self.dispatchFrame(reader, frame);
+		}
 	}, options));
 
 	this.sensors[name] = sensor;

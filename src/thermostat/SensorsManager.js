@@ -76,7 +76,7 @@ SensorsManager.prototype.dispatchFrame = function(reader, frame) {
 	// 	frame: frame
 	// }, 'Read values');
 
-	console.log(this.actions);
+	console.log(this);
 	var actions = this.actions.Sensors.readFrame(frame);
 
 	if (actions) {

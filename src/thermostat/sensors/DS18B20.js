@@ -9,7 +9,8 @@ var DS18B20Sensor = function (options) {
 
 	this.parseTempObj = this.parseTempObj.bind(this);
 	this.onDriversLoad = this.onDriversLoad.bind(this);
-};
+}; DS18B20Sensor.prototype.constructor = DS18B20Sensor;
+module.exports = DS18B20Sensor;
 
 DS18B20Sensor.properties = {
 	prefix: 'ds18x20',
@@ -19,55 +20,55 @@ DS18B20Sensor.properties = {
 	}
 };
 
-DS18B20Sensor.prototype = Object.create({
-	constructor: DS18B20Sensor,
-	start: function() {
-		sensor.isDriverLoaded(this.onDriversLoad);
-	},
-	stop: function() {
-		this.log.debug('Stoping sensor');
-		clearInterval(this.intervalId);
-		delete this.intervalId;
-	},
-	dispatchFrame: function(frame) {
-		this.options.dispatchCallback(this.options.name, frame);
-	},
-	onDriversLoad: function(err, isLoaded) {
-		var self = this;
-		if (!err && isLoaded) {
-			this.log.debug('Starting sensor');
+DS18B20Sensor.prototype.start = function() {
+	sensor.isDriverLoaded(this.onDriversLoad);
+};
 
-			this.intervalId = setInterval(function() {
-				sensor.getAll(self.parseTempObj);
-			}, this.options.interval);
-		}
-		else {
-			this.log.error('Modules not loaded');
-		}
-	},
-	parseTempObj: function(err, tempObj) {
-		if (err) {
-			this.log.debug('No values');
-			return;
-		}
+DS18B20Sensor.prototype.stop = function() {
+	this.log.debug('Stoping sensor');
+	clearInterval(this.intervalId);
+	delete this.intervalId;
+};
 
-		var samples = this.createSamples(tempObj);
+DS18B20Sensor.prototype.dispatchFrame = function(frame) {
+	this.options.dispatchCallback(this.options.name, frame);
+};
 
-		this.dispatchFrame({
-			reader: DS18B20Sensor.properties.prefix,
-			samples: samples
-		});
-	},
-	createSamples: function(tempObj) {
-		return Object.keys(tempObj).map(function(id) {
-			return {
-				sensorId: DS18B20Sensor.properties.prefix + '-' + id,
-				type: DS18B20Sensor.properties.type,
-				value: tempObj[id],
-				time: Date.now()
-			};
-		}, this);
+DS18B20Sensor.prototype.onDriversLoad = function(err, isLoaded) {
+	var self = this;
+	if (!err && isLoaded) {
+		this.log.debug('Starting sensor');
+
+		this.intervalId = setInterval(function() {
+			sensor.getAll(self.parseTempObj);
+		}, this.options.interval);
 	}
-});
+	else {
+		this.log.error('Modules not loaded');
+	}
+};
 
-module.exports = DS18B20Sensor;
+DS18B20Sensor.prototype.parseTempObj = function(err, tempObj) {
+	if (err) {
+		this.log.debug('No values');
+		return;
+	}
+
+	var samples = this.createSamples(tempObj);
+
+	this.dispatchFrame({
+		reader: DS18B20Sensor.properties.prefix,
+		samples: samples
+	});
+};
+
+DS18B20Sensor.prototype.createSamples = function(tempObj) {
+	return Object.keys(tempObj).map(function(id) {
+		return {
+			sensorId: DS18B20Sensor.properties.prefix + '-' + id,
+			type: DS18B20Sensor.properties.type,
+			value: tempObj[id],
+			time: Date.now()
+		};
+	}, this);
+};

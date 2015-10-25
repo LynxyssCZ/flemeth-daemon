@@ -28,50 +28,55 @@ DRF5150Sensor.properties = {
 	}
 };
 
-DRF5150Sensor.prototype = Object.create({
-	constructor: DRF5150Sensor,
-	start: function() {
-		this.enable = new Gpio(this.options.enable, 'out');
+DRF5150Sensor.prototype.constructor = DRF5150Sensor;
 
-		this.enable.writeAsync(true)
-			.bind(this).then(function() {
-				return this.serialPort.openAsync();
-			})
-			.catch(function(err) {
-				this.log.err({error: err}, 'Error while starting sensor');
-			});
-	},
-	stop: function() {
-		this.log.debug('Stoping sensor');
-		this.enable.writeSync(false);
-		this.enable.unexport();
-		this.serialPort.close();
-	},
-	dispatchFrame: function(frame) {
-		this.options.dispatchCallback(this.options.name, frame);
-	},
-	onDataRead: function(data) {
-		var sensorId = DRF5150Sensor.properties.prefix + '-' + data.readUInt8(0) + '-' + data.readUInt8(1);
+DRF5150Sensor.prototype.start = function() {
+	this.enable = new Gpio(this.options.enable, 'out');
 
-		if(data.length !== 6) {
-			this.log.warn(data, 'Buffer is not the expected length');
-			return;
-		}
-
-		this.dispatchFrame({
-			reader: DRF5150Sensor.properties.prefix,
-			samples: [
-				{
-					sensorId: sensorId,
-					type: DRF5150Sensor.properties.type,
-					value: (data.readUInt16LE(2) / 16),
-					vbat: (data.readUInt8(4) / 100) + 2,
-					rssi: data.readUInt8(5),
-					time: Date.now()
-				}
-			]
+	this.enable.writeAsync(true)
+		.bind(this).then(function() {
+			return this.serialPort.openAsync();
+		})
+		.catch(function(err) {
+			this.log.err({error: err}, 'Error while starting sensor');
 		});
-	},
-});
+};
+
+DRF5150Sensor.prototype.stop = function() {
+	this.log.debug('Stoping sensor');
+	this.enable.writeSync(false);
+	this.enable.unexport();
+	this.serialPort.close();
+};
+
+DRF5150Sensor.prototype.dispatchFrame = function(frame) {
+	this.options.dispatchCallback(this.options.name, frame);
+};
+
+DRF5150Sensor.prototype.onDataRead = function(data) {
+	var sensorId = DRF5150Sensor.properties.prefix + '-' + data.readUInt8(0) + '-' + data.readUInt8(1);
+
+	if(data.length !== 6) {
+		this.log.warn(data, 'Buffer is not the expected length');
+		return;
+	}
+
+	this.dispatchFrame({
+		reader: DRF5150Sensor.properties.prefix,
+		samples: [
+			{
+				sensorId: sensorId,
+				type: DRF5150Sensor.properties.type,
+				value: (data.readUInt16LE(2) / 16),
+				meta: {
+					vbat: (data.readUInt8(4) / 100) + 2,
+					rssi: data.readUInt8(5)
+				},
+				time: Date.now()
+			}
+		]
+	});
+};
+
 
 module.exports = DRF5150Sensor;

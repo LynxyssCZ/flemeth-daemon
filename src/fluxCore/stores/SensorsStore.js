@@ -19,6 +19,7 @@ function getDefaultState() {
 }
 
 function update(sensors, state) {
+	console.log(sensors);
 	sensors.foreach(function(sensor) {
 		var newSensor;
 		if (sensor && state.has(sensor.sensorId)) {

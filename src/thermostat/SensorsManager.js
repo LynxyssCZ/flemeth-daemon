@@ -43,6 +43,8 @@ SensorsManager.prototype.stop = function() {
 
 SensorsManager.prototype.addSensor = function(name, type, options) {
 	var SensorClass = sensors[type];
+	var dispatchCallback = this.dispatchFrame;
+	var logger = this.logger;
 
 	if (!SensorClass) {
 		this.logger.error('Unknown reader type ', type);
@@ -52,8 +54,8 @@ SensorsManager.prototype.addSensor = function(name, type, options) {
 
 	var sensor = new SensorClass(assign({
 		name: name,
-		logger: this.logger,
-		dispatchCallback: this.dispatchFrame
+		logger: logger,
+		dispatchCallback: dispatchCallback
 	}, options));
 
 	this.sensors[name] = sensor;

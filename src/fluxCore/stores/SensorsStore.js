@@ -58,6 +58,8 @@ function updateTempSensor(sensor, updateData) {
 	var values = sensor.get('values').slice(0, VALUES);
 	values.unshift(updateData.value);
 
+	console.log(values, sensor.get('values'));
+
 	return sensor
 		.set('values', values)
 		.set('meta', updateData.meta)

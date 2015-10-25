@@ -26,8 +26,7 @@ var flemeth = new Flemeth({
 });
 
 flemeth.container.subscribe(['Sensors'], function() {
-	log.info('Update of sensors');
-	log.info(flemeth.container.getState(['Sensors']));
+	log.info(flemeth.container.getState(['Sensors']), 'Update of sensors');
 });
 
 var clear = function() {

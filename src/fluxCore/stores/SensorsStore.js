@@ -35,6 +35,7 @@ function update(sensors, state) {
 }
 
 function createSensor(initialData) {
+	console.log(initialData);
 	return Map({
 		id: initialData.sensorId,
 		type: initialData.type,

@@ -55,8 +55,6 @@ SensorsManager.prototype.addSensor = function(name, type, options) {
 		dispatchCallback: function(reader, frame) {
 			var actions = self.actions.Sensors.readFrame(frame);
 
-			self.logger.info(actions, 'Read sensor');
-
 			if (actions) {
 				self.container.dispatch(actions);
 			}

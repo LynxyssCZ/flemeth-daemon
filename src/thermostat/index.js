@@ -1,4 +1,5 @@
 var SensorsManager = require('./SensorsManager');
+var ZonesManager = require('./ZonesManager');
 
 
 var Thermostat = function(options) {
@@ -6,26 +7,38 @@ var Thermostat = function(options) {
 
 	this.actions = options.actions;
 	this.container = options.container;
+
+	this.createZonesManager(options);
 	this.createSensorsManager(options);
 };
 module.exports = Thermostat;
 
 Thermostat.prototype.start = function(next) {
 	this.logger.info('Thermostat starting');
-	this.manager.start();
+	this.zonesManager.start();
+	this.sensorsManager.start();
 	next();
 };
 
 Thermostat.prototype.stop = function(next) {
 	this.logger.info('Thermostat stoping');
-	this.manager.stop();
+	this.zonesManager.stop();
+	this.sensorsManager.stop();
 	next();
 };
 
 Thermostat.prototype.createSensorsManager = function(options) {
-	this.manager = new SensorsManager({
+	this.sensorsManager = new SensorsManager({
 		logger: options.logger,
 		sensors: options.sensors,
+		actions: options.actions,
+		container: options.container
+	});
+};
+
+Thermostat.prototype.createZonesManager = function (options) {
+	this.zonesManager = new ZonesManager({
+		logger: options.logger,
 		actions: options.actions,
 		container: options.container
 	});

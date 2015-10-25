@@ -1,11 +1,19 @@
 require('dotenv').load();
 var bunyan = require('bunyan');
+var Async = require('async');
 var Flemeth = require('./src');
+
 
 var log = bunyan.createLogger({name: 'Flemeth', level: process.env.LOG_LEVEL});
 var flemeth = new Flemeth({
 	logger: log,
 	// other config
+	server: {
+		connection: {
+			port: 8098,
+			host: '0.0.0.0'
+		}
+	},
 	thermostat: {
 		sensors: [
 			{
@@ -30,12 +38,24 @@ flemeth.container.subscribe(['Sensors'], function() {
 });
 
 var clear = function() {
-	flemeth.stop();
-	process.exit();
+	flemeth.stop(function() {
+		log.info('Stopped');
+		process.exit();
+	});
 };
 
 var start = function() {
-	flemeth.start();
+	Async.series([
+		flemeth.init.bind(flemeth),
+		flemeth.start.bind(flemeth)
+	], function(error) {
+		if (error) {
+			log.error(error);
+		}
+		else {
+			log.info('Started');
+		}
+	});
 };
 process.on('SIGINT', clear);
 

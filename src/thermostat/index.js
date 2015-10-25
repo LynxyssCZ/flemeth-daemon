@@ -10,14 +10,16 @@ var Thermostat = function(options) {
 };
 module.exports = Thermostat;
 
-Thermostat.prototype.start = function() {
+Thermostat.prototype.start = function(next) {
 	this.logger.info('Thermostat starting');
 	this.manager.start();
+	next();
 };
 
-Thermostat.prototype.stop = function() {
+Thermostat.prototype.stop = function(next) {
 	this.logger.info('Thermostat stoping');
 	this.manager.stop();
+	next();
 };
 
 Thermostat.prototype.createSensorsManager = function(options) {

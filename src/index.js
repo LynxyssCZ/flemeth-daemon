@@ -1,4 +1,5 @@
 var assign = require('object-assign');
+var Async = require('async');
 var core = require('./fluxCore');
 var Container = core.Container;
 var Store = core.stores.compose(core.stores.stores);
@@ -29,14 +30,32 @@ var Flemeth = function(options) {
 };
 module.exports = Flemeth;
 
-Flemeth.prototype.start = function () {
-	this.logger.info('Flemeth daemon starting');
-	this.thermostat.start();
+Flemeth.prototype.init = function (next) {
+	Async.series([
+		this.server.init.bind(this.server)
+	], function(err) {
+		next(err);
+	});
 };
 
-Flemeth.prototype.stop = function () {
+Flemeth.prototype.start = function (next) {
+	this.logger.info('Flemeth daemon starting');
+	Async.series([
+		this.thermostat.start.bind(this.thermostat),
+		this.server.start.bind(this.server)
+	], function(err) {
+		next(err);
+	});
+};
+
+Flemeth.prototype.stop = function (next) {
 	this.logger.info('Flemeth daemon stoping.');
-	this.thermostat.stop();
+	Async.series([
+		this.thermostat.stop.bind(this.thermostat),
+		this.server.stop.bind(this.server)
+	], function(err) {
+		next(err);
+	});
 };
 
 // TODO: Load initial data from database

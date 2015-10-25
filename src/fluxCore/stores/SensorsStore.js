@@ -22,7 +22,7 @@ function update(sensors, state) {
 	sensors.forEach(function(sensor) {
 		var newSensor;
 		if (sensor && state.has(sensor.sensorId)) {
-			newSensor = updateSensor(sensor, state.get(sensor.sensorId));
+			newSensor = updateSensor(state.get(sensor.sensorId), sensor);
 		}
 		else if (sensor) {
 			newSensor = createSensor(sensor);

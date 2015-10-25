@@ -10,6 +10,7 @@ function composeStores(stores) {
 module.exports = {
 	stores: {
 		Sensors: require('./SensorsStore'),
+		Zones: require('./ZonesStore'),
 	},
 	compose: composeStores
 };

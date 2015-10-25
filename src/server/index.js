@@ -1,9 +1,18 @@
 var Hapi = require('hapi');
+var assign = require('object-assign');
 
 
 var Server = function(options) {
 	this.logger = options.logger.child({component: 'Server'});
-	this.server = new Hapi.Server(options.serverConfig);
+	this.container = options.container;
+	this.actions = options.actions;
+
+	this.server = new Hapi.Server(assign({
+		app: {
+			container: options.container,
+			actions: options.actions
+		}
+	},options.serverConfig));
 	this.server.connection(options.connection);
 
 	this.apiOptions = options.api;
@@ -14,7 +23,14 @@ Server.prototype.init = function (next) {
 	this.server.register([
 		{
 			register: require('./api'),
-			options: this.apiOptions
+			options: assign({
+				base: '/api'
+			}, this.apiOptions)
+		}, {
+			register: require('hapi-bunyan'),
+			options: {
+				logger: this.logger
+			}
 		}
 	], function(err) {
 		next(err);

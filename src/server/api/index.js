@@ -1,8 +1,12 @@
+
 var api = {
 	register: function (server, options, next) {
 		server.register([
 			{
-				register: require('./Sensors')
+				register: require('./Sensors'),
+				options: {
+					base: options.base.concat('/sensors')
+				}
 			}
 		], function(err) {
 			next(err);

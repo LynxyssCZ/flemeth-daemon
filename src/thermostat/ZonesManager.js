@@ -23,7 +23,7 @@ ZonesManager.prototype.updateZonesValues = function () {
 	var sensors = [];
 
 	state.Sensors.forEach(function(sensor) {
-		sensor.push({
+		sensors.push({
 			id: sensor.get('sensorId'),
 			value: mean(sensor.get('values'))
 		});

@@ -3,12 +3,14 @@ var Map = require('immutable').Map;
 var VALUES = 5;
 
 module.exports = function(action, state) {
+	var payload = action.payload;
+
 	if (!state) {
 		state = getDefaultState();
 	}
 
 	if (action.sensors) {
-		state = update(action.sensors, state);
+		state = update(payload.sensors, state);
 	}
 
 	return state;

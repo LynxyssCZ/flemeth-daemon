@@ -20,12 +20,13 @@ ZonesManager.prototype.stop = function() {
 
 ZonesManager.prototype.updateZonesValues = function () {
 	var state = this.container.getState(['Zones', 'Sensors']);
+	var sensors = [];
 
-	var sensors = state.Sensors.map(function(sensor) {
-		return {
+	state.Sensors.forEach(function(sensor) {
+		sensor.push({
 			id: sensor.get('sensorId'),
 			value: mean(sensor.get('values'))
-		};
+		});
 	});
 
 	this.logger.info(sensors);

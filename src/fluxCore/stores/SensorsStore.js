@@ -46,7 +46,7 @@ function createSensor(initialData) {
 }
 
 function updateSensor(sensor, updateData) {
-	switch (sensor.type) {
+	switch (sensor.get('type')) {
 		case 'temp':
 			return updateTempSensor(sensor, updateData);
 		default:
@@ -57,8 +57,6 @@ function updateSensor(sensor, updateData) {
 function updateTempSensor(sensor, updateData) {
 	var values = sensor.get('values').slice(0, VALUES);
 	values.unshift(updateData.value);
-
-	console.log(values, sensor.get('values'));
 
 	return sensor
 		.set('values', values)

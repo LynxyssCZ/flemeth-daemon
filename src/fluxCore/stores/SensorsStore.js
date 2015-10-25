@@ -40,6 +40,7 @@ function createSensor(initialData) {
 		type: initialData.type,
 		reader: initialData.reader,
 		values: [initialData.value],
+		average: initialData.value,
 		meta: initialData.meta,
 		lastUpdate: initialData.time
 	});
@@ -60,6 +61,15 @@ function updateTempSensor(sensor, updateData) {
 
 	return sensor
 		.set('values', values)
+		.set('average', mean(values))
 		.set('meta', updateData.meta)
 		.set('lastUpdate', updateData.time);
+}
+
+function mean(array) {
+	var sum = 0, i;
+	for (i = 0; i < array.length; i++) {
+		sum += array[i];
+	}
+	return array.length ? sum / array.length : 0;
 }

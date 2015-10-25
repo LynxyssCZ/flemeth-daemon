@@ -20,17 +20,46 @@ ZonesManager.prototype.stop = function() {
 
 ZonesManager.prototype.updateZonesValues = function () {
 	var state = this.container.getState(['Zones', 'Sensors']);
-	var sensors = [];
+	var zones = state.Zones.toArray();
+	var sensors = state.Sensors.toArray();
 
-	state.Sensors.forEach(function(sensor) {
-		sensors.push({
-			id: sensor.get('id'),
-			value: mean(sensor.get('values'))
-		});
-	});
+	var zonesValues = sensors.filter(function(sensor) {
+		return sensor.get('type') !== 'temp';
+	}).reduce(function(zonesValues, sensor) {
+		var associated;
+		var id = sensor.get('id');
 
-	this.logger.info(sensors);
+		for (var i = 0; i < zones.length; i++) {
+			var zone = zones[i];
+			var zoneSensors = zone.get('sensors');
+
+			if (zoneSensors && zoneSensors.indexOf(id) >= 0) {
+				storeZoneValue(zonesValues[zone.get('id')], sensor);
+				associated = true;
+				break;
+			}
+		}
+
+		if (!associated) {
+			zonesValues.default = storeZoneValue(zonesValues.default, sensor);
+		}
+
+		return zonesValues;
+	}, { default: [] });
+
+	this.logger.info(zonesValues);
 };
+
+function storeZoneValue(zonesValues, sensor) {
+	if (zonesValues) {
+		zonesValues.push(sensor.get('average'));
+	}
+	else {
+		zonesValues = [sensor.get('average')];
+	}
+
+	return zonesValues;
+}
 
 function mean(array) {
 	var sum = 0, i;

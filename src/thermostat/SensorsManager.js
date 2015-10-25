@@ -53,7 +53,13 @@ SensorsManager.prototype.addSensor = function(name, type, options) {
 		name: name,
 		logger: this.logger,
 		dispatchCallback: function(reader, frame) {
-			self.dispatchFrame(reader, frame);
+			var actions = self.actions.Sensors.readFrame(frame);
+
+			self.logger.info(actions, 'Read sensor');
+
+			if (actions) {
+				self.container.dispatch(actions);
+			}
 		}
 	}, options));
 
@@ -69,17 +75,4 @@ SensorsManager.prototype.removeSensor = function(name) {
 	var sensor = sensors[name];
 	sensor.stop();
 	delete sensors[name];
-};
-
-SensorsManager.prototype.dispatchFrame = function(reader, frame) {
-	// this.logger.info({
-	// 	reader: reader,
-	// 	frame: frame
-	// }, 'Read values');
-
-	var actions = this.actions.Sensors.readFrame(frame);
-
-	if (actions) {
-		this.container.dispatch(actions);
-	}
 };

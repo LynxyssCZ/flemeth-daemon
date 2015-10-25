@@ -1,6 +1,12 @@
 var api = {
 	register: function (server, options, next) {
-		next();
+		server.register([
+			{
+				register: require('./Sensors')
+			}
+		], function(err) {
+			next(err);
+		});
 	}
 };
 

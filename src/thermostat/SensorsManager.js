@@ -2,8 +2,10 @@ var assign = require('object-assign');
 var sensors = require('./sensors');
 
 var SensorsManager = function(options) {
-	this.options = options;
 	this.logger = options.logger.child({component: 'SensorsManager'});
+	this.container = options.container;
+	this.actions = options.actions;
+
 	this.sensors = {};
 
 	if (options.sensors) {
@@ -22,7 +24,7 @@ SensorsManager.prototype.start = function() {
 
 	for (var sensorName in this.sensors) {
 		if (this.sensors.hasOwnProperty(sensorName)) {
-			this.logger.debug('Starting sensor ' + sensorName);
+			this.logger.info('Starting sensor ', sensorName);
 			this.sensors[sensorName].start();
 		}
 	}
@@ -33,7 +35,7 @@ SensorsManager.prototype.stop = function() {
 
 	for (var sensorName in this.sensors) {
 		if (this.sensors.hasOwnProperty(sensorName)) {
-			this.logger.debug('Stoping sensor ' + sensorName);
+			this.logger.info('Stoping sensor ', sensorName);
 			this.sensors[sensorName].stop();
 		}
 	}
@@ -43,9 +45,10 @@ SensorsManager.prototype.addSensor = function(name, type, options) {
 	var SensorClass = sensors[type];
 
 	if (!SensorClass) {
-		this.logger.warn('Unknown reader type ' + type);
+		this.logger.err('Unknown reader type ', type);
 		return;
 	}
+	this.logger.info('Adding sensor', name, type);
 
 	var sensor = new SensorClass(assign({
 		name: name,
@@ -61,14 +64,21 @@ SensorsManager.prototype.removeSensor = function(name) {
 		return false;
 	}
 
+	this.logger.info('Removing sensor', name);
 	var sensor = sensors[name];
 	sensor.stop();
 	delete sensors[name];
 };
 
 SensorsManager.prototype.dispatchFrame = function(reader, frame) {
-	this.logger.info({
-		reader: reader,
-		frame: frame
-	}, 'Read values');
+	// this.logger.info({
+	// 	reader: reader,
+	// 	frame: frame
+	// }, 'Read values');
+
+	var actions = this.actions.Sensors.readFrame(frame);
+
+	if (actions) {
+		this.container.dispatch(actions);
+	}
 };

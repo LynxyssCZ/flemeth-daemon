@@ -23,6 +23,8 @@ Thermostat.prototype.stop = function() {
 Thermostat.prototype.createSensorsManager = function(options) {
 	this.manager = new SensorsManager({
 		logger: options.logger,
-		sensors: options.sensors
+		sensors: options.sensors,
+		actions: options.actions,
+		container: options.container
 	});
 };

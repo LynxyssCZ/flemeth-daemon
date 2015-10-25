@@ -9,8 +9,8 @@ module.exports = ZonesManager;
 ZonesManager.prototype.start = function() {
 	this.logger.info('Starting zones manager');
 	this.subscriptionKey = this.container.subscribe([
-		'Sensors', 'Zones'
-	], this.updateZones.bind(this));
+		'Sensors'
+	], this.updateZonesValues.bind(this));
 };
 
 ZonesManager.prototype.stop = function() {
@@ -18,8 +18,23 @@ ZonesManager.prototype.stop = function() {
 	this.container.unsubscribe(this.subscriptionKey);
 };
 
-ZonesManager.prototype.updateZones = function () {
+ZonesManager.prototype.updateZonesValues = function () {
 	var state = this.container.getState(['Zones', 'Sensors']);
 
-	this.logger.info(state, 'Update of sensors');
+	var sensors = state.Sensors.map(function(sensor) {
+		return {
+			id: sensor.sensorId,
+			value: mean(sensor.values)
+		};
+	});
+
+	this.logger.info(sensors);
 };
+
+function mean(array) {
+	var sum = 0, i;
+	for (i = 0; i < array.length; i++) {
+		sum += array[i];
+	}
+	return array.length ? sum / array.length : 0;
+}

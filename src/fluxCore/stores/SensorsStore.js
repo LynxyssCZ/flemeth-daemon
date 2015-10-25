@@ -28,7 +28,7 @@ function update(sensors, state) {
 			newSensor = createSensor(sensor);
 		}
 
-		state = state.set(newSensor.id, newSensor);
+		state = state.set(newSensor.get('id'), newSensor);
 	});
 
 	return state;

@@ -1,3 +1,4 @@
 module.exports = {
-	Sensors: require('./SensorsActions')
+	Sensors: require('./SensorsActions'),
+	Zones: require('./ZonesActions')
 };

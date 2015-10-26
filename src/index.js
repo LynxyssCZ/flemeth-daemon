@@ -16,6 +16,17 @@ var Flemeth = function(options) {
 
 	this.createContainer();
 
+	this.container.dispatch({
+		type: 'Mock.zone',
+		payload: {
+			zones: {
+				id: 'zone-chan',
+				sensors: ['DRF5150-225-5'],
+				name: 'Mocked zone'
+			}
+		}
+	});
+
 	this.thermostat = new Thermostat(assign({
 		logger: this.logger,
 		container: this.container,

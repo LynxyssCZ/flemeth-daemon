@@ -33,6 +33,8 @@ ZonesManager.prototype.generateSensorsMap = function (zones) {
 			sensorsMap[zonesSensors[i]] = zoneId;
 		}
 	});
+
+	return sensorsMap;
 };
 
 ZonesManager.prototype.updateZonesValues = function () {

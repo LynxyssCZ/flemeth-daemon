@@ -8,7 +8,7 @@ var api = {
 					base: options.base.concat('/sensors')
 				}
 			}, {
-				register: require('./zones'),
+				register: require('./Zones'),
 				options: {
 					base: options.base.concat('/zones')
 				}

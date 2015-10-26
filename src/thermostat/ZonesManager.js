@@ -44,11 +44,8 @@ ZonesManager.prototype.updateZonesValues = function () {
 		default: []
 	};
 
-	this.logger.debug(sensorsMap);
-
 	state.Sensors.forEach(function(sensor) {
 		var targetZone = sensorsMap[sensor.get('id')];
-		console.log(targetZone);
 		if (!targetZone) {
 			zonesValues.default.push(sensor.get('average'));
 		}
@@ -59,6 +56,8 @@ ZonesManager.prototype.updateZonesValues = function () {
 			zonesValues[targetZone].push(sensor.get('average'));
 		}
 	});
+
+	zonesValues = zonesValues.map(mean);
 
 	this.logger.info(zonesValues);
 };

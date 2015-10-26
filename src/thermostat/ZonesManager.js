@@ -63,8 +63,10 @@ ZonesManager.prototype.updateZonesValues = function () {
 	});
 
 	zonesValues = Object.keys(zonesValues).reduce(function(zones, zoneId) {
-		zones[zoneId].value = mean(zonesValues[zoneId].values);
-		zones[zoneId].lastUpdate = Math.max(zonesValues[zoneId].times);
+		zones[zoneId] = {
+			value: mean(zonesValues[zoneId].values),
+			lastUpdate: Math.max(zonesValues[zoneId].times)
+		};
 		return zones;
 	}, {});
 

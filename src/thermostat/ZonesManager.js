@@ -21,6 +21,8 @@ ZonesManager.prototype.stop = function() {
 ZonesManager.prototype.generateSensorsMap = function (zones) {
 	var sensorsMap = {};
 
+	this.logger.debug(zones);
+
 	zones.forEach(function(zone) {
 		var zonesSensors = zone.get('sensors');
 		var zoneId = zone.get('id');
@@ -33,6 +35,8 @@ ZonesManager.prototype.generateSensorsMap = function (zones) {
 			sensorsMap[zonesSensors[i]] = zoneId;
 		}
 	});
+
+	this.logger.debug(sensorsMap);
 
 	return sensorsMap;
 };

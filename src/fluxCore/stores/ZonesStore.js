@@ -15,10 +15,10 @@ module.exports = function(action, state) {
 function getDefaultState() {
 	return Map({
 		default: Map({
-			id: 'default',
+			id: 'global',
 			value: null,
-			priority: 0.1,
-			name: 'Default zone'
+			priority: 0,
+			name: 'Global zone (for debugging purposes only)'
 		})
 	});
 }

@@ -41,7 +41,7 @@ ZonesManager.prototype.updateZonesValues = function () {
 	var state = this.container.getState(['Zones', 'Sensors']);
 	var sensorsMap = this.generateSensorsMap(state.Zones);
 	var zonesValues = {
-		default: {
+		global: {
 			values: [],
 			times: []
 		}
@@ -49,10 +49,7 @@ ZonesManager.prototype.updateZonesValues = function () {
 
 	state.Sensors.forEach(function(sensor) {
 		var targetZone = sensorsMap[sensor.get('id')];
-		if (!targetZone) {
-			targetZone = 'default';
-		}
-		else if (!zonesValues[targetZone]) {
+		if (targetZone && !zonesValues[targetZone]) {
 			zonesValues[targetZone] = {
 				values: [],
 				times: []
@@ -60,6 +57,9 @@ ZonesManager.prototype.updateZonesValues = function () {
 		}
 		zonesValues[targetZone].values.push(sensor.get('average'));
 		zonesValues[targetZone].times.push(sensor.get('lastUpdate'));
+
+		zonesValues.global.values.push(sensor.get('average'));
+		zonesValues.global.times.push(sensor.get('lastUpdate'));
 	});
 
 	this.container.dispatch(this.actions.Zones.updateValues(zonesValues));

@@ -3,7 +3,12 @@ var zonesApi = {
 		server.route({
 			path: options.base.concat('/'),
 			method: 'GET',
-			handler: handlers.getRaw
+			handler: handlers.getRaw,
+			config: {
+				descrition: 'Base zones getter.',
+				notes: ['Returns all', 'No filtering', 'Raw from core'],
+				tags: ['api', 'zones']
+			}
 		});
 		next();
 	}

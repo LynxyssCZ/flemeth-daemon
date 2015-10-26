@@ -55,8 +55,11 @@ ZonesManager.prototype.updateZonesValues = function () {
 				times: []
 			};
 		}
-		zonesValues[targetZone].values.push(sensor.get('average'));
-		zonesValues[targetZone].times.push(sensor.get('lastUpdate'));
+
+		if (targetZone) {
+			zonesValues[targetZone].values.push(sensor.get('average'));
+			zonesValues[targetZone].times.push(sensor.get('lastUpdate'));
+		}
 
 		zonesValues.global.values.push(sensor.get('average'));
 		zonesValues.global.times.push(sensor.get('lastUpdate'));

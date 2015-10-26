@@ -3,7 +3,12 @@ var sensorsApi = {
 		server.route({
 			path: options.base.concat('/'),
 			method: 'GET',
-			handler: handlers.getRaw
+			handler: handlers.getRaw,
+			config: {
+				description: 'Base sensors getter.',
+				notes: ['Returns all', 'No filtering', 'Raw from core'],
+				tags: ['api', 'sensors']
+			}
 		});
 		next();
 	}

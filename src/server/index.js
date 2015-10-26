@@ -31,6 +31,20 @@ Server.prototype.init = function (next) {
 			options: {
 				logger: this.logger
 			}
+		},
+		require('vision'),
+		require('inert'),
+		{
+			register: require('hapi-swagger'),
+			options: {
+				apiVersion: '0.1.0',
+				documentationPath: '/swag-doc',
+				endpoint: '/swag-spec',
+				info: {
+					title: 'Flemeth daemon',
+					description: 'Javascript based home thermostat'
+				}
+			}
 		}
 	], function(err) {
 		next(err);

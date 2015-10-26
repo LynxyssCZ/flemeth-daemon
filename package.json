@@ -32,7 +32,9 @@
     "ds18x20": "^0.2.0",
     "hapi": "^10.4.1",
     "hapi-bunyan": "^0.6.0",
+    "hapi-swagger": "^2.2.1",
     "immutable": "^3.7.5",
+    "inert": "^3.2.0",
     "keymirror": "^0.1.1",
     "moment": "^2.10.6",
     "nedb": "^1.2.1",
@@ -40,7 +42,8 @@
     "onoff": "^1.0.3",
     "serialport": "^2.0.0",
     "sqlite3": "^3.1.0",
-    "thin-orm": "^0.1.4"
+    "thin-orm": "^0.1.4",
+    "vision": "^3.0.0"
   },
   "devDependencies": {
     "gulp": "^3.9.0",

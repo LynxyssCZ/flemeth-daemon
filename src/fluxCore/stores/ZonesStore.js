@@ -14,7 +14,7 @@ module.exports = function(action, state) {
 
 function getDefaultState() {
 	return Map({
-		default: Map({
+		global: Map({
 			id: 'global',
 			value: null,
 			priority: 0,

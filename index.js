@@ -33,9 +33,9 @@ var flemeth = new Flemeth({
 	}
 });
 
-flemeth.container.subscribe(['Zones'], function() {
-	log.info(flemeth.container.getState(['Zones']), 'Update of zones');
-});
+// flemeth.container.subscribe(['Zones'], function() {
+// 	log.info(flemeth.container.getState(['Zones']), 'Update of zones');
+// });
 
 var clear = function() {
 	flemeth.stop(function() {

@@ -7,6 +7,11 @@ var api = {
 				options: {
 					base: options.base.concat('/sensors')
 				}
+			}, {
+				register: require('./zones'),
+				options: {
+					base: options.base.concat('/zones')
+				}
 			}
 		], function(err) {
 			next(err);

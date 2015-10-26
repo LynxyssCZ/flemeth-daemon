@@ -41,7 +41,7 @@ function update(zones, state) {
 function createZone(initialData) {
 	return Map({
 		id: initialData.id,
-		value: initialData.value || [],
+		value: initialData.value,
 		sensors: initialData.sensors,
 		priority: initialData.priority || 1,
 		name: initialData.name,

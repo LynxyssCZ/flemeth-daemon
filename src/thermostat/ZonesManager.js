@@ -8,58 +8,55 @@ module.exports = ZonesManager;
 
 ZonesManager.prototype.start = function() {
 	this.logger.info('Starting zones manager');
-	this.subscriptionKey = this.container.subscribe([
+	this.sensorsSubscriptionKey = this.container.subscribe([
 		'Sensors'
 	], this.updateZonesValues.bind(this));
 };
 
 ZonesManager.prototype.stop = function() {
 	this.logger.info('Stoping zones manager');
-	this.container.unsubscribe(this.subscriptionKey);
+	this.container.unsubscribe(this.sensorsSubscriptionKey);
+};
+
+ZonesManager.prototype.generateSensorsMap = function (zones) {
+	var sensorsMap = {};
+
+	zones.forEach(function(zone) {
+		var zonesSensors = zone.get('sensors');
+		var zoneId = zone.get('id');
+
+		for (var i = 0; i < zonesSensors.length; i++) {
+			sensorsMap[zonesSensors[i]] = zoneId;
+		}
+	});
 };
 
 ZonesManager.prototype.updateZonesValues = function () {
 	var state = this.container.getState(['Zones', 'Sensors']);
-	var zones = state.Zones.toArray();
-	var sensors = state.Sensors.toArray();
+	var sensorsMap = this.generateSensorsMap(state.Zones);
+	var zonesValues = {
+		default: []
+	};
 
-	var zonesValues = sensors.filter(function(sensor) {
-		return sensor.get('type') !== 'temp';
-	}).reduce(function(zonesValues, sensor) {
-		var associated;
-		var id = sensor.get('id');
+	state.Sensors.filter(function(sensor) {
+		return sensor.get('type') === 'temp';
+	})
+	.forEach(function(sensor) {
+		var targetZone = sensorsMap[sensor.get('id')];
 
-		for (var i = 0; i < zones.length; i++) {
-			var zone = zones[i];
-			var zoneSensors = zone.get('sensors');
-
-			if (zoneSensors && zoneSensors.indexOf(id) >= 0) {
-				storeZoneValue(zonesValues[zone.get('id')], sensor);
-				associated = true;
-				break;
-			}
+		if (!targetZone) {
+			zonesValues.default.push(sensor.get('average'));
 		}
-
-		if (!associated) {
-			zonesValues.default = storeZoneValue(zonesValues.default, sensor);
+		else if (!zonesValues[targetZone]) {
+			zonesValues[targetZone] = [sensor.get('average')];
 		}
-
-		return zonesValues;
-	}, { default: [] });
+		else {
+			zonesValues[targetZone].push(sensor.get('average'));
+		}
+	});
 
 	this.logger.info(zonesValues);
 };
-
-function storeZoneValue(zonesValues, sensor) {
-	if (zonesValues) {
-		zonesValues.push(sensor.get('average'));
-	}
-	else {
-		zonesValues = [sensor.get('average')];
-	}
-
-	return zonesValues;
-}
 
 function mean(array) {
 	var sum = 0, i;

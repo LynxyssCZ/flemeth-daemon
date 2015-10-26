@@ -38,12 +38,11 @@ ZonesManager.prototype.updateZonesValues = function () {
 		default: []
 	};
 
-	state.Sensors.filter(function(sensor) {
-		return sensor.get('type') === 'temp';
-	})
-	.forEach(function(sensor) {
-		var targetZone = sensorsMap[sensor.get('id')];
+	this.logger.debug(sensorsMap);
 
+	state.Sensors.forEach(function(sensor) {
+		var targetZone = sensorsMap[sensor.get('id')];
+		console.log(targetZone);
 		if (!targetZone) {
 			zonesValues.default.push(sensor.get('average'));
 		}

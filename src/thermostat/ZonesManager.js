@@ -65,5 +65,5 @@ ZonesManager.prototype.updateZonesValues = function () {
 	this.logger.debug(zonesValues);
 
 	var zonesUpdateAction = this.actions.Zones.updateValues(zonesValues);
-	this.actions.dispatch(zonesUpdateAction);
+	this.container.dispatch(zonesUpdateAction);
 };

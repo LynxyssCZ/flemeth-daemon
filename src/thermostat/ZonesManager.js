@@ -62,21 +62,7 @@ ZonesManager.prototype.updateZonesValues = function () {
 		zonesValues[targetZone].times.push(sensor.get('lastUpdate'));
 	});
 
-	zonesValues = Object.keys(zonesValues).reduce(function(zones, zoneId) {
-		zones[zoneId] = {
-			value: mean(zonesValues[zoneId].values),
-			lastUpdate: Math.max.apply(null, zonesValues[zoneId].times)
-		};
-		return zones;
-	}, {});
+	var zonesUpdateAction = this.actions.Zones.updateValues(zonesValues);
 
-	this.logger.info(zonesValues);
+	this.logger.info(zonesUpdateAction);
 };
-
-function mean(array) {
-	var sum = 0, i;
-	for (i = 0; i < array.length; i++) {
-		sum += array[i];
-	}
-	return array.length ? sum / array.length : 0;
-}

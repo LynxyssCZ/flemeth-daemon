@@ -1,12 +1,11 @@
 module.exports = {
 	updateValues: function(zonesValues) {
-		var zones = zonesValues = Object.keys(zonesValues).reduce(function(zones, zoneId) {
-			zones[zoneId] = {
+		var zones = Object.keys(zonesValues).map(function(zones, zoneId) {
+			return {
 				value: mean(zonesValues[zoneId].values),
 				lastUpdate: Math.max.apply(null, zonesValues[zoneId].times)
 			};
-			return zones;
-		}, {});
+		});
 
 		return [{
 			type: 'Zones.ReadValues',

@@ -5,9 +5,16 @@ module.exports = function(action, state) {
 		state = getDefaultState();
 	}
 
-	if (action && action.payload && action.payload.zones) {
-		state = update(action.payload.zones, state);
+	if (action && action.payload) {
+		if (action.payload.zones) {
+			state = updateZones(action.payload.zones, state);
+		}
+
+		if (action.payload.deletedZones) {
+			state = deleteZones(action.payload.deletedZones, state);
+		}
 	}
+
 
 	return state;
 };
@@ -23,7 +30,15 @@ function getDefaultState() {
 	});
 }
 
-function update(zones, state) {
+function deleteZones(zones, state) {
+	zones.forEach(function(zoneId) {
+		state = state.delete(zoneId);
+	});
+
+	return state;
+}
+
+function updateZones(zones, state) {
 	zones.forEach(function(zone) {
 		var newZone;
 		if (zone && state.has(zone.id)) {

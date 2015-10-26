@@ -1,15 +1,10 @@
 var sensorsApi = {
 	register: function (server, options, next) {
-		server.route({
-			path: options.base.concat('/'),
-			method: 'GET',
-			handler: handlers.getRaw,
-			config: {
-				description: 'Base sensors getter.',
-				notes: ['Returns all', 'No filtering', 'Raw from core'],
-				tags: ['api', 'sensors']
-			}
+		var routes = endpoints.map(function(route) {
+			route.path = options.base.concat(route.path);
+			return route;
 		});
+		server.route(routes);
 		next();
 	}
 };
@@ -28,3 +23,16 @@ var handlers = {
 		});
 	}
 };
+
+var endpoints = [
+	{
+		path: '/',
+		method: 'GET',
+		handler: handlers.getRaw,
+		config: {
+			description: 'Base sensors getter.',
+			notes: ['Returns all', 'No filtering', 'Raw from core'],
+			tags: ['api', 'sensors']
+		}
+	}
+];

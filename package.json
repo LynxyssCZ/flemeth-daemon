@@ -35,6 +35,7 @@
     "hapi-swagger": "^2.2.1",
     "immutable": "^3.7.5",
     "inert": "^3.2.0",
+    "joi": "^6.9.1",
     "keymirror": "^0.1.1",
     "moment": "^2.10.6",
     "nedb": "^1.2.1",

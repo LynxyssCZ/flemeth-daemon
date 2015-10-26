@@ -21,7 +21,7 @@ var Flemeth = function(options) {
 		payload: {
 			zones: {
 				id: 'zone-chan',
-				sensors: ['DRF5150-225-5'],
+				sensors: ['DRF5150-225-4'],
 				name: 'Mocked zone'
 			}
 		}

@@ -57,7 +57,10 @@ ZonesManager.prototype.updateZonesValues = function () {
 		}
 	});
 
-	zonesValues = zonesValues.map(mean);
+	zonesValues = Object.keys(zonesValues).reduce(function(zones, zoneId) {
+		zones[zoneId] = mean(zonesValues[zoneId]);
+		return zones;
+	}, {});
 
 	this.logger.info(zonesValues);
 };

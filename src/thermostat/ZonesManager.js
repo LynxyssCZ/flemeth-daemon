@@ -47,8 +47,6 @@ ZonesManager.prototype.updateZonesValues = function () {
 		}
 	};
 
-	this.logger.info(sensorsMap);
-
 	state.Sensors.forEach(function(sensor) {
 		var targetZone = sensorsMap[sensor.get('id')];
 		if (!targetZone) {

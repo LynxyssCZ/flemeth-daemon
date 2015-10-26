@@ -19,11 +19,11 @@ var Flemeth = function(options) {
 	this.container.dispatch({
 		type: 'Mock.zone',
 		payload: {
-			zones: {
+			zones: [{
 				id: 'zone-chan',
 				sensors: ['DRF5150-225-4'],
 				name: 'Mocked zone'
-			}
+			}]
 		}
 	});
 

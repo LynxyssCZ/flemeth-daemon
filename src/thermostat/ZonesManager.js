@@ -25,6 +25,10 @@ ZonesManager.prototype.generateSensorsMap = function (zones) {
 		var zonesSensors = zone.get('sensors');
 		var zoneId = zone.get('id');
 
+		if (!zonesSensors) {
+			return;
+		}
+
 		for (var i = 0; i < zonesSensors.length; i++) {
 			sensorsMap[zonesSensors[i]] = zoneId;
 		}

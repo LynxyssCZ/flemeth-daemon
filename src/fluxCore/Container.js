@@ -31,8 +31,11 @@ FluxContainer.prototype.getState = function(keys) {
 };
 
 FluxContainer.prototype.dispatch = function(actions) {
-	if (!actions || actions.length === 0) {
+	if (!actions || (Array.isArray(actions) && actions.length === 0)) {
 		return;
+	}
+	else if (!Array.isArray(actions)) {
+		actions = [actions];
 	}
 
 	var newState = this.dataStore;

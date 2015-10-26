@@ -1,7 +1,5 @@
 var Map = require('immutable').Map;
 
-var VALUES = 5;
-
 module.exports = function(action, state) {
 	if (!state) {
 		state = getDefaultState();
@@ -27,7 +25,13 @@ function getDefaultState() {
 
 function update(zones, state) {
 	zones.forEach(function(zone) {
-		var newZone = createZone(zone);
+		var newZone;
+		if (zone && state.has(zone.id)) {
+			newZone = state.get(zone.id).merge(zone);
+		}
+		else if (zone) {
+			newZone = createZone(zone);
+		}
 		state = state.set(newZone.get('id'), newZone);
 	});
 

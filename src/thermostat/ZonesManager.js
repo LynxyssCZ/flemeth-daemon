@@ -41,24 +41,30 @@ ZonesManager.prototype.updateZonesValues = function () {
 	var state = this.container.getState(['Zones', 'Sensors']);
 	var sensorsMap = this.generateSensorsMap(state.Zones);
 	var zonesValues = {
-		default: []
+		default: {
+			values: [],
+			times: []
+		}
 	};
 
 	state.Sensors.forEach(function(sensor) {
 		var targetZone = sensorsMap[sensor.get('id')];
 		if (!targetZone) {
-			zonesValues.default.push(sensor.get('average'));
+			targetZone = 'default';
 		}
 		else if (!zonesValues[targetZone]) {
-			zonesValues[targetZone] = [sensor.get('average')];
+			zonesValues[targetZone] = {
+				values: [],
+				times: []
+			};
 		}
-		else {
-			zonesValues[targetZone].push(sensor.get('average'));
-		}
+		zonesValues[targetZone].values.push(sensor.get('average'));
+		zonesValues[targetZone].times.push(sensor.get('lastUpdate'));
 	});
 
 	zonesValues = Object.keys(zonesValues).reduce(function(zones, zoneId) {
-		zones[zoneId] = mean(zonesValues[zoneId]);
+		zones[zoneId].value = mean(zonesValues[zoneId].values);
+		zones[zoneId].lastUpdate = Math.max(zonesValues[zoneId].times);
 		return zones;
 	}, {});
 

@@ -1,7 +1,8 @@
 module.exports = {
 	updateValues: function(zonesValues) {
-		var zones = Object.keys(zonesValues).map(function(zones, zoneId) {
+		var zones = Object.keys(zonesValues).map(function(zoneId) {
 			return {
+				id: zoneId,
 				value: mean(zonesValues[zoneId].values),
 				lastUpdate: Math.max.apply(null, zonesValues[zoneId].times)
 			};

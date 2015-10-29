@@ -2,13 +2,13 @@ var Map = require('immutable').Map;
 
 var VALUES = 5;
 
-module.exports = function(action, state) {
+module.exports = function(type, payload, state) {
 	if (!state) {
 		state = getDefaultState();
 	}
 
-	if (action && action.payload && action.payload.sensors) {
-		state = update(action.payload.sensors, state);
+	if (type === 'Sensors.readFrame') {
+		state = update(payload.sensors, state);
 	}
 
 	return state;

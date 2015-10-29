@@ -1,8 +1,6 @@
 var assign = require('object-assign');
 var Async = require('async');
-var core = require('./fluxCore');
-var Container = core.Container;
-var Store = core.stores.compose(core.stores.stores);
+var Core = require('./fluxCore');
 var Server = require('./server');
 var Thermostat = require('./thermostat');
 var FlemDb = require('./db');
@@ -18,14 +16,12 @@ var Flemeth = function(options) {
 
 	this.thermostat = new Thermostat(assign({
 		logger: this.logger,
-		container: this.container,
-		actions: core.actions
+		container: this.container
 	}, options.thermostat));
 
 	this.server = new Server(assign({
 		logger: this.logger,
-		container: this.container,
-		actions: core.actions
+		container: this.container
 	}, options.server));
 };
 module.exports = Flemeth;
@@ -60,8 +56,5 @@ Flemeth.prototype.stop = function (next) {
 
 // TODO: Load initial data from database
 Flemeth.prototype.createContainer = function () {
-	var initial = {};
-
-	this.container = new Container(Store);
-	this.container.dispatch(initial); // First dispatch to init stores
+	this.container = new Core();
 };

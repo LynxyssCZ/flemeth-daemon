@@ -7,13 +7,9 @@ var Server = function(options) {
 	this.container = options.container;
 	this.actions = options.actions;
 
-	this.server = new Hapi.Server(assign({
-		app: {
-			container: options.container,
-			actions: options.actions
-		}
-	},options.serverConfig));
+	this.server = new Hapi.Server(options.serverConfig);
 	this.server.connection(options.connection);
+	this.server.app.container = options.container;
 
 	this.apiOptions = options.api;
 };

@@ -21,34 +21,32 @@ module.exports = zonesApi;
 var handlers = {
 	getRaw: function(req, reply) {
 		return reply({
-			zones: req.server.settings.app.container.getState(['Zones'])
+			zones: req.server.app.container.getState('Zones')
 		});
 	},
 	create: function(req, reply) {
+		var container = req.server.app.container;
+
 		var zone = {
 			name: req.payload.name,
 			sensors: req.payload.sensors,
 			priority: req.payload.priority
 		};
 
-		req.server.settings.app.actions.Zones.createZone(zone, function(err, zoneId, action) {
-			req.server.settings.app.container.dispatch(action);
-			var state = req.server.settings.app.container.getState(['Zones']);
-			var zone = state.Zones.get(zoneId);
-
+		return container.push(container.actions.Zones.create, [zone], function(error, payload) {
 			return reply({
-				msg: 'Ok',
-				result: zone
+				msg: error ? error : 'OK',
+				zones: error ? undefined : payload.zones
 			});
 		});
 	},
 	delete: function(req, reply) {
+		var container = req.server.app.container;
 		var zoneId = req.params.zoneId;
 
-		req.server.settings.app.actions.Zones.deleteZone(zoneId, function(err, action) {
-			req.server.settings.app.container.dispatch(action);
+		container.push(container.actions.Zone.delete, [zoneId], function(err) {
 			return reply({
-				msg: 'Ok'
+				msg: err ? err : 'Ok'
 			});
 		});
 	}

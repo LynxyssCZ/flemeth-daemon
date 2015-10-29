@@ -1,7 +1,7 @@
 var assign = require('object-assign');
 
 module.exports = {
-	updateValues: function(zonesValues) {
+	update: function(zonesValues) {
 		var zones = Object.keys(zonesValues).map(function(zoneId) {
 			return {
 				id: zoneId,
@@ -10,39 +10,30 @@ module.exports = {
 			};
 		});
 
-		return [{
-			type: 'Zones.ReadValues',
-			payload: {
-				zones: zones
-			}
-		}];
+		return {
+			zones: zones
+		};
 	},
-	createZone: function(initialData, callback) {
+	create: function(initialData) {
 		var mockId = generateKey();
 		var zone = assign({
 			id: mockId
 		}, initialData);
 
-		var action = {
-			type: 'Zones.Create',
-			payload: {
-				zones: [zone]
-			}
+		return {
+			zones: [zone]
 		};
-
-		callback(null, zone.id, [action]);
 	},
-	deleteZone: function(zoneId, callback) {
-		var action = {
-			type: 'Zones.Delete',
-			payload: {
-				deletedZones: [zoneId]
-			}
-		};
+	delete: function(zoneIds) {
+		zoneIds = Array.isArray(zoneIds) ? zoneIds : [zoneIds];
 
-		callback(null, action);
+		return {
+			deletedZones: zoneIds
+		};
 	}
 };
+
+var IntSize = Math.pow(2, 32);
 
 function mean(array) {
 	var sum = 0, i;
@@ -51,9 +42,6 @@ function mean(array) {
 	}
 	return array.length ? sum / array.length : 0;
 }
-
-
-var IntSize = Math.pow(2, 32);
 
 function generateKey() {
 	return (Math.random()*IntSize).toString(16);

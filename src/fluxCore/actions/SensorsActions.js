@@ -10,11 +10,8 @@ module.exports = {
 			}, sample);
 		});
 
-		return [{
-			type: 'Sensors.Read',
-			payload: {
-				sensors: sensors
-			}
-		}];
+		return {
+			sensors: sensors
+		};
 	}
 };

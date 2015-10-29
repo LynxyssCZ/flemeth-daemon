@@ -4,7 +4,6 @@ var sensors = require('./sensors');
 var SensorsManager = function(options) {
 	this.logger = options.logger.child({component: 'SensorsManager'});
 	this.container = options.container;
-	this.actions = options.actions;
 
 	this.sensors = {};
 
@@ -53,11 +52,7 @@ SensorsManager.prototype.addSensor = function(name, type, options) {
 		name: name,
 		logger: this.logger,
 		dispatchCallback: function(reader, frame) {
-			var actions = self.actions.Sensors.readFrame(frame);
-
-			if (actions) {
-				self.container.dispatch(actions);
-			}
+			self.container.push(self.container.actions.Sensors.readFrame, [frame]);
 		}
 	}, options));
 

@@ -65,5 +65,5 @@ ZonesManager.prototype.updateZonesValues = function () {
 		zonesValues.global.times.push(sensor.get('lastUpdate'));
 	});
 
-	this.container.push(this.container.actions.Zones.update, [zonesValues]);
+	this.container.push(this.container.actions.Zones.updateValues, [zonesValues]);
 };

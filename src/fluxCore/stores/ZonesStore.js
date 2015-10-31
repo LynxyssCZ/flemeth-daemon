@@ -7,7 +7,7 @@ module.exports = function(type, payload, state) {
 	}
 
 	switch (type) {
-		case ZonesActions.update.actionType:
+		case ZonesActions.updateValues.actionType:
 			state = updateZones(payload.zones, state);
 			break;
 		case ZonesActions.create.actionType:

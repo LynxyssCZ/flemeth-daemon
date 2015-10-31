@@ -1,7 +1,9 @@
 var assign = require('object-assign');
+var FlemDb = require('../../db').db;
+
 
 module.exports = {
-	update: function(zonesValues) {
+	updateValues: function(zonesValues) {
 		var zones = Object.keys(zonesValues).map(function(zoneId) {
 			return {
 				id: zoneId,
@@ -16,13 +18,23 @@ module.exports = {
 	},
 	create: function(initialData) {
 		var mockId = generateKey();
-		var zone = assign({
-			id: mockId
-		}, initialData);
 
-		return {
-			zones: [zone]
-		};
+		return [
+			{
+				zones: [assign({ id: mockId }, initialData)]
+			},
+			FlemDb.zones.insertAsync(initialData)
+				.then(function(data) {
+					return {
+						zones: [{
+							id: data._id,
+							name: data.name,
+							sensors: data.sensors,
+							priority: data.priority
+						}]
+					};
+				})
+		];
 	},
 	delete: function(zoneIds) {
 		zoneIds = Array.isArray(zoneIds) ? zoneIds : [zoneIds];

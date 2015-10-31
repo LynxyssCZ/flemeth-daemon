@@ -1,6 +1,8 @@
 require('dotenv').load();
 var bunyan = require('bunyan');
 var Async = require('async');
+var path = require('path');
+
 var Flemeth = require('./src');
 
 
@@ -13,6 +15,10 @@ var flemeth = new Flemeth({
 			port: 8098,
 			host: '0.0.0.0'
 		}
+	},
+	db: {
+		nedbPath: path.join(__dirname, 'databases'),
+		sqliteFile: path.join(__dirname, 'databases/flemeth.sqlite')
 	},
 	thermostat: {
 		sensors: [

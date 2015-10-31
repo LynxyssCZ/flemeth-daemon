@@ -27,6 +27,7 @@
   "dependencies": {
     "async": "^1.4.2",
     "bluebird": "^2.10.2",
+    "bookshelf": "^0.8.2",
     "bunyan": "^1.5.1",
     "dotenv": "^1.2.0",
     "ds18x20": "^0.2.0",
@@ -38,13 +39,13 @@
     "inert": "^3.2.0",
     "joi": "^6.9.1",
     "keymirror": "^0.1.1",
+    "knex": "^0.8.6",
     "moment": "^2.10.6",
     "nedb": "^1.2.1",
     "object-assign": "^4.0.1",
     "onoff": "^1.0.3",
     "serialport": "^2.0.0",
     "sqlite3": "^3.1.0",
-    "thin-orm": "^0.1.4",
     "vision": "^3.0.0"
   },
   "devDependencies": {

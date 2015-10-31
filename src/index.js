@@ -7,21 +7,22 @@ var FlemDb = require('./db');
 
 var Flemeth = function(options) {
 	this.logger = options.logger;
+	this.createContainer();
 
-	this.db = new FlemDb(assign({
+	FlemDb.config(assign({
 		logger: this.logger
 	}, options.db));
 
-	this.createContainer();
-
 	this.thermostat = new Thermostat(assign({
 		logger: this.logger,
-		container: this.container
+		container: this.container,
+		db: FlemDb.db
 	}, options.thermostat));
 
 	this.server = new Server(assign({
 		logger: this.logger,
-		container: this.container
+		container: this.container,
+		db: FlemDb.db
 	}, options.server));
 };
 module.exports = Flemeth;

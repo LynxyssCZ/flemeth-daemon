@@ -19,7 +19,7 @@ var flemeth = new Flemeth({
 	db: {
 		nedbPath: path.join(__dirname, 'databases'),
 		sqliteFile: path.join(__dirname, 'databases/flemeth.sqlite'),
-		knexFile: require('./knexFile')
+		knexFile: require('./knexfile')
 	},
 	thermostat: {
 		sensors: [

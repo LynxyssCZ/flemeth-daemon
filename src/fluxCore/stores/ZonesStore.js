@@ -1,5 +1,6 @@
 var Map = require('immutable').Map;
 var ZonesActions = require('../actions').Zones;
+var RootActions = require('../actions').Root;
 
 module.exports = function(type, payload, state) {
 	if (!state) {
@@ -7,6 +8,9 @@ module.exports = function(type, payload, state) {
 	}
 
 	switch (type) {
+		case RootActions.loadFromDB.actionType:
+			state = createZones(payload.zones, state);
+			break;
 		case ZonesActions.updateValues.actionType:
 			state = updateZones(payload.zones, state);
 			break;

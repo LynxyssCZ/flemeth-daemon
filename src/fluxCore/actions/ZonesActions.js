@@ -1,8 +1,15 @@
 var assign = require('object-assign');
-var FlemDb = require('../../db').db;
+var FlemDb = require('../../db');
 
 
 module.exports = {
+	loadFromDB: function() {
+		return FlemDb.models.Zones.Collection.forge()
+			.fetch()
+			.then(function(collection) {
+				console.log(collection.toJSON());
+			});
+	},
 	updateValues: function(zonesValues) {
 		var zones = Object.keys(zonesValues).map(function(zoneId) {
 			return {
@@ -23,16 +30,13 @@ module.exports = {
 			{
 				zones: [assign({ id: mockId }, initialData)]
 			},
-			FlemDb.zones.insertAsync(initialData)
-				.then(function(data) {
-					return {
-						zones: [{
-							id: data._id,
-							name: data.name,
-							sensors: data.sensors,
-							priority: data.priority
-						}]
-					};
+			FlemDb.models.Zones.Model.forge(initialData).save()
+				.then(function(zone) {
+					if (zone) {
+						return {
+							zones: [zone.toJSON()]
+						};
+					}
 				})
 		];
 	},
@@ -56,5 +60,5 @@ function mean(array) {
 }
 
 function generateKey() {
-	return (Math.random()*IntSize).toString(16);
+	return 'loading_' + (Math.random()*IntSize).toString(16);
 }

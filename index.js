@@ -18,7 +18,8 @@ var flemeth = new Flemeth({
 	},
 	db: {
 		nedbPath: path.join(__dirname, 'databases'),
-		sqliteFile: path.join(__dirname, 'databases/flemeth.sqlite')
+		sqliteFile: path.join(__dirname, 'databases/flemeth.sqlite'),
+		knexFile: require('./knexFile')
 	},
 	thermostat: {
 		sensors: [
@@ -57,6 +58,7 @@ var start = function() {
 	], function(error) {
 		if (error) {
 			log.error(error);
+			clear();
 		}
 		else {
 			log.info('Started');

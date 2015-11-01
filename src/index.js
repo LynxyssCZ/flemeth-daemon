@@ -8,28 +8,27 @@ var FlemDb = require('./db');
 var Flemeth = function(options) {
 	this.logger = options.logger;
 	this.createContainer();
-
-	FlemDb.config(assign({
-		logger: this.logger
-	}, options.db));
+	this.dbOptions = options.db;
 
 	this.thermostat = new Thermostat(assign({
 		logger: this.logger,
 		container: this.container,
-		db: FlemDb.db
+		db: FlemDb.models
 	}, options.thermostat));
 
 	this.server = new Server(assign({
 		logger: this.logger,
 		container: this.container,
-		db: FlemDb.db
+		db: FlemDb.models
 	}, options.server));
 };
 module.exports = Flemeth;
 
 Flemeth.prototype.init = function (next) {
 	Async.series([
-		this.server.init.bind(this.server)
+		this.server.init.bind(this.server),
+		this.initDB.bind(this),
+		this.loadPersistance.bind(this)
 	], function(err) {
 		next(err);
 	});
@@ -55,7 +54,17 @@ Flemeth.prototype.stop = function (next) {
 	});
 };
 
+Flemeth.prototype.initDB = function (callback) {
+	return FlemDb.config(this.dbOptions, callback);
+};
+
 // TODO: Load initial data from database
 Flemeth.prototype.createContainer = function () {
 	this.container = new Core();
+};
+
+Flemeth.prototype.loadPersistance = function (next) {
+	this.container.push(this.container.actions.Root.loadFromDB, [], function(err) {
+		next(err);
+	});
 };

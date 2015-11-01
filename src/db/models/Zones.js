@@ -1,0 +1,37 @@
+module.exports = function register(Bookshelf) {
+	var Zone = Bookshelf.Model.extend({
+		tableName: 'zones',
+		hidden: ['raw_sensors'],
+		virtuals: {
+			sensors: {
+				get: function() {
+					var rawSensors = this.get('raw_sensors');
+
+					if (rawSensors) {
+						return rawSensors.split(';');
+					}
+					else {
+						return [];
+					}
+				},
+				set: function(value) {
+					if (value) {
+						this.set('raw_sensors', value.join(';'));
+					}
+					else {
+						this.set('raw_sensors', null);
+					}
+				}
+			}
+		}
+	});
+
+	var Zones = Bookshelf.Collection.extend({
+		model: Zone
+	});
+
+	return {
+		Model: Bookshelf.model('Zone', Zone),
+		Collection: Bookshelf.collection('Zones', Zones)
+	};
+};

@@ -93,7 +93,7 @@ var endpoints = [
 				payload: {
 					name: Joi.string().min(5).max(50).required(),
 					sensors: Joi.array().items(Joi.string().required()).unique(),
-					priority: Joi.number().positive().precision(2).max(150).default(1)
+					priority: Joi.number().min(0).precision(2).max(150).default(1)
 				}
 			}
 		}

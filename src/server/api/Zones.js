@@ -40,11 +40,29 @@ var handlers = {
 			});
 		});
 	},
+	update: function(req, reply) {
+		var container = req.server.app.container;
+		var zoneId = req.params.zoneId;
+
+		var zone = {
+			id: zoneId,
+			name: req.payload.name,
+			sensors: req.payload.sensors,
+			priority: req.payload.priority
+		};
+
+		return container.push(container.actions.Zones.update, [zone], function(error, payload) {
+			return reply({
+				msg: error ? error : 'OK',
+				zones: error ? undefined : payload.zones
+			});
+		});
+	},
 	delete: function(req, reply) {
 		var container = req.server.app.container;
 		var zoneId = req.params.zoneId;
 
-		container.push(container.actions.Zone.delete, [zoneId], function(err) {
+		container.push(container.actions.Zones.delete, [zoneId], function(err) {
 			return reply({
 				msg: err ? err : 'Ok'
 			});
@@ -72,6 +90,29 @@ var endpoints = [
 			notes: ['Can assign sensors'],
 			tags: ['api', 'zones'],
 			validate: {
+				payload: {
+					name: Joi.string().min(5).max(50).required(),
+					sensors: Joi.array().items(Joi.string().required()).unique(),
+					priority: Joi.number().positive().precision(2).max(150).default(1)
+				}
+			}
+		}
+	},
+	{
+		path: '/{zoneId}',
+		method: 'PUT',
+		handler: handlers.update,
+		config: {
+			description: 'Update a zone',
+			notes: [
+				'Can change everything apart from ID',
+				'Global zone is untouchable'
+			],
+			tags: ['api', 'zones'],
+			validate: {
+				params: {
+					zoneId: Joi.string().lowercase().invalid('global').required()
+				},
 				payload: {
 					name: Joi.string().min(5).max(50).required(),
 					sensors: Joi.array().items(Joi.string().required()).unique(),

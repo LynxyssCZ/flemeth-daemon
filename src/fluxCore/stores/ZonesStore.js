@@ -7,10 +7,12 @@ module.exports = function(type, payload, state) {
 		state = getDefaultState();
 	}
 
+
 	switch (type) {
 		case RootActions.loadFromDB.actionType:
 			state = createZones(payload.zones, state);
 			break;
+		case ZonesActions.update.actionType:
 		case ZonesActions.updateValues.actionType:
 			state = updateZones(payload.zones, state);
 			break;
@@ -45,7 +47,9 @@ function deleteZones(zones, state) {
 }
 
 function updateZones(zones, state) {
-	zones.forEach(function(zone) {
+	zones.filter(function(zone) {
+		return state.has(zone.id);	// Filter only existing zones
+	}).forEach(function(zone) {
 		var newZone = state.get(zone.id).merge(zone);
 
 		state = state.set(newZone.get('id'), newZone);
@@ -64,7 +68,7 @@ function createZones(zones, state) {
 
 function createZone(initialData) {
 	return Map({
-		id: initialData.id,
+		id: initialData.id.toString(),	// IDs are string only for brewity purposes
 		value: initialData.value,
 		sensors: initialData.sensors,
 		priority: initialData.priority || 1,

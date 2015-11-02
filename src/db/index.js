@@ -1,7 +1,6 @@
 var Knex = require('knex');
 var Bookshelf = require('bookshelf');
 var mkdirp = require('mkdirp');
-var fs = require('fs');
 var path = require('path');
 
 var FlemDB = module.exports = {
@@ -25,5 +24,11 @@ var FlemDB = module.exports = {
 					next(null);
 				});
 		});
+	},
+	getModel: function(name) {
+		return FlemDB.models[name].Model;
+	},
+	getCollection: function(name) {
+		return FlemDB.models[name].Collection;
 	}
 };

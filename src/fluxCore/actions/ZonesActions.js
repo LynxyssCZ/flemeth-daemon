@@ -1,10 +1,11 @@
 var assign = require('object-assign');
+var Promise = require('bluebird');
 var FlemDb = require('../../db');
 
 
 module.exports = {
 	loadFromDB: function() {
-		return FlemDb.models.Zones.Collection.forge()
+		return FlemDb.getCollection('Zones').forge()
 			.fetch()
 			.then(function(collection) {
 				console.log(collection.toJSON());
@@ -23,6 +24,24 @@ module.exports = {
 			zones: zones
 		};
 	},
+	update: function(zoneData) {
+		var Zone = FlemDb.getModel('Zones');
+
+		var data = {};
+		data.id = zoneData.id;
+
+		return [
+			{ zones: [ zoneData ] },
+			Zone.forge(data)
+			.fetch({require: true})
+			.then(function(model) {
+				return model.save(zoneData);
+			})
+			.then(function(zone) {
+				return { zones: [zone.toJSON()] };
+			})
+		];
+	},
 	create: function(initialData) {
 		var mockId = generateKey();
 
@@ -30,7 +49,7 @@ module.exports = {
 			{
 				zones: [assign({ id: mockId }, initialData)]
 			},
-			FlemDb.models.Zones.Model.forge(initialData).save()
+			FlemDb.getModel('Zones').forge(initialData).save()
 				.then(function(zone) {
 					if (zone) {
 						return {
@@ -41,11 +60,23 @@ module.exports = {
 		];
 	},
 	delete: function(zoneIds) {
+		var Zone = FlemDb.getModel('Zones');
 		zoneIds = Array.isArray(zoneIds) ? zoneIds : [zoneIds];
 
-		return {
-			deletedZones: zoneIds
-		};
+		var zonePromises = zoneIds.map(function(zoneId) {
+			var data = {};
+			data.id = zoneId;
+
+			return Zone.forge(data).destroy();
+		});
+
+		return [
+			{deletedZones: zoneIds},
+			Promise.all(zonePromises)
+			.then(function() {
+				return {deletedZones: zoneIds};
+			})
+		];
 	}
 };
 

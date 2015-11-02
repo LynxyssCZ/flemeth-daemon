@@ -12,9 +12,11 @@ module.exports = function(type, payload, state) {
 		case RootActions.loadFromDB.actionType:
 			state = createZones(payload.zones, state);
 			break;
-		case ZonesActions.update.actionType:
 		case ZonesActions.updateValues.actionType:
 			state = updateZones(payload.zones, state);
+			break;
+		case ZonesActions.update.actionType:
+			state = updateZone(payload.zones, state);
 			break;
 		case ZonesActions.create.actionType:
 			state = createZones(payload.zones, state);
@@ -50,7 +52,7 @@ function updateZones(zones, state) {
 	zones.filter(function(zone) {
 		return state.has(zone.id);	// Filter only existing zones
 	}).forEach(function(zone) {
-		var newZone = state.get(zone.id).merge(zone);
+		var newZone = state.get(zone.id).merge(Map(zone));
 
 		state = state.set(newZone.get('id'), newZone);
 	});

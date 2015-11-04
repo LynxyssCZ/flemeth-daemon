@@ -1,5 +1,6 @@
 var SensorsManager = require('./SensorsManager');
 var ZonesManager = require('./ZonesManager');
+var SwitcherManager = require('./SwitcherManager');
 
 
 var Thermostat = function(options) {
@@ -10,6 +11,7 @@ var Thermostat = function(options) {
 
 	this.createZonesManager(options);
 	this.createSensorsManager(options);
+	this.createSwitcherManager(options);
 };
 module.exports = Thermostat;
 
@@ -31,7 +33,6 @@ Thermostat.prototype.createSensorsManager = function(options) {
 	this.sensorsManager = new SensorsManager({
 		logger: options.logger,
 		sensors: options.sensors,
-		actions: options.actions,
 		container: options.container
 	});
 };
@@ -39,7 +40,15 @@ Thermostat.prototype.createSensorsManager = function(options) {
 Thermostat.prototype.createZonesManager = function (options) {
 	this.zonesManager = new ZonesManager({
 		logger: options.logger,
-		actions: options.actions,
 		container: options.container
+	});
+};
+
+Thermostat.prototype.createSwitcherManager = function (options) {
+	this.switcherManager = new SwitcherManager({
+		logger: options.logger,
+		container: options.container,
+		lockTime: options.lockTime,
+		pin: options.switcherPin
 	});
 };

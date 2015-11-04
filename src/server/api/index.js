@@ -19,9 +19,23 @@ var api = {
 	}
 };
 
+var swaggerSpecs = {
+	tags: [
+		{
+			name: 'zones',
+			description: 'Full zones CRUD'
+		},
+		{
+			name: 'sensors',
+			description: 'Sensors *read-only* endpoints'
+		}
+	]
+};
+
 api.register.attributes = {
 	name: 'api',
-	version: '1.0.0'
+	version: '1.0.0',
+	swaggerSpecs: swaggerSpecs
 };
 
 module.exports = api;

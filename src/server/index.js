@@ -35,19 +35,7 @@ Server.prototype.init = function (next) {
 			options: {
 				endpoint: '/swag-spec',
 				stripPrefix: '/api',
-				tagging: {
-					mode: 'tags'
-				},
-				tags: [
-					{
-						name: 'zones',
-						description: 'Full zones CRUD'
-					},
-					{
-						name: 'sensors',
-						description: 'Sensors *read-only* endpoints'
-					}
-				],
+				tags: require('./api').register.attributes.swaggerSpecs.tags,
 				info: {
 					title: 'Flemeth daemon',
 					description: 'Javascript based home thermostat',

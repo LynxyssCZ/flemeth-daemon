@@ -31,15 +31,40 @@ Server.prototype.init = function (next) {
 		require('vision'),
 		require('inert'),
 		{
-			register: require('hapi-swagger'),
+			register: require('hapi-swaggered'),
 			options: {
-				apiVersion: '0.1.0',
-				documentationPath: '/swag-doc',
 				endpoint: '/swag-spec',
+				stripPrefix: '/api',
+				tagging: {
+					mode: 'tags'
+				},
+				tags: [
+					{
+						name: 'zones',
+						description: 'Full zones CRUD'
+					},
+					{
+						name: 'sensors',
+						description: 'Sensors *read-only* endpoints'
+					}
+				],
 				info: {
 					title: 'Flemeth daemon',
-					description: 'Javascript based home thermostat'
+					description: 'Javascript based home thermostat',
+					version: require('./api').register.attributes.version
 				}
+			}
+		},
+		{
+			register: require('hapi-swaggered-ui'),
+			options: {
+				title: 'Flemeth API Documentation',
+				path: '/swag-doc',
+				swaggerOptions: {
+					validatorUrl: null,
+					docExpansion: 'list'
+				},
+				authorization: false
 			}
 		}
 	], function(err) {

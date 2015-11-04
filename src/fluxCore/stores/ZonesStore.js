@@ -12,11 +12,9 @@ module.exports = function(type, payload, state) {
 		case RootActions.loadFromDB.actionType:
 			state = createZones(payload.zones, state);
 			break;
+		case ZonesActions.update.actionType:
 		case ZonesActions.updateValues.actionType:
 			state = updateZones(payload.zones, state);
-			break;
-		case ZonesActions.update.actionType:
-			state = updateZone(payload.zones, state);
 			break;
 		case ZonesActions.create.actionType:
 			state = createZones(payload.zones, state);

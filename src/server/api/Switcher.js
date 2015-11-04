@@ -1,4 +1,4 @@
-var sensorsApi = {
+var switcherApi = {
 	register: function (server, options, next) {
 		var routes = endpoints.map(function(route) {
 			route.path = options.base.concat(route.path);
@@ -9,17 +9,17 @@ var sensorsApi = {
 	}
 };
 
-sensorsApi.register.attributes = {
-	name: 'sensors-api',
+switcherApi.register.attributes = {
+	name: 'switcher-api',
 	version: '1.0.0'
 };
 
-module.exports = sensorsApi;
+module.exports = switcherApi;
 
 var handlers = {
 	getRaw: function(req, reply) {
 		return reply({
-			sensors: req.server.app.container.getState('Sensors')
+			switcher: req.server.app.container.getState('Switcher')
 		});
 	}
 };
@@ -30,9 +30,8 @@ var endpoints = [
 		method: 'GET',
 		handler: handlers.getRaw,
 		config: {
-			description: 'Base sensors getter.',
-			notes: ['Returns all', 'No filtering', 'Raw from core'],
-			tags: ['api', 'sensors']
+			description: 'Reads switcher value',
+			tags: ['api', 'switcher']
 		}
 	}
 ];

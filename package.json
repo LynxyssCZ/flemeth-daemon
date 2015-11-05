@@ -28,6 +28,7 @@
     "async": "^1.4.2",
     "bluebird": "^2.10.2",
     "bookshelf": "^0.8.2",
+    "bookshelf-camelcase": "^1.1.2",
     "bunyan": "^1.5.1",
     "dotenv": "^1.2.0",
     "ds18x20": "^0.2.0",

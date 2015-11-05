@@ -49,8 +49,7 @@ Server.prototype.init = function (next) {
 				title: 'Flemeth API Documentation',
 				path: '/swag-doc',
 				swaggerOptions: {
-					validatorUrl: null,
-					docExpansion: 'list'
+					validatorUrl: null
 				},
 				authorization: false
 			}

@@ -2,7 +2,7 @@ var Map = require('immutable').Map;
 
 var VALUES = 5;
 
-module.exports = function(type, payload, state) {
+function SensorsStore(type, payload, state) {
 	if (!state) {
 		state = getDefaultState();
 	}
@@ -12,7 +12,9 @@ module.exports = function(type, payload, state) {
 	}
 
 	return state;
-};
+}
+
+module.exports = SensorsStore;
 
 function getDefaultState() {
 	return Map();

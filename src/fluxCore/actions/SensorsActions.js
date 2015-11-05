@@ -13,5 +13,13 @@ module.exports = {
 		return {
 			sensors: sensors
 		};
+	},
+	purge: function(ttl) {
+		//TODO: Implement in store
+		return {
+			purgeSensors: {
+				ttl: ttl
+			}
+		};
 	}
 };

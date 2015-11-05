@@ -4,6 +4,7 @@ var FlemDb = require('../../db');
 
 module.exports = {
 	loadFromDB: function() {
+		// TODO: Add all stores to rehydrate after implementation
 		return Promise.props({
 			zones: fetchZones()
 		});

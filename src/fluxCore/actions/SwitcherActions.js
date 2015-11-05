@@ -1,5 +1,3 @@
-
-
 module.exports = {
 	switch: function(nextValue, forced) {
 		return {

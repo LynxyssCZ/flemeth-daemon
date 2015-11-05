@@ -1,5 +1,9 @@
 module.exports = {
+	Plans: require('./PlansStore'),
+	Schedules: require('./SchedulesStore'),
 	Sensors: require('./SensorsStore'),
-	Zones: require('./ZonesStore'),
-	Switcher: require('./SwitcherStore')
+	Settings: require('./SettingsStore'),
+	Switcher: require('./SwitcherStore'),
+	TempChecker: require('./TempCheckerStore'),
+	Zones: require('./ZonesStore')
 };

@@ -17,6 +17,16 @@ var api = {
 				options: {
 					base: options.base.concat('/switcher')
 				}
+			}, {
+				register: require('./Schedules'),
+				options: {
+					base: options.base.concat('/schedules')
+				}
+			}, {
+				register: require('./Plans'),
+				options: {
+					base: options.base.concat('/plans')
+				}
 			}
 		], function(err) {
 			next(err);
@@ -25,20 +35,7 @@ var api = {
 };
 
 var swaggerSpecs = {
-	tags: [
-		{
-			name: 'zones',
-			description: 'Full zones CRUD'
-		},
-		{
-			name: 'sensors',
-			description: 'Sensors *read-only* endpoints'
-		},
-		{
-			name: 'switcher',
-			description: 'Switcher read only endpoint'
-		}
-	]
+	tags: []
 };
 
 api.register.attributes = {

@@ -1,8 +1,7 @@
 var Map = require('immutable').Map;
 var SwitcherActions = require('../actions').Switcher;
 
-
-module.exports = function(type, payload, state) {
+function SwitcherStore(type, payload, state) {
 	if (!state) {
 		state = getDefaultState();
 	}
@@ -20,8 +19,8 @@ module.exports = function(type, payload, state) {
 	}
 
 	return state;
-};
-
+}
+module.exports = SwitcherStore;
 
 function getDefaultState() {
 	return Map({

@@ -14,9 +14,7 @@ var FlemDB = module.exports = {
 
 			var knex = Knex(options.knexFile);
 			var bookshelf = FlemDB.bookshelf = Bookshelf(knex);
-			bookshelf.plugin('virtuals');
-			bookshelf.plugin('registry');
-			bookshelf.plugin('visibility');
+			bookshelf.plugin(['virtuals', 'registry', 'visibility', 'bookshelf-camelcase']);
 			FlemDB.models = require('./models')(bookshelf);
 
 			knex.migrate.latest()

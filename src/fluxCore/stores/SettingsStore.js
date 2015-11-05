@@ -1,13 +1,13 @@
 var Map = require('immutable').Map;
 
-function SchedulesStore(type, payload, state) {
+function SettingsStore(type, payload, state) {
 	if (!state) {
 		state = getDefaultState();
 	}
 	return state;
 }
 
-module.exports = SchedulesStore;
+module.exports = SettingsStore;
 
 function getDefaultState() {
 	return Map({});

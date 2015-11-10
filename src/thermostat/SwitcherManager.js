@@ -1,6 +1,12 @@
 var Bluebird = require('bluebird');
-var Gpio = Bluebird.promisifyAll(require('onoff')).Gpio;
+var Gpio;
 
+try {
+	Gpio = Bluebird.promisifyAll(require('onoff')).Gpio;
+}
+catch(e) {
+	Gpio = Bluebird.promisifyAll(require('./GpioMock')).Gpio;
+}
 
 var SwitcherManager = function(options) {
 	this.logger = options.logger.child({ component: 'SwitcherManager' });

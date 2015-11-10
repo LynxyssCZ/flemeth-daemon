@@ -1,10 +1,10 @@
 module.exports = function register(Bookshelf) {
 	return {
-		Plans: require('./Plans')(Bookshelf),
-		Schedules: require('./Schedules')(Bookshelf),
-		SensorsValues: require('./SensorsValues')(Bookshelf),
-		Settings: require('./Settings')(Bookshelf),
 		Zones: require('./Zones')(Bookshelf),
+		Schedules: require('./Schedules')(Bookshelf),
+		Plans: require('./Plans')(Bookshelf),
+		Settings: require('./Settings')(Bookshelf),
+		SensorsValues: require('./SensorsValues')(Bookshelf),
 		ZonesTemps: require('./ZonesTemps')(Bookshelf)
 	};
 };

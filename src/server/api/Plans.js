@@ -32,10 +32,45 @@ var handlers = {
 		});
 	},
 	create: function(req, reply) {
+		var container = req.server.app.container;
+		var plan = {
+			name: req.payload.name,
+			schedules: req.payload.schedules
+		};
+
+		return container.push(container.actions.Plans.create, [plan], function(error, payload) {
+			return reply({
+				msg: error ? error : 'OK',
+				plans: error ? undefined : payload.plans
+			});
+		});
 	},
 	update: function(req, reply) {
+		var container = req.server.app.container;
+		var planId = req.params.planId;
+
+		var plan = {
+			id: planId,
+			name: req.payload.name,
+			schedules: req.payload.schedules
+		};
+
+		return container.push(container.actions.Plans.update, [plan], function(error, payload) {
+			return reply({
+				msg: error ? error : 'OK',
+				plans: error ? undefined : payload.plans
+			});
+		});
 	},
 	delete: function(req, reply) {
+		var container = req.server.app.container;
+		var planId = req.params.planId;
+
+		container.push(container.actions.Plans.delete, [planId], function(err) {
+			return reply({
+				msg: err ? err : 'Ok'
+			});
+		});
 	}
 };
 

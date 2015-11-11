@@ -13,6 +13,11 @@ var api = {
 					base: options.base.concat('/sensors')
 				}
 			}, {
+				register: require('./Settings'),
+				options: {
+					base: options.base.concat('/settings')
+				}
+			}, {
 				register: require('./Zones'),
 				options: {
 					base: options.base.concat('/zones')

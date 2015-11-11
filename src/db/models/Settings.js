@@ -1,7 +1,7 @@
 module.exports = function register(Bookshelf) {
 	var Setting = Bookshelf.Model.extend({
 		tableName: 'settings',
-		hidden: ['raw_value'],
+		hidden: ['id', 'raw_value', 'rawValue'],
 		virtuals: {
 			value: {
 				get: function() {
@@ -12,7 +12,7 @@ module.exports = function register(Bookshelf) {
 						return JSON.parse(rawValue);
 					}
 					else {
-						return [];
+						return undefined;
 					}
 				},
 				set: function(value) {

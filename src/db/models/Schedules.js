@@ -1,7 +1,7 @@
 module.exports = function register(Bookshelf) {
 	var Schedule = Bookshelf.Model.extend({
 		tableName: 'schedules',
-		hidden: ['raw_changes'],
+		hidden: ['raw_changes', 'rawChanges'],
 		virtuals: {
 			changes: {
 				get: function() {

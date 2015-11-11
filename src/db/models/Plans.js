@@ -1,6 +1,7 @@
 module.exports = function register(Bookshelf) {
 	var Plan = Bookshelf.Model.extend({
 		tableName: 'plans',
+		hidden: ['raw_chedules', 'rawSchedules'],
 		virtuals: {
 			schedules: {
 				get: function() {

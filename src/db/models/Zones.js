@@ -1,7 +1,7 @@
 module.exports = function register(Bookshelf) {
 	var Zone = Bookshelf.Model.extend({
 		tableName: 'zones',
-		hidden: ['raw_sensors'],
+		hidden: ['raw_sensors', 'rawSensors'],
 		virtuals: {
 			sensors: {
 				get: function() {

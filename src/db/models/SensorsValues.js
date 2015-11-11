@@ -5,7 +5,7 @@ module.exports = function register(Bookshelf) {
 
 	var SensorsValues = Bookshelf.Collection.extend({
 		model: SensorValue,
-		hidden: ['raw_meta'],
+		hidden: ['raw_meta', 'rawMeta'],
 		virtuals: {
 			get: function() {
 				var rawMeta = this.get('rawMeta');

@@ -3,13 +3,6 @@ var Promise = require('bluebird');
 
 
 module.exports = {
-	loadFromDB: function() {
-		return this.db.getCollection('Zones').forge()
-			.fetch()
-			.then(function(collection) {
-				console.log(collection.toJSON());
-			});
-	},
 	updateValues: function(zonesValues) {
 		var zones = Object.keys(zonesValues).map(function(zoneId) {
 			return {

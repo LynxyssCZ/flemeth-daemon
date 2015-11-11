@@ -3,6 +3,11 @@ var api = {
 	register: function (server, options, next) {
 		server.register([
 			{
+				register: require('./Override'),
+				options: {
+					base: options.base.concat('/override')
+				}
+			}, {
 				register: require('./Sensors'),
 				options: {
 					base: options.base.concat('/sensors')

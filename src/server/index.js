@@ -5,11 +5,11 @@ var assign = require('object-assign');
 var Server = function(options) {
 	this.logger = options.logger.child({component: 'Server'});
 	this.container = options.container;
-	this.actions = options.actions;
 
 	this.server = new Hapi.Server(options.serverConfig);
 	this.server.connection(options.connection);
 	this.server.app.container = options.container;
+	this.server.app.db = options.db;
 
 	this.apiOptions = options.api;
 };

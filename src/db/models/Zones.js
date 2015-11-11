@@ -5,7 +5,7 @@ module.exports = function register(Bookshelf) {
 		virtuals: {
 			sensors: {
 				get: function() {
-					var rawSensors = this.get('raw_sensors');
+					var rawSensors = this.get('rawSensors');
 
 					if (rawSensors) {
 						return rawSensors.split(';');
@@ -16,10 +16,10 @@ module.exports = function register(Bookshelf) {
 				},
 				set: function(value) {
 					if (value) {
-						this.set('raw_sensors', value.join(';'));
+						this.set('rawSensors', value.join(';'));
 					}
 					else {
-						this.set('raw_sensors', null);
+						this.set('rawSensors', null);
 					}
 				}
 			}

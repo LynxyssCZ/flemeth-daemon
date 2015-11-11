@@ -2,8 +2,8 @@ var Fluxerino = require('fluxerino');
 var stores = require('./stores');
 var actions = require('./actions');
 
-var Container = function() {
-	Fluxerino.Container.call(this, stores);
+var Container = function(context) {
+	Fluxerino.Container.call(this, stores, context);
 	this.actions = actions;
 
 	this.init();

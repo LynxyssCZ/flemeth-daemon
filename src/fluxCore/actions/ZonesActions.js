@@ -1,11 +1,10 @@
 var assign = require('object-assign');
 var Promise = require('bluebird');
-var FlemDb = require('../../db');
 
 
 module.exports = {
 	loadFromDB: function() {
-		return FlemDb.getCollection('Zones').forge()
+		return this.db.getCollection('Zones').forge()
 			.fetch()
 			.then(function(collection) {
 				console.log(collection.toJSON());
@@ -25,7 +24,7 @@ module.exports = {
 		};
 	},
 	update: function(zoneData) {
-		var Zone = FlemDb.getModel('Zones');
+		var Zone = this.db.getModel('Zones');
 
 		var data = {};
 		data.id = zoneData.id;
@@ -49,7 +48,7 @@ module.exports = {
 			{
 				zones: [assign({ id: mockId }, initialData)]
 			},
-			FlemDb.getModel('Zones').forge(initialData).save()
+			this.db.getModel('Zones').forge(initialData).save()
 				.then(function(zone) {
 					if (zone) {
 						return {
@@ -60,7 +59,7 @@ module.exports = {
 		];
 	},
 	delete: function(zoneIds) {
-		var Zone = FlemDb.getModel('Zones');
+		var Zone = this.db.getModel('Zones');
 		zoneIds = Array.isArray(zoneIds) ? zoneIds : [zoneIds];
 
 		var zonePromises = zoneIds.map(function(zoneId) {

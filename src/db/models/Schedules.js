@@ -5,7 +5,7 @@ module.exports = function register(Bookshelf) {
 		virtuals: {
 			changes: {
 				get: function() {
-					var rawChanges = this.get('raw_changes');
+					var rawChanges = this.get('rawChanges');
 
 					if (rawChanges) {
 						// FIXME: YOLO
@@ -18,10 +18,10 @@ module.exports = function register(Bookshelf) {
 				set: function(value) {
 					if (value) {
 						// FIXME: Double YOLO
-						this.set('raw_changes', JSON.stringify(value));
+						this.set('rawChanges', JSON.stringify(value));
 					}
 					else {
-						this.set('raw_changes', null);
+						this.set('rawChanges', null);
 					}
 				}
 			}

@@ -13,13 +13,13 @@ var Flemeth = function(options) {
 	this.thermostat = new Thermostat(assign({
 		logger: this.logger,
 		container: this.container,
-		db: FlemDb.models
+		db: FlemDb
 	}, options.thermostat));
 
 	this.server = new Server(assign({
 		logger: this.logger,
 		container: this.container,
-		db: FlemDb.models
+		db: FlemDb
 	}, options.server));
 };
 module.exports = Flemeth;
@@ -60,7 +60,10 @@ Flemeth.prototype.initDB = function (callback) {
 
 // TODO: Load initial data from database
 Flemeth.prototype.createContainer = function () {
-	this.container = new Core();
+	this.container = new Core({
+		logger: this.logger,
+		db: FlemDb
+	});
 };
 
 Flemeth.prototype.loadPersistance = function (next) {

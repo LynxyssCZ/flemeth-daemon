@@ -4,7 +4,7 @@ module.exports = function register(Bookshelf) {
 		virtuals: {
 			schedules: {
 				get: function() {
-					var rawSchedules = this.get('raw_schedules');
+					var rawSchedules = this.get('rawSchedules');
 
 					if (rawSchedules) {
 						return rawSchedules.split(';');
@@ -15,10 +15,10 @@ module.exports = function register(Bookshelf) {
 				},
 				set: function(value) {
 					if (value) {
-						this.set('raw_schedules', value.join(';'));
+						this.set('rawSchedules', value.join(';'));
 					}
 					else {
-						this.set('raw_schedules', null);
+						this.set('rawSchedules', null);
 					}
 				}
 			}

@@ -8,7 +8,7 @@ module.exports = function register(Bookshelf) {
 		hidden: ['raw_meta'],
 		virtuals: {
 			get: function() {
-				var rawMeta = this.get('raw_meta');
+				var rawMeta = this.get('rawMeta');
 
 				if (rawMeta) {
 					// FIXME: YOLO
@@ -21,10 +21,10 @@ module.exports = function register(Bookshelf) {
 			set: function(value) {
 				if (value) {
 					// FIXME: Double YOLO
-					this.set('raw_meta', JSON.stringify(value));
+					this.set('rawMeta', JSON.stringify(value));
 				}
 				else {
-					this.set('raw_meta', null);
+					this.set('rawMeta', null);
 				}
 			}
 		}

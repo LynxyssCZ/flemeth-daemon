@@ -1,10 +1,11 @@
+var assign = require('object-assign');
 var Joi = require('joi');
 
 var temperature = Joi.number().min(7).precision(1).max(38);
 var scheduleIdSchema = Joi.string().lowercase().invalid('default');
 
 var changeSchema = Joi.object().meta({ className: 'Change' }).keys({
-	startTime: Joi.number().meta({ className: 'DayMs' }).integer().min(0).max(86400000).required(),
+	startTime: Joi.number().integer().min(0).max(86400000).required(),
 	newValue: temperature.required(),
 	length: Joi.number().integer().positive().max(15)
 });
@@ -41,10 +42,40 @@ var handlers = {
 		});
 	},
 	create: function(req, reply) {
+		var container = req.server.app.container;
+		var schedule = req.payload;
+
+		return container.push(container.actions.Schedules.create, [schedule], function(error, payload) {
+			return reply({
+				msg: error ? error : 'OK',
+				schedules: error ? undefined : payload.schedules
+			});
+		});
 	},
 	update: function(req, reply) {
+		var container = req.server.app.container;
+		var scheduleId = req.params.scheduleId;
+
+		var schedule = assign({
+			id: scheduleId
+		}, req.payload);
+
+		return container.push(container.actions.Schedules.update, [schedule], function(error, payload) {
+			return reply({
+				msg: error ? error : 'Ok',
+				schedules: error ? undefined : payload.schedules
+			});
+		});
 	},
 	delete: function(req, reply) {
+		var container = req.server.app.container;
+		var scheduleId = req.params.scheduleId;
+
+		return container.push(container.actions.Schedules.delete, [scheduleId], function(error) {
+			return reply({
+				msg: error ? error : 'Ok'
+			});
+		});
 	}
 };
 
@@ -54,7 +85,7 @@ var endpoints = [
 		method: 'GET',
 		handler: handlers.getRaw,
 		config: {
-			description: 'Get al schedules.',
+			description: 'Get all schedules.',
 			notes: ['Returns all', 'No filtering', 'Raw from core'],
 			tags: ['api', 'schedules']
 		}

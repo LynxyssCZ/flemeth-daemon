@@ -80,7 +80,7 @@ var endpoints = [
 		method: 'GET',
 		handler: handlers.getRaw,
 		config: {
-			description: 'Get al plans.',
+			description: 'Get all plans.',
 			notes: ['Returns all', 'No filtering', 'Raw from core'],
 			tags: ['api', 'plans']
 		}

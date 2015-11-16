@@ -6,6 +6,7 @@ module.exports = tagActions({
 	Root: require('./RootActions'),
 	Schedules: require('./SchedulesActions'),
 	Sensors: require('./SensorsActions'),
+	SensorsValues: require('./SensorsValuesActions'),
 	Settings: require('./SettingsActions'),
 	Switcher: require('./SwitcherActions'),
 	TempChecker: require('./TempCheckerActions'),

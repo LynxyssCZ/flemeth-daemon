@@ -14,10 +14,10 @@ module.exports = {
 				};
 			});
 	},
-	write: function(zoneId, value, time) {
+	write: function(zoneId, temp, time) {
 		return this.db.getModel('ZonesTemps').forge({
 			zoneId: zoneId,
-			value: value,
+			temp: temp,
 			time: time
 		}).then(function(value) {
 			if (value) {

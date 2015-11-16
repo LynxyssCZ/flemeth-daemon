@@ -42,6 +42,11 @@ var api = {
 				options: {
 					base: options.base.concat('/zones')
 				}
+			}, {
+				register: require('./ZonesTemps'),
+				options: {
+					base: options.base.concat('/zonestemps')
+				}
 			}
 		], function(err) {
 			next(err);

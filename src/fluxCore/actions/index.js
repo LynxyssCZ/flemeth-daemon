@@ -9,5 +9,6 @@ module.exports = tagActions({
 	Settings: require('./SettingsActions'),
 	Switcher: require('./SwitcherActions'),
 	TempChecker: require('./TempCheckerActions'),
-	Zones: require('./ZonesActions')
+	Zones: require('./ZonesActions'),
+	ZonesTemps: require('./ZonesTempsActions')
 });

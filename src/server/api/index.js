@@ -8,6 +8,11 @@ var api = {
 					base: options.base.concat('/override')
 				}
 			}, {
+				register: require('./Plans'),
+				options: {
+					base: options.base.concat('/plans')
+				}
+			}, {
 				register: require('./Sensors'),
 				options: {
 					base: options.base.concat('/sensors')
@@ -18,9 +23,9 @@ var api = {
 					base: options.base.concat('/settings')
 				}
 			}, {
-				register: require('./Zones'),
+				register: require('./Schedules'),
 				options: {
-					base: options.base.concat('/zones')
+					base: options.base.concat('/schedules')
 				}
 			}, {
 				register: require('./Switcher'),
@@ -28,14 +33,14 @@ var api = {
 					base: options.base.concat('/switcher')
 				}
 			}, {
-				register: require('./Schedules'),
+				register: require('./TempChecker'),
 				options: {
-					base: options.base.concat('/schedules')
+					base: options.base.concat('/tempchecker')
 				}
 			}, {
-				register: require('./Plans'),
+				register: require('./Zones'),
 				options: {
-					base: options.base.concat('/plans')
+					base: options.base.concat('/zones')
 				}
 			}
 		], function(err) {

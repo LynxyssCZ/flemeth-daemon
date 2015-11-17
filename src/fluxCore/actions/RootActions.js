@@ -5,22 +5,15 @@ module.exports = {
 	loadFromDB: function() {
 		// TODO: Add all stores to rehydrate after implementation
 		return Promise.props({
-			settings: fetchSettings(this.db),
-			zones: fetchZones(this.db)
+			settings: fetchCollection(this.db, 'Settings'),
+			zones: fetchCollection(this.db, 'Zones'),
+			plans: fetchCollection(this.db, 'Plans')
 		});
 	}
 };
 
-function fetchZones(db) {
-	return db.getCollection('Zones').forge()
-		.fetch()
-		.then(function(collection) {
-			return collection.toJSON();
-		});
-}
-
-function fetchSettings(db) {
-	return db.getCollection('Settings').forge()
+function fetchCollection(db, model) {
+	return db.getCollection(model).forge()
 		.fetch()
 		.then(function(collection) {
 			return collection.toJSON();

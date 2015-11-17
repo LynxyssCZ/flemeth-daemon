@@ -1,10 +1,17 @@
-
 module.exports = {
-	setDefaultPlan: function(planId) {
-		//TODO: Store to DB
+	changeTarget: function(newTarget) {
 		return {
-			tempchecker: {
-				defaultPlan: planId
+			tempChecker: {
+				target: newTarget.value,
+				hysteresis: newTarget.hysteresis
+			}
+		};
+	},
+	updateState: function(newState) {
+		return {
+			tempChecker: {
+				state: newState.state,
+				rising: newState.rising
 			}
 		};
 	}

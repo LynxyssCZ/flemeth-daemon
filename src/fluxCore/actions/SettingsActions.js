@@ -37,13 +37,7 @@ module.exports = {
 
 		return [
 			{ deletedSettings: [settingKey] },
-			Setting.forge().where({key: settingKey})
-				.fetch()
-				.then(function(model) {
-					if (model) {
-						return model.destroy();
-					}
-				})
+			Setting.forge().where({key: settingKey}).destroy()
 				.then(function() {
 					return {deletedSettings: [settingKey]};
 				})

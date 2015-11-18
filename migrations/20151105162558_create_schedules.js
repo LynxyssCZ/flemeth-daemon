@@ -10,7 +10,6 @@ function createTable(table) {
 	table.increments('id').primary();
 	table.string('name').unique();
 	table.string('raw_changes');
-	table.integer('changes_resolution').unsigned();
 	table.float('start_temp').unsigned();
 	table.float('hysteresis').unsigned();
 }

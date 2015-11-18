@@ -32,7 +32,6 @@ function getDefaultState() {
 			name: 'default',
 			startTemp: 20.5,
 			hysteresis: 2,
-			changesResolution: 15,
 			changes: []
 		})
 	});
@@ -44,8 +43,7 @@ function createSchedule(scheduleData) {
 		name: scheduleData.name,
 		startTemp: scheduleData.startTemp,
 		hysteresis: scheduleData.hysteresis,
-		changesResolution: scheduleData.changesResolution,
-		changes: scheduleData.changes // Optional parse
+		changes: scheduleData.changes
 	});
 }
 

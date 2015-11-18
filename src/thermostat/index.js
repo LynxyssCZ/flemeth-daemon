@@ -2,6 +2,7 @@ var SensorsManager = require('./SensorsManager');
 var ZonesManager = require('./ZonesManager');
 var SwitcherManager = require('./SwitcherManager');
 var SchedulesManager = require('./SchedulesManager');
+var TemperatureChecker = require('./TemperatureChecker');
 
 
 var Thermostat = function(options) {
@@ -14,6 +15,7 @@ var Thermostat = function(options) {
 	this.createSensorsManager(options);
 	this.createSwitcherManager(options);
 	this.createSchedulesManager(options);
+	this.createTempCheckerManager(options);
 };
 module.exports = Thermostat;
 
@@ -22,6 +24,7 @@ Thermostat.prototype.start = function(next) {
 	this.zonesManager.start();
 	this.sensorsManager.start();
 	this.schedulesManager.start();
+	this.tempChecker.start();
 	next();
 };
 
@@ -30,6 +33,7 @@ Thermostat.prototype.stop = function(next) {
 	this.zonesManager.stop();
 	this.sensorsManager.stop();
 	this.schedulesManager.stop();
+	this.tempChecker.stop();
 	next();
 };
 
@@ -62,5 +66,12 @@ Thermostat.prototype.createSchedulesManager = function (options) {
 		logger: options.logger,
 		container: options.container,
 		updatePeriod: options.updatePeriod
+	});
+};
+
+Thermostat.prototype.createTempCheckerManager = function (options) {
+	this.tempChecker = new TemperatureChecker({
+		logger: options.logger,
+		container: options.container
 	});
 };

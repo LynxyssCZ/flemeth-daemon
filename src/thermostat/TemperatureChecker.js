@@ -29,7 +29,7 @@ TemperatureChecker.prototype.getZonesMean = function (zones) {
 		var weight = zone.get('priority');
 		var value = zone.get('value');
 
-		if (weight) {
+		if (weight && value) {
 			result = {
 				valuesSum: result.valuesSum + (weight * value),
 				weightsSum: result.weightsSum + weight

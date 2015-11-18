@@ -20,8 +20,29 @@ TemperatureChecker.prototype.stop = function() {
 TemperatureChecker.prototype.update = function () {
 	var state = this.container.getState(['Zones', 'TempChecker']);
 	var zonesMean = this.getZonesMean(state.Zones);
+	var target = state.TempChecker.get('target');
+	var hysteresis = state.TempChecker.get('hysteresis');
+	var hysteresisState = state.TempChecker.get('rising');
 
-	this.logger.debug(zonesMean);
+	if (!target || !zonesMean) {
+		return;
+	}
+
+	zonesMean = Math.round(zonesMean, 3);
+	target = Math.round(target, 3);
+
+	if (hysteresisState === true && zonesMean > (target + hysteresis)) {
+		return this.container.push(this.container.actions.TempChecker.updateState, [{
+			rising: false,
+			state: true
+		}]);
+	}
+	else if (hysteresisState === false && zonesMean < (target - hysteresis)) {
+		return this.container.push(this.container.actions.TempChecker.updateState, [{
+			rising: true,
+			state: false
+		}]);
+	}
 };
 
 TemperatureChecker.prototype.getZonesMean = function (zones) {

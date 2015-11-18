@@ -7,13 +7,13 @@ var scheduleIdSchema = Joi.string().lowercase().invalid('default');
 var changeSchema = Joi.object().meta({ className: 'Change' }).keys({
 	startTime: Joi.number().integer().min(0).max(1440).required(),
 	newValue: temperature.required(),
-	length: Joi.number().integer().positive().max(15)
+	length: Joi.number().integer().positive().max(15).default(15)
 });
 
 var scheduleSchema = Joi.object().meta({ className: 'Schedule' }).keys({
 	name: Joi.string().min(5).max(50).required(),
 	startTemp: temperature.default(20.5),
-	hysteresis: Joi.number().integer().min(0).max(5).default(2),
+	hysteresis: Joi.number().precision(2).min(0).max(5).default(2),
 	changes: Joi.array().items(changeSchema).required().unique()
 });
 

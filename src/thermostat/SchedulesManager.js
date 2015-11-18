@@ -31,26 +31,39 @@ SchedulesManager.prototype.stop = function() {
 };
 
 SchedulesManager.prototype.getTarget = function (time, schedule) {
-	var changes = schedule.get('changes');
+	var changes = schedule.get('changes') || [];
 	var minute = time.getHours() * 60 + time.getMinutes();
+
+	var relevant = changes.filter(function(change) {
+		return change.startTime <= minute;
+	}).filter(function(value, index, array) {
+		return index >= array.length - 2;
+	}).reverse();
 
 	var target = {
 		value: schedule.get('startTemp'),
 		hysteresis: schedule.get('hysteresis') || 2.0
 	};
 
-	if (changes && changes.length) {
-		target = changes.filter(function(change) {
-			return change.startTime <= minute;
-		}).reduce(function(oldTarget, change) {
-			return {
-				value: change.newValue || oldTarget.value,
-				hysteresis: change.hysteresis || oldTarget.hysteresis
-			};
-		}, target);
+	if (relevant.length) {// Some relevant changes are left
+		target = {
+			value: this.getValue(minute, relevant, target.value),
+			hysteresis: schedule.get('hysteresis') || 2.0
+		};
 	}
 
 	return target;
+};
+
+SchedulesManager.prototype.getValue = function (minute, relevant, defaultValue) {
+	var prevValue = (relevant.length === 2) ? relevant[1].newValue : defaultValue; // Strict 2 items or GTFO
+	var value = relevant[0].newValue;
+
+	if (relevant[0].startTime + relevant[0].length > minute) {
+		value = prevValue + (value - prevValue)/relevant[0].length * (minute - relevant[0].startTime);
+	}
+
+	return value;
 };
 
 SchedulesManager.prototype.getCurrentPlan = function (planSettings, plans) {
@@ -60,8 +73,6 @@ SchedulesManager.prototype.getCurrentPlan = function (planSettings, plans) {
 };
 
 SchedulesManager.prototype.update = function () {
-	this.logger.debug('Update');
-
 	var state = this.container.getState(['Schedules', 'Plans', 'Settings']),
 		now = new Date(),
 		currentPlan = this.getCurrentPlan(state.Settings.get('plans'), state.Plans),
@@ -74,6 +85,5 @@ SchedulesManager.prototype.update = function () {
 		schedule = state.Schedules.get('default');
 	}
 
-	var target = this.getTarget(now, schedule);
-	this.logger.debug('Target', target);
+	this.container.push(this.container.actions.TempChecker.changeTarget, [this.getTarget(now, schedule)]);
 };

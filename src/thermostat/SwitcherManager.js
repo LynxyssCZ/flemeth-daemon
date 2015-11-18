@@ -38,9 +38,7 @@ SwitcherManager.prototype.stop = function (next) {
 };
 
 SwitcherManager.prototype.update = function() {
-	state = this.container.getState(['Switcher', 'TempChecker']);
-
-
+	var state = this.container.getState(['Switcher', 'TempChecker']);
 };
 
 SwitcherManager.prototype.switch = function(value, forced, next) {

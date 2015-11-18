@@ -72,7 +72,7 @@ function createZone(initialData) {
 		id: initialData.id.toString(),	// IDs are string only for brewity purposes
 		value: initialData.value,
 		sensors: initialData.sensors,
-		priority: initialData.priority || 1,
+		priority: (initialData.priority >= 0) ? initialData.priority : 1,
 		name: initialData.name,
 		lastUpdate: initialData.time || null
 	});

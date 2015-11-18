@@ -28,8 +28,8 @@ TemperatureChecker.prototype.update = function () {
 		return;
 	}
 
-	zonesMean = Math.round(zonesMean, 3);
-	target = Math.round(target, 3);
+	zonesMean = Number(zonesMean.toFixed(3));
+	target = Number(target.toFixed(3));
 
 	this.logger.debug(zonesMean, target);
 

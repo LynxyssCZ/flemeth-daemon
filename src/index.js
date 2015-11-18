@@ -58,7 +58,6 @@ Flemeth.prototype.initDB = function (callback) {
 	return FlemDb.config(this.dbOptions, callback);
 };
 
-// TODO: Load initial data from database
 Flemeth.prototype.createContainer = function () {
 	this.container = new Core({
 		logger: this.logger,

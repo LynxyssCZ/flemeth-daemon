@@ -8,7 +8,6 @@ function ZonesStore(type, payload, state) {
 		state = getDefaultState();
 	}
 
-
 	switch (type) {
 		case RootActions.loadFromDB.actionType:
 			state = createZones(payload.zones, state);

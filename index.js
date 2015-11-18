@@ -7,6 +7,8 @@ var Flemeth = require('./src');
 
 
 var log = bunyan.createLogger({name: 'Flemeth', level: process.env.LOG_LEVEL});
+
+// TODO: Load settings from file or so
 var flemeth = new Flemeth({
 	logger: log,
 	// other config
@@ -22,6 +24,9 @@ var flemeth = new Flemeth({
 		knexFile: require('./knexfile')
 	},
 	thermostat: {
+		updatePeriod: 5 * 1000,
+		pin: 15,
+		lockTime:  5 * 60 * 1000,
 		sensors: [
 			{
 				name: 'Local DS',

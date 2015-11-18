@@ -12,4 +12,5 @@ function createTable(table) {
 	table.string('raw_changes');
 	table.integer('changes_resolution').unsigned();
 	table.float('start_temp').unsigned();
+	table.float('hysteresis').unsigned();
 }

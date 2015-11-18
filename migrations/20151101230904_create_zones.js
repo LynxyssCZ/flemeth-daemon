@@ -10,5 +10,5 @@ function createTable(table) {
 	table.increments('id').primary();
 	table.string('name').unique();
 	table.string('raw_sensors');
-	table.integer('priority').unsigned();
+	table.float('priority', 4).unsigned();
 }

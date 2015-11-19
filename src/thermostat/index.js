@@ -25,6 +25,7 @@ Thermostat.prototype.start = function(next) {
 	this.sensorsManager.start();
 	this.schedulesManager.start();
 	this.tempChecker.start();
+	this.switcherManager.start();
 	next();
 };
 
@@ -34,7 +35,9 @@ Thermostat.prototype.stop = function(next) {
 	this.sensorsManager.stop();
 	this.schedulesManager.stop();
 	this.tempChecker.stop();
-	next();
+	this.switcherManager.stop(function() {
+		next();
+	});
 };
 
 Thermostat.prototype.createSensorsManager = function(options) {

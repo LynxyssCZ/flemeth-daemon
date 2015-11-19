@@ -1,6 +1,3 @@
-var Bluebird = require('bluebird');
-
-
 var SwitcherManager = function(options) {
 	this.logger = options.logger.child({ component: 'SwitcherManager' });
 	this.container = options.container;

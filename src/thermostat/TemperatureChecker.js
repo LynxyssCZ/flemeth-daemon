@@ -31,19 +31,13 @@ TemperatureChecker.prototype.update = function () {
 	zonesMean = Number(zonesMean.toFixed(3));
 	target = Number(target.toFixed(3));
 
-	this.logger.debug(zonesMean, target);
-
 	if (hysteresisState === true && zonesMean > (target + hysteresis)) {
-		this.logger.debug('Turning off the heat');
-
 		return this.container.push(this.container.actions.TempChecker.updateState, [{
 			rising: false,
 			state: false
 		}]);
 	}
 	else if (hysteresisState === false && zonesMean < (target - hysteresis)) {
-		this.logger.debug('Turning on the heat');
-
 		return this.container.push(this.container.actions.TempChecker.updateState, [{
 			rising: true,
 			state: true

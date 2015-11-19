@@ -3,12 +3,12 @@ var bunyan = require('bunyan');
 var Bluebird = require('bluebird');
 var serialport = Bluebird.promisifyAll(require('serialport'));
 var SerialPort = serialport.SerialPort;
-var Gpio = Bluebird.promisifyAll(require('onoff')).Gpio;
 
 
 var DRF5150Sensor = function (options) {
 	this.options = options;
 	this.log = options.logger ? options.logger.child({component: 'DRF5150Sensor'}) : bunyan.createLogger({name: 'DRF5150Sensor'});
+	this.enable = this.options.enable;
 
 	this.serialPort = new SerialPort(options.tty, {
 		baudrate: 9600,
@@ -31,8 +31,6 @@ DRF5150Sensor.properties = {
 DRF5150Sensor.prototype.constructor = DRF5150Sensor;
 
 DRF5150Sensor.prototype.start = function() {
-	this.enable = new Gpio(this.options.enable, 'out');
-
 	this.enable.writeAsync(true)
 		.bind(this).then(function() {
 			return this.serialPort.openAsync();
@@ -45,7 +43,6 @@ DRF5150Sensor.prototype.start = function() {
 DRF5150Sensor.prototype.stop = function() {
 	this.log.debug('Stoping sensor');
 	this.enable.writeSync(false);
-	this.enable.unexport();
 	this.serialPort.close();
 };
 

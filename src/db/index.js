@@ -1,11 +1,9 @@
-var Knex = require('knex');
 var Bookshelf = require('bookshelf');
 
 var FlemDB = module.exports = {
 	bookshelf: null,
 	models: null,
-	config: function(options, next) {
-		var knex = Knex(options.knexFile);
+	config: function(knex, next) {
 		var bookshelf = FlemDB.bookshelf = Bookshelf(knex);
 		bookshelf.plugin(['virtuals', 'registry', 'visibility', 'bookshelf-camelcase']);
 		FlemDB.models = require('./models')(bookshelf);

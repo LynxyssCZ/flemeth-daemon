@@ -1,12 +1,5 @@
 var Bluebird = require('bluebird');
-var Gpio;
 
-try {
-	Gpio = Bluebird.promisifyAll(require('onoff')).Gpio;
-}
-catch(e) {
-	Gpio = Bluebird.promisifyAll(require('./GpioMock')).Gpio;
-}
 
 var SwitcherManager = function(options) {
 	this.logger = options.logger.child({ component: 'SwitcherManager' });
@@ -24,7 +17,7 @@ module.exports = SwitcherManager;
 
 SwitcherManager.prototype.start = function (next) {
 	this.lock(this.lockTime);
-	this.switcher = new Gpio(this.pin, 'out');
+	this.switcher = this.pin;
 	return this.switch(false, true, next);
 };
 

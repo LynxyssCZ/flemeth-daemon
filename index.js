@@ -1,56 +1,27 @@
 require('dotenv').load();
 var bunyan = require('bunyan');
 var Async = require('async');
-var path = require('path');
-
+var FlemethSettings = require('./flemethSettings');
 var Flemeth = require('./src');
 
-
 var log = bunyan.createLogger({name: 'Flemeth', level: process.env.LOG_LEVEL});
+var settings = new FlemethSettings({
+	logger: log,
+	mockGpio: process.env.MOCK_GPIO === 'true'
+});
 
 // TODO: Load settings from file or so
-var flemeth = new Flemeth({
-	logger: log,
-	// other config
-	server: {
-		connection: {
-			port: 8098,
-			host: '0.0.0.0'
-		}
-	},
-	db: {
-		nedbPath: path.join(__dirname, 'databases'),
-		sqliteFile: path.join(__dirname, 'databases/flemeth.sqlite'),
-		knexFile: require('./knexfile')
-	},
-	thermostat: {
-		updatePeriod: 5 * 1000,
-		pin: 15,
-		lockTime:  5 * 60 * 1000,
-		sensors: [
-			{
-				name: 'Local DS',
-				type: 'DS18B20',
-				options: { interval: 60000 }
-			},
-			{
-				name: 'DRF',
-				type: 'DRF5150',
-				options: {
-					tty: '/dev/ttyAMA0',
-					enable: 17
-				}
-			}
-		]
-	}
-});
+var flemeth = new Flemeth(settings.get());
 
 var clear = function() {
 	flemeth.stop(function() {
 		log.info('Stopped');
+		settings.destroy();
+
 		process.exit();
 	});
 };
+process.on('SIGINT', clear);
 
 var start = function() {
 	Async.series([
@@ -66,6 +37,5 @@ var start = function() {
 		}
 	});
 };
-process.on('SIGINT', clear);
 
 start();

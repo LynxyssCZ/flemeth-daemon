@@ -2,7 +2,7 @@ var SwitcherManager = function(options) {
 	this.logger = options.logger.child({ component: 'SwitcherManager' });
 	this.container = options.container;
 	this.lockTime = options.lockTime;
-	this.pin = options.pin;
+	this.switcher = options.pin;
 
 	this.unlockTask = null;
 	this.subKey = null;
@@ -13,9 +13,20 @@ var SwitcherManager = function(options) {
 module.exports = SwitcherManager;
 
 SwitcherManager.prototype.start = function (next) {
-	this.switcher = this.pin;
-	this.switch(false, true, next);
-	return this.setupUnlock(this.lockTime);
+	var self = this;
+
+	this.sensorsSubscriptionKey = this.container.subscribe([
+		'TempChecker'
+	], this.update.bind(this));
+
+	this.switch(false, true, function(error) {
+		self.setupUnlock(self.lockTime);
+		self.update();
+
+		if (next) {
+			next(error);
+		}
+	});
 };
 
 SwitcherManager.prototype.stop = function (next) {
@@ -23,7 +34,8 @@ SwitcherManager.prototype.stop = function (next) {
 		global.clearTimeout(this.unlockTask);
 		this.unlockTask = null;
 	}
-
+	this.container.unsubscribe(this.sensorsSubscriptionKey);
+	// Cleanup
 	return next(null);
 };
 

@@ -21,11 +21,11 @@ module.exports = Thermostat;
 
 Thermostat.prototype.start = function(next) {
 	this.logger.info('Thermostat starting');
-	this.switcherManager.start();
-	this.tempChecker.start();
-	this.schedulesManager.start();
 	this.zonesManager.start();
 	this.sensorsManager.start();
+	this.schedulesManager.start();
+	this.tempChecker.start();
+	this.switcherManager.start();
 	next();
 };
 

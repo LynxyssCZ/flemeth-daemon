@@ -45,7 +45,6 @@ function updateSwitcher(value, state) {
 	}
 	else {
 		// Unlocked or forced, switch and lock again
-		console.log(value);
 		state = updateLock(true, state.merge({
 			realValue: value.nextValue,
 			nextValue: value.nextValue

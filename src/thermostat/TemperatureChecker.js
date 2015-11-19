@@ -34,13 +34,13 @@ TemperatureChecker.prototype.update = function () {
 	if (hysteresisState === true && zonesMean > (target + hysteresis)) {
 		return this.container.push(this.container.actions.TempChecker.updateState, [{
 			rising: false,
-			state: false
+			state: true
 		}]);
 	}
 	else if (hysteresisState === false && zonesMean < (target - hysteresis)) {
 		return this.container.push(this.container.actions.TempChecker.updateState, [{
 			rising: true,
-			state: true
+			state: false
 		}]);
 	}
 };

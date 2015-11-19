@@ -29,9 +29,26 @@ SwitcherManager.prototype.stop = function (next) {
 
 SwitcherManager.prototype.update = function() {
 	var state = this.container.getState(['Switcher', 'TempChecker']);
+
+	var value = state.TempChecker.get('state');
+	var realValue = state.Switcher.get('realValue');
+	var nextValue = state.Switcher.get('nextValue');
+
+	if (value === nextValue && value === realValue) {
+		return;
+	}
+
+	this.logger.debug('Switching');
+	if (state.get('locked') === false) {
+		return this.switch(value);
+	}
+	else {
+		return this.changeNext(value);
+	}
 };
 
 SwitcherManager.prototype.switch = function(value, forced, next) {
+	this.logger.debug('Changing "real" value', value);
 	return this.switcher.writeAsync(value)
 		.bind(this).then(function() {
 			return this.container.push(this.container.action.Switcher.switch, [value, forced], next);
@@ -39,6 +56,11 @@ SwitcherManager.prototype.switch = function(value, forced, next) {
 		.catch(function(err) {
 			return next(err);
 		});
+};
+
+SwitcherManager.prototype.changeNext = function (value, next) {
+	this.logger.debug('Changing next value', value);
+	return this.container.push(this.container.action.Switcher.switch, [value, false], next);
 };
 
 SwitcherManager.prototype.lock = function (duration) {

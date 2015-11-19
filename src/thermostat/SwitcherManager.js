@@ -41,6 +41,7 @@ SwitcherManager.prototype.stop = function (next) {
 
 SwitcherManager.prototype.update = function() {
 	var state = this.container.getState(['Switcher', 'TempChecker']);
+	this.logger.debug('Switcher update');
 
 	var value = !state.TempChecker.get('state');
 	var locked = state.Switcher.get('locked');
@@ -48,6 +49,7 @@ SwitcherManager.prototype.update = function() {
 	var nextValue = state.Switcher.get('nextValue');
 
 	if (value === nextValue && value === realValue) {
+		this.logger.debug('Skipping switching');
 		return;
 	}
 

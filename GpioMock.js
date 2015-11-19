@@ -12,7 +12,7 @@ GpioMock.prototype.write = function (value, callback) {
 	return callback(null);
 };
 
-GpioMock.prototype.write = function (value) {
+GpioMock.prototype.writeSync = function (value) {
 	this.logger.debug('Pin:', this.number, 'Value:', value);
 	this.value = value;
 };

@@ -13,9 +13,9 @@ var SwitcherManager = function(options) {
 module.exports = SwitcherManager;
 
 SwitcherManager.prototype.start = function (next) {
-	this.lock(this.lockTime);
 	this.switcher = this.pin;
-	return this.switch(false, true, next);
+	this.switch(false, true, next);
+	return this.setupUnlock(this.lockTime);
 };
 
 SwitcherManager.prototype.stop = function (next) {
@@ -40,6 +40,7 @@ SwitcherManager.prototype.update = function() {
 
 	this.logger.debug('Switching');
 	if (state.get('locked') === false) {
+		this.setupUnlock(this.lockTime);
 		return this.switch(value);
 	}
 	else {
@@ -51,19 +52,20 @@ SwitcherManager.prototype.switch = function(value, forced, next) {
 	this.logger.debug('Changing "real" value', value);
 	return this.switcher.writeAsync(value)
 		.bind(this).then(function() {
-			return this.container.push(this.container.action.Switcher.switch, [value, forced], next);
+			return this.container.push(this.container.actions.Switcher.switch, [value, forced], next);
 		})
 		.catch(function(err) {
-			return next(err);
+			return next ? next(err) : undefined;
 		});
 };
 
 SwitcherManager.prototype.changeNext = function (value, next) {
 	this.logger.debug('Changing next value', value);
-	return this.container.push(this.container.action.Switcher.switch, [value, false], next);
+	return this.container.push(this.container.actions.Switcher.switch, [value, false], next);
 };
 
-SwitcherManager.prototype.lock = function (duration) {
+SwitcherManager.prototype.setupUnlock = function (duration) {
+	this.logger.debug('Setting up unlock task');
 	this.unlockTask = global.setTimeout(this.unlock, duration);
 };
 
@@ -73,10 +75,12 @@ SwitcherManager.prototype.unlock = function (next) {
 
 	// Value didn't change, only unlock
 	if (state.get('nextValue') === state.get('realValue')) {
+		this.logger.debug('Unlocking switcher');
 		return this.container.push(this.container.actions.Switcher.unlock, [], next);
 	}
 	else {
 		// Value changed, do a 'U->S->L' atomically
+		this.logger.debug('Changing value, re-locking');
 		return this.switch(state.get('nextValue'), true, next);
 	}
 };

@@ -36,7 +36,7 @@ DRF5150Sensor.prototype.start = function() {
 			return this.serialPort.openAsync();
 		})
 		.catch(function(err) {
-			this.log.err({error: err}, 'Error while starting sensor');
+			this.log.error({error: err}, 'Error while starting sensor');
 		});
 };
 

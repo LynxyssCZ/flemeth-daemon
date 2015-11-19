@@ -34,7 +34,7 @@ FlemethSettings.prototype.get = function () {
 		thermostat: {
 			updatePeriod: 15 * 1000,
 			switcherPin: this.switcherPin,
-			lockTime:  5 * 60 * 1000,
+			lockTime:  15 * 1000,
 			sensors: this.getSensors()
 		}
 	};

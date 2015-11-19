@@ -43,7 +43,7 @@ SwitcherManager.prototype.update = function() {
 	var state = this.container.getState(['Switcher', 'TempChecker']);
 	this.logger.debug('Switcher update');
 
-	var value = !state.TempChecker.get('state');
+	var value = state.TempChecker.get('state');
 	var locked = state.Switcher.get('locked');
 	var realValue = state.Switcher.get('realValue');
 	var nextValue = state.Switcher.get('nextValue');

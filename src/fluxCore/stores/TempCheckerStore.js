@@ -25,7 +25,7 @@ function getDefaultState() {
 		target: null,
 		hysteresis: null,
 		rising: false,
-		state: false
+		state: true
 	});
 }
 

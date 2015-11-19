@@ -52,12 +52,12 @@ DRF5150Sensor.prototype.dispatchFrame = function(frame) {
 
 DRF5150Sensor.prototype.onDataRead = function(data) {
 	// TODO: Need to fix wrong buffering and nonexistent validation
-	var sensorId = DRF5150Sensor.properties.prefix + '-' + data.readUInt8(0) + '-' + data.readUInt8(1);
-
 	if(data.length !== 6) {
 		this.log.warn(data, 'Buffer is not the expected length');
 		return;
 	}
+
+	var sensorId = DRF5150Sensor.properties.prefix + '-' + data.readUInt8(0) + '-' + data.readUInt8(1);
 
 	this.dispatchFrame({
 		reader: DRF5150Sensor.properties.prefix,

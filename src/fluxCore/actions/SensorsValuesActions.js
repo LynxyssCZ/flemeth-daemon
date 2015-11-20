@@ -27,5 +27,15 @@ module.exports = {
 				};
 			}
 		});
+	},
+	writeBatch: function(data) {
+		var temps = this.db.getCollection('SensorsValues').forge(data);
+
+		return temps.invokeThen('save')
+			.then(function(models) {
+				return {
+					sensorsValues: [ models.map(function(model) { return model.toJSON(); }) ]
+				};
+			});
 	}
 };

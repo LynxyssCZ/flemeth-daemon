@@ -5,6 +5,7 @@ var ZonesManager = require('./ZonesManager');
 var SwitcherManager = require('./SwitcherManager');
 var SchedulesManager = require('./SchedulesManager');
 var TemperatureChecker = require('./TemperatureChecker');
+var SnapshotsManager = require('./SnapshotsManager');
 
 
 var Thermostat = function(options) {
@@ -18,6 +19,7 @@ var Thermostat = function(options) {
 	this.createSwitcherManager(options);
 	this.createSchedulesManager(options);
 	this.createTempCheckerManager(options);
+	this.createSnapshotsManager(options);
 };
 module.exports = Thermostat;
 
@@ -28,13 +30,15 @@ Thermostat.prototype.start = function(next) {
 		this.tempChecker.start.bind(this.tempChecker),
 		this.schedulesManager.start.bind(this.schedulesManager),
 		this.zonesManager.start.bind(this.zonesManager),
-		this.sensorsManager.start.bind(this.sensorsManager)
+		this.sensorsManager.start.bind(this.sensorsManager),
+		this.snapshotsManager.start.bind(this.snapshotsManager)
 	], next);
 };
 
 Thermostat.prototype.stop = function(next) {
 	this.logger.info('Thermostat stoping');
 	Async.series([
+		this.snapshotsManager.stop.bind(this.snapshotsManager),
 		this.sensorsManager.stop.bind(this.sensorsManager),
 		this.zonesManager.stop.bind(this.zonesManager),
 		this.schedulesManager.stop.bind(this.schedulesManager),
@@ -79,5 +83,13 @@ Thermostat.prototype.createTempCheckerManager = function (options) {
 	this.tempChecker = new TemperatureChecker({
 		logger: options.logger,
 		container: options.container
+	});
+};
+
+Thermostat.prototype.createSnapshotsManager = function(options) {
+	this.snapshotsManager = new SnapshotsManager({
+		logger: options.logger,
+		container: options.container,
+		updatePeriod: 5 * 60 * 1000
 	});
 };

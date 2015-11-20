@@ -26,5 +26,15 @@ module.exports = {
 				};
 			}
 		});
+	},
+	writeBatch: function(data) {
+		var temps = this.db.getCollection('ZonesTemps').forge(data);
+
+		return temps.invokeThen('save')
+			.then(function(models) {
+				return {
+					zonesTemps: [ models.map(function(model) { return model.toJSON(); }) ]
+				};
+			});
 	}
 };

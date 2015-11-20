@@ -15,17 +15,15 @@ module.exports = SwitcherManager;
 SwitcherManager.prototype.start = function (next) {
 	var self = this;
 
-	this.sensorsSubscriptionKey = this.container.subscribe([
-		'TempChecker'
-	], this.update.bind(this));
-
 	this.switch(false, true, function(error) {
 		self.setupUnlock(self.lockTime);
 		self.update();
 
-		if (next) {
-			next(error);
-		}
+		self.sensorsSubscriptionKey = self.container.subscribe([
+			'TempChecker'
+		], self.update.bind(self));
+
+		next(error);
 	});
 };
 

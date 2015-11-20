@@ -6,11 +6,13 @@ var ZonesManager = function(options) {
 module.exports = ZonesManager;
 
 
-ZonesManager.prototype.start = function() {
+ZonesManager.prototype.start = function(next) {
 	this.logger.info('Starting zones manager');
 	this.sensorsSubscriptionKey = this.container.subscribe([
 		'Sensors'
 	], this.updateZonesValues.bind(this));
+
+	next();
 };
 
 ZonesManager.prototype.stop = function() {

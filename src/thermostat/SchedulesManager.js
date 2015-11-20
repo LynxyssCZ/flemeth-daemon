@@ -8,7 +8,7 @@ var SchedulesManager = function(options) {
 module.exports = SchedulesManager;
 
 
-SchedulesManager.prototype.start = function() {
+SchedulesManager.prototype.start = function(next) {
 	var self = this;
 	this.logger.info('Starting schedules manager');
 	this.sensorsSubscriptionKey = this.container.subscribe([
@@ -22,6 +22,8 @@ SchedulesManager.prototype.start = function() {
 	global.setTimeout(function() {
 		self.update();
 	});
+
+	next();
 };
 
 SchedulesManager.prototype.stop = function() {

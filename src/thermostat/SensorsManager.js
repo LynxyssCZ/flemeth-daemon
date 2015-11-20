@@ -16,7 +16,7 @@ var SensorsManager = function(options) {
 module.exports = SensorsManager;
 
 
-SensorsManager.prototype.start = function() {
+SensorsManager.prototype.start = function(next) {
 	this.logger.info('Starting sensors manager');
 
 	for (var sensorName in this.sensors) {
@@ -25,6 +25,8 @@ SensorsManager.prototype.start = function() {
 			this.sensors[sensorName].start();
 		}
 	}
+
+	next();
 };
 
 SensorsManager.prototype.stop = function() {

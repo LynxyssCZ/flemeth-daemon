@@ -1,3 +1,5 @@
+var Async = require('async');
+
 var SensorsManager = require('./SensorsManager');
 var ZonesManager = require('./ZonesManager');
 var SwitcherManager = require('./SwitcherManager');
@@ -21,12 +23,13 @@ module.exports = Thermostat;
 
 Thermostat.prototype.start = function(next) {
 	this.logger.info('Thermostat starting');
-	this.zonesManager.start();
-	this.sensorsManager.start();
-	this.schedulesManager.start();
-	this.tempChecker.start();
-	this.switcherManager.start();
-	next();
+	Async.series([
+		this.zonesManager.start.bind(this.zonesManager),
+		this.sensorsManager.start.bind(this.sensorsManager),
+		this.schedulesManager.start.bind(this.schedulesManager),
+		this.tempChecker.start.bind(this.tempChecker),
+		this.switcherManager.start.bind(this.switcherManager)
+	], next);
 };
 
 Thermostat.prototype.stop = function(next) {

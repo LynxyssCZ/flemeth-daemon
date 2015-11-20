@@ -5,11 +5,13 @@ var TemperatureChecker = function(options) {
 module.exports = TemperatureChecker;
 
 
-TemperatureChecker.prototype.start = function() {
+TemperatureChecker.prototype.start = function(next) {
 	this.logger.info('Starting temperature checker');
 	this.sensorsSubscriptionKey = this.container.subscribe([
 		'Zones'
 	], this.update.bind(this));
+
+	next();
 };
 
 TemperatureChecker.prototype.stop = function() {

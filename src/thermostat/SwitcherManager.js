@@ -94,6 +94,7 @@ SwitcherManager.prototype.unlock = function (next) {
 	else {
 		// Value changed, do a 'U->S->L' atomically
 		this.logger.debug('Changing value, re-locking');
+		this.setupUnlock(this.lockTime);
 		return this.switch(state.get('nextValue'), true, next);
 	}
 };

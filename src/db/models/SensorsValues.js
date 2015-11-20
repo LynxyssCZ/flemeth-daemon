@@ -7,24 +7,26 @@ module.exports = function register(Bookshelf) {
 		model: SensorValue,
 		hidden: ['raw_meta', 'rawMeta'],
 		virtuals: {
-			get: function() {
-				var rawMeta = this.get('rawMeta');
+			meta: {
+				get: function() {
+					var rawMeta = this.get('rawMeta');
 
-				if (rawMeta) {
-					// FIXME: YOLO
-					return JSON.parse(rawMeta);
-				}
-				else {
-					return [];
-				}
-			},
-			set: function(value) {
-				if (value) {
-					// FIXME: Double YOLO
-					this.set('rawMeta', JSON.stringify(value));
-				}
-				else {
-					this.set('rawMeta', null);
+					if (rawMeta) {
+						// FIXME: YOLO
+						return JSON.parse(rawMeta);
+					}
+					else {
+						return [];
+					}
+				},
+				set: function(value) {
+					if (value) {
+						// FIXME: Double YOLO
+						this.set('rawMeta', JSON.stringify(value));
+					}
+					else {
+						this.set('rawMeta', null);
+					}
 				}
 			}
 		}

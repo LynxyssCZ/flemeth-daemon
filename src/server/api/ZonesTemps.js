@@ -2,8 +2,8 @@ var Joi = require('joi');
 
 var querySchema = Joi.object({
 	zones: Joi.string().default(''),
-	from: Joi.number().integer().positive().default(Date.now() - 85800000),
-	to: Joi.number().integer().positive().greater(Joi.ref('from')).default(Date.now())
+	from: Joi.number().integer().positive(),
+	to: Joi.number().integer().positive().greater(Joi.ref('from'))
 });
 
 var zonesTempsApi = {
@@ -27,8 +27,8 @@ module.exports = zonesTempsApi;
 var handlers = {
 	get: function(req, reply) {
 		var container = req.server.app.container;
-		var fromTs = req.query.from;
-		var toTs = req.query.to;
+		var toTs = req.query.to || Date.now();
+		var fromTs = req.query.from || toTs - 85800000;
 		var zones = req.query.zones ? req.query.zones.split(';') : undefined;
 
 		return container.push(container.actions.ZonesTemps.read, [fromTs, toTs, zones], function(err, payload) {

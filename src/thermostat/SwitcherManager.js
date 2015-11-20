@@ -13,6 +13,8 @@ var SwitcherManager = function(options) {
 module.exports = SwitcherManager;
 
 SwitcherManager.prototype.start = function (next) {
+	this.logger.info('Starting switcher manager');
+
 	var self = this;
 
 	this.switch(false, true, function(error) {
@@ -28,13 +30,14 @@ SwitcherManager.prototype.start = function (next) {
 };
 
 SwitcherManager.prototype.stop = function (next) {
+	this.logger.info('Stopping switcher manager');
 	if (this.unlockTask) {
 		global.clearTimeout(this.unlockTask);
 		this.unlockTask = null;
 	}
 	this.container.unsubscribe(this.sensorsSubscriptionKey);
 	// Cleanup
-	return next(null);
+	this.switcher.writeAsync(false, next);
 };
 
 SwitcherManager.prototype.update = function() {

@@ -15,13 +15,18 @@ var flemeth = new Flemeth(settings.get());
 
 var clear = function() {
 	flemeth.stop(function() {
-		log.info('Stopped');
+		log.info('All Stopped');
 		settings.destroy();
-
+		log.info('Settings destroyed, the way is clear, Flemeth is exiting.');
 		process.exit();
 	});
 };
 process.on('SIGINT', clear);
+process.on('uncaughtException', function (err) {
+	log.error('Some unexpected error occured', err);
+	log.error(err.stack);
+	clear();
+});
 
 var start = function() {
 	Async.series([
@@ -33,7 +38,7 @@ var start = function() {
 			clear();
 		}
 		else {
-			log.info('Started');
+			log.info('All Started');
 		}
 	});
 };

@@ -14,9 +14,11 @@ TemperatureChecker.prototype.start = function(next) {
 	next();
 };
 
-TemperatureChecker.prototype.stop = function() {
+TemperatureChecker.prototype.stop = function(next) {
 	this.logger.info('Stoping temperature checker');
 	this.container.unsubscribe(this.sensorsSubscriptionKey);
+
+	next();
 };
 
 TemperatureChecker.prototype.update = function () {

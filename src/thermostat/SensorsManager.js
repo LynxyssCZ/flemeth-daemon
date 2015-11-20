@@ -29,7 +29,7 @@ SensorsManager.prototype.start = function(next) {
 	next();
 };
 
-SensorsManager.prototype.stop = function() {
+SensorsManager.prototype.stop = function(next) {
 	this.logger.info('Stoping sensors manager');
 
 	for (var sensorName in this.sensors) {
@@ -38,6 +38,8 @@ SensorsManager.prototype.stop = function() {
 			this.sensors[sensorName].stop();
 		}
 	}
+
+	next();
 };
 
 SensorsManager.prototype.addSensor = function(name, type, options) {

@@ -24,23 +24,23 @@ module.exports = Thermostat;
 Thermostat.prototype.start = function(next) {
 	this.logger.info('Thermostat starting');
 	Async.series([
-		this.zonesManager.start.bind(this.zonesManager),
-		this.sensorsManager.start.bind(this.sensorsManager),
-		this.schedulesManager.start.bind(this.schedulesManager),
+		this.switcherManager.start.bind(this.switcherManager),
 		this.tempChecker.start.bind(this.tempChecker),
-		this.switcherManager.start.bind(this.switcherManager)
+		this.schedulesManager.start.bind(this.schedulesManager),
+		this.zonesManager.start.bind(this.zonesManager),
+		this.sensorsManager.start.bind(this.sensorsManager)
 	], next);
 };
 
 Thermostat.prototype.stop = function(next) {
 	this.logger.info('Thermostat stoping');
-	this.zonesManager.stop();
-	this.sensorsManager.stop();
-	this.schedulesManager.stop();
-	this.tempChecker.stop();
-	this.switcherManager.stop(function() {
-		next();
-	});
+	Async.series([
+		this.sensorsManager.stop.bind(this.sensorsManager),
+		this.zonesManager.stop.bind(this.zonesManager),
+		this.schedulesManager.stop.bind(this.schedulesManager),
+		this.tempChecker.stop.bind(this.tempChecker),
+		this.switcherManager.stop.bind(this.switcherManager)
+	], next);
 };
 
 Thermostat.prototype.createSensorsManager = function(options) {

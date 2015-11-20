@@ -15,9 +15,11 @@ ZonesManager.prototype.start = function(next) {
 	next();
 };
 
-ZonesManager.prototype.stop = function() {
+ZonesManager.prototype.stop = function(next) {
 	this.logger.info('Stoping zones manager');
 	this.container.unsubscribe(this.sensorsSubscriptionKey);
+
+	next();
 };
 
 ZonesManager.prototype.generateSensorsMap = function (zones) {

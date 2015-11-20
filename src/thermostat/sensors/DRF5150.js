@@ -43,7 +43,9 @@ DRF5150Sensor.prototype.start = function() {
 DRF5150Sensor.prototype.stop = function() {
 	this.log.debug('Stoping sensor');
 	this.enable.writeSync(false);
-	this.serialPort.close();
+	if (this.serialPort.isOpen()) {
+		this.serialPort.close();
+	}
 };
 
 DRF5150Sensor.prototype.dispatchFrame = function(frame) {

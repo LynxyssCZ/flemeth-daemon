@@ -26,10 +26,12 @@ SchedulesManager.prototype.start = function(next) {
 	next();
 };
 
-SchedulesManager.prototype.stop = function() {
+SchedulesManager.prototype.stop = function(next) {
 	this.logger.info('Stoping schedules manager');
 	global.clearInterval(this.updateTaskId);
 	this.container.unsubscribe(this.sensorsSubscriptionKey);
+
+	next();
 };
 
 SchedulesManager.prototype.getTarget = function (time, schedule) {

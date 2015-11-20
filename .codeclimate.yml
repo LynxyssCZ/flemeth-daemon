@@ -1,0 +1,11 @@
+languages:
+  JavaScript: true
+
+exclude_paths:
+  - "test/*"
+  - "migrations/*"
+  - ".jshint.rc"
+  - ".jshint.rc"
+
+env:
+  node: true

@@ -1,10 +1,6 @@
 module.exports = function register(Bookshelf) {
 	var SensorValue = Bookshelf.Model.extend({
-		tableName: 'sensors_values'
-	});
-
-	var SensorsValues = Bookshelf.Collection.extend({
-		model: SensorValue,
+		tableName: 'sensors_values',
 		hidden: ['raw_meta', 'rawMeta'],
 		virtuals: {
 			meta: {
@@ -30,6 +26,10 @@ module.exports = function register(Bookshelf) {
 				}
 			}
 		}
+	});
+
+	var SensorsValues = Bookshelf.Collection.extend({
+		model: SensorValue
 	});
 
 	return {

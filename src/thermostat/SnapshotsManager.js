@@ -32,7 +32,7 @@ SnapshotsManager.prototype.update = function() {
 
 	var now = Date.now();
 	var zonesData = state.Zones.filter(function(zone) {
-		return zone.get('id') !== 'global' && zone.get('value') !== null;
+		return zone.get('id') !== 'global' && zone.get('value') > 0;
 	}).map(function(zone) {
 		return {
 			zoneId: zone.get('id'),

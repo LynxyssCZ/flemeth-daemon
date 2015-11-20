@@ -90,6 +90,6 @@ Thermostat.prototype.createSnapshotsManager = function(options) {
 	this.snapshotsManager = new SnapshotsManager({
 		logger: options.logger,
 		container: options.container,
-		updatePeriod: 5 * 60 * 1000
+		updatePeriod: options.snapshotPeriod
 	});
 };

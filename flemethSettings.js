@@ -33,6 +33,7 @@ FlemethSettings.prototype.get = function () {
 		db: this.knex,
 		thermostat: {
 			updatePeriod: 15 * 1000,
+			snapshotPeriod: 5 * 60 * 1000,
 			switcherPin: this.switcherPin,
 			lockTime:  5 * 60 * 1000,
 			sensors: this.getSensors()

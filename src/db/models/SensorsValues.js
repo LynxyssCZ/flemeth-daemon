@@ -12,7 +12,7 @@ module.exports = function register(Bookshelf) {
 						return JSON.parse(rawMeta);
 					}
 					else {
-						return [];
+						return undefined;
 					}
 				},
 				set: function(value) {

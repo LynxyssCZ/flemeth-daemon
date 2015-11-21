@@ -22,7 +22,7 @@ SwitcherManager.prototype.start = function (next) {
 		self.update();
 
 		self.sensorsSubscriptionKey = self.container.subscribe([
-			'TempChecker'
+			'TempChecker', 'Override'
 		], self.update.bind(self));
 
 		next(error);
@@ -41,13 +41,20 @@ SwitcherManager.prototype.stop = function (next) {
 };
 
 SwitcherManager.prototype.update = function() {
-	var state = this.container.getState(['Switcher', 'TempChecker']);
+	var state = this.container.getState(['Switcher', 'TempChecker', 'Override']);
 	this.logger.debug('Switcher update');
 
+	var override = state.Override;
 	var value = !state.TempChecker.get('state');
 	var locked = state.Switcher.get('locked');
 	var realValue = state.Switcher.get('realValue');
 	var nextValue = state.Switcher.get('nextValue');
+
+	console.log(override);
+
+	if (override) {
+		value = override.get('value');
+	}
 
 	if (value === nextValue && value === realValue) {
 		this.logger.debug('Skipping switching');

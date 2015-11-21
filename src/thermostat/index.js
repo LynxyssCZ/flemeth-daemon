@@ -6,6 +6,7 @@ var SwitcherManager = require('./SwitcherManager');
 var SchedulesManager = require('./SchedulesManager');
 var TemperatureChecker = require('./TemperatureChecker');
 var SnapshotsManager = require('./SnapshotsManager');
+var OverridesManager = require('./OverridesManager');
 
 
 var Thermostat = function(options) {
@@ -20,6 +21,7 @@ var Thermostat = function(options) {
 	this.createSchedulesManager(options);
 	this.createTempCheckerManager(options);
 	this.createSnapshotsManager(options);
+	this.createOverridesManager(options);
 };
 module.exports = Thermostat;
 
@@ -31,6 +33,7 @@ Thermostat.prototype.start = function(next) {
 		this.schedulesManager.start.bind(this.schedulesManager),
 		this.zonesManager.start.bind(this.zonesManager),
 		this.sensorsManager.start.bind(this.sensorsManager),
+		this.overridesManager.start.bind(this.overridesManager),
 		this.snapshotsManager.start.bind(this.snapshotsManager)
 	], next);
 };
@@ -43,6 +46,7 @@ Thermostat.prototype.stop = function(next) {
 		this.zonesManager.stop.bind(this.zonesManager),
 		this.schedulesManager.stop.bind(this.schedulesManager),
 		this.tempChecker.stop.bind(this.tempChecker),
+		this.overridesManager.stop.bind(this.overridesManager),
 		this.switcherManager.stop.bind(this.switcherManager)
 	], next);
 };
@@ -91,5 +95,12 @@ Thermostat.prototype.createSnapshotsManager = function(options) {
 		logger: options.logger,
 		container: options.container,
 		updatePeriod: options.snapshotPeriod
+	});
+};
+
+Thermostat.prototype.createOverridesManager = function (options) {
+	this.overridesManager = new OverridesManager({
+		logger: options.logger,
+		container: options.container
 	});
 };

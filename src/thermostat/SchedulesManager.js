@@ -77,7 +77,7 @@ SchedulesManager.prototype.getCurrentPlan = function (planSettings, plans) {
 };
 
 SchedulesManager.prototype.update = function () {
-	var state = this.container.getState(['Schedules', 'Plans', 'Settings']),
+	var state = this.container.getState(['Schedules', 'Plans', 'Settings', 'TempChecker']),
 		now = new Date(),
 		currentPlan = this.getCurrentPlan(state.Settings.get('plans'), state.Plans),
 		schedule;
@@ -89,5 +89,9 @@ SchedulesManager.prototype.update = function () {
 		schedule = state.Schedules.get('default');
 	}
 
-	this.container.push(this.container.actions.TempChecker.changeTarget, [this.getTarget(now, schedule)]);
+	var target = this.getTarget(now, schedule);
+
+	if (target.value !== state.TempChecker.get('target') || target.hysteresis !== state.TempChecker.get('hysteresis')) {
+		this.container.push(this.container.actions.TempChecker.changeTarget, [target]);
+	}
 };

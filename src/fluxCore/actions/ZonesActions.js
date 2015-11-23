@@ -4,11 +4,12 @@ var Promise = require('bluebird');
 
 module.exports = {
 	updateValues: function(zonesValues) {
-		var zones = Object.keys(zonesValues).map(function(zoneId) {
+
+		var zones = zonesValues.map(function(zone) {
 			return {
-				id: zoneId,
-				value: mean(zonesValues[zoneId].values),
-				lastUpdate: Math.max.apply(null, zonesValues[zoneId].times)
+				id: zone.id,
+				value: zone.value,
+				lastUpdate: zone.lastUpdate
 			};
 		});
 

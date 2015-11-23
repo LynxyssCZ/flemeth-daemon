@@ -22,52 +22,56 @@ ZonesManager.prototype.stop = function(next) {
 	next();
 };
 
-ZonesManager.prototype.generateSensorsMap = function (zones) {
-	var sensorsMap = {};
-
-	zones.forEach(function(zone) {
-		var zonesSensors = zone.get('sensors');
-		var zoneId = zone.get('id');
-
-		if (!zonesSensors) {
-			return;
-		}
-
-		for (var i = 0; i < zonesSensors.length; i++) {
-			sensorsMap[zonesSensors[i]] = zoneId;
-		}
-	});
-
-	return sensorsMap;
-};
-
 ZonesManager.prototype.updateZonesValues = function () {
 	var state = this.container.getState(['Zones', 'Sensors']);
-	var sensorsMap = this.generateSensorsMap(state.Zones);
-	var zonesValues = {
-		global: {
-			values: [],
-			times: []
-		}
-	};
 
-	state.Sensors.forEach(function(sensor) {
-		var targetZone = sensorsMap[sensor.get('id')];
-		if (targetZone && !zonesValues[targetZone]) {
-			zonesValues[targetZone] = {
-				values: [],
-				times: []
-			};
-		}
+	var zonesValues = state.Zones.map(function(zone) {
+		var sensorsValue = this.getSensorsValue(zone.get('id') === 'global' ? '*' : zone.get('sensors'), state.Sensors);
 
-		if (targetZone) {
-			zonesValues[targetZone].values.push(sensor.get('average'));
-			zonesValues[targetZone].times.push(sensor.get('lastUpdate'));
-		}
+		return {
+			id: zone.get('id'),
+			lastUpdate: zone.get('lastUpdate') >= sensorsValue.lastUpdate ? null : sensorsValue.lastUpdate,
+			value: sensorsValue.value
+		};
+	}, this).filter(function(zoneUpdate) {
+		return zoneUpdate.lastUpdate > 0;
+	}, this).toArray();
 
-		zonesValues.global.values.push(sensor.get('average'));
-		zonesValues.global.times.push(sensor.get('lastUpdate'));
-	});
+	if (zonesValues.length) {
+		this.container.push(this.container.actions.Zones.updateValues, [zonesValues]);
+	}
 
-	this.container.push(this.container.actions.Zones.updateValues, [zonesValues]);
 };
+
+ZonesManager.prototype.getSensorsValue = function (ids, sensors) {
+	var validIds = [];
+
+	if (ids && Array.isArray(ids)) {
+		validIds = ids.filter(function(sensorId) {
+			return sensors.has(sensorId);
+		});
+	}
+	else if (ids === '*') {
+		validIds = sensors.keySeq().toArray();
+	}
+
+	var temp = validIds.reduce(function(reduction, sensorId) {
+		var sensor = sensors.get(sensorId);
+		reduction[0].push(sensor.get('average'));
+		reduction[1].push(sensor.get('lastUpdate'));
+		return reduction;
+	}, [[], []]);
+
+	return {
+		lastUpdate: Math.max(temp[1]),
+		value: mean(temp[0])
+	};
+};
+
+function mean(array) {
+	var sum = 0, i;
+	for (i = 0; i < array.length; i++) {
+		sum += array[i];
+	}
+	return array.length ? sum / array.length : 0;
+}

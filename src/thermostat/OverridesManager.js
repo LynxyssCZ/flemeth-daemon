@@ -29,7 +29,7 @@ OverridesManager.prototype.stop = function(next) {
 OverridesManager.prototype.update = function () {
 	var override = this.container.getState('Override');
 
-	if ((override && override.get('created') + (60 * 1000 * override.get('length'))) < Date.now()) {
+	if (override && (override.get('created') + (60 * 1000 * override.get('length'))) < Date.now()) {
 		this.container.push(this.container.actions.Override.delete, []);
 	}
 };

@@ -28,6 +28,7 @@ SnapshotsManager.prototype.stop = function (next) {
 };
 
 SnapshotsManager.prototype.update = function() {
+	var self = this;
 	var state = this.container.getState(['Zones', 'Sensors']);
 
 	var now = Date.now();
@@ -41,15 +42,16 @@ SnapshotsManager.prototype.update = function() {
 		};
 	}).toArray();
 
-	var sensorsData = state.Sensors.map(function(sensor) {
-		return {
-			sensorId: sensor.get('id'),
-			value: sensor.get('average'),
-			meta: sensor.get('meta'),
-			time: now
-		};
-	}).toArray();
+	this.container.push(this.container.actions.ZonesTemps.writeBatch, [zonesData], function() {
+		var sensorsData = state.Sensors.map(function(sensor) {
+			return {
+				sensorId: sensor.get('id'),
+				value: sensor.get('average'),
+				meta: sensor.get('meta'),
+				time: now
+			};
+		}).toArray();
 
-	this.container.push(this.container.actions.ZonesTemps.writeBatch, [zonesData]);
-	this.container.push(this.container.actions.SensorsValues.writeBatch, [sensorsData]);
+		self.container.push(self.container.actions.SensorsValues.writeBatch, [sensorsData]);
+	});
 };

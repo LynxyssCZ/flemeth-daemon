@@ -63,7 +63,7 @@ ZonesManager.prototype.getSensorsValue = function (ids, sensors) {
 	}, [[], []]);
 
 	return {
-		lastUpdate: Math.max(temp[1]),
+		lastUpdate: Math.max.apply(Math, temp[1]),
 		value: mean(temp[0])
 	};
 };

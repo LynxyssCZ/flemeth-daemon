@@ -28,7 +28,7 @@ module.exports = plansApi;
 var handlers = {
 	getRaw: function(req, reply) {
 		return reply({
-			plans: req.server.app.container.getState('Plans')
+			plans: req.server.app.container.getState('Plans').toArray()
 		});
 	},
 	create: function(req, reply) {

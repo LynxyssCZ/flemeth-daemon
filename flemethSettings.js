@@ -27,7 +27,10 @@ FlemethSettings.prototype.get = function () {
 		server: {
 			connection: {
 				port: 8098,
-				host: '0.0.0.0'
+				host: '0.0.0.0',
+				routes: {
+					cors: true
+				}
 			}
 		},
 		db: this.knex,

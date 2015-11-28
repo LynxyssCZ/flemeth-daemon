@@ -8,8 +8,10 @@ function OverrideStore(type, payload, state) {
 
 	switch (type) {
 		case OverrideActions.create.actionType:
-		case OverrideActions.update.actionType:
 			state = create(payload.override, state);
+			break;
+		case OverrideActions.update.actionType:
+			state = update(payload.override, state);
 			break;
 		case OverrideActions.delete.actionType:
 			state = getDefaultState();
@@ -26,4 +28,8 @@ function getDefaultState() {
 
 function create(data) {
 	return Map(data);
+}
+
+function update(data, state) {
+	return state.merge(data);
 }

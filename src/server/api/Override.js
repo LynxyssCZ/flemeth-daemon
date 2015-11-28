@@ -1,4 +1,6 @@
 var Joi = require('joi');
+var Boom = require('boom');
+
 
 var overrideSchema = Joi.object().meta({ className: 'Override' }).keys({
 	reason: Joi.string().min(5).max(50).required(),
@@ -39,10 +41,15 @@ var handlers = {
 		};
 
 		return container.push(container.actions.Override.create, [override], function(error, payload) {
-			return reply({
-				msg: error ? error : 'OK',
-				override: error ? undefined : payload.override
-			});
+			if (!error) {
+				return reply({
+					msg: 'OK',
+					override: payload.override
+				}).code(201);
+			}
+			else {
+				return reply(Boom.wrap(error, 500));
+			}
 		});
 	},
 	update: function(req, reply) {
@@ -53,20 +60,34 @@ var handlers = {
 			length: req.payload.length
 		};
 
+		if (!container.getState('Override')) {
+			return reply(Boom.conflict('No override active'));
+		}
+
 		return container.push(container.actions.Override.update, [override], function(error, payload) {
-			return reply({
-				msg: error ? error : 'OK',
-				override: error ? undefined : payload.override
-			});
+			if (!error) {
+				return reply({
+					msg: 'OK',
+					override: container.getState('Override')
+				}).code(202);
+			}
+			else {
+				return reply(Boom.wrap(error, 500));
+			}
 		});
 	},
 	delete: function(req, reply) {
 		var container = req.server.app.container;
 
-		return container.push(container.actions.Override.delete, [], function(err) {
-			return reply({
-				msg: err ? err : 'Ok'
-			});
+		return container.push(container.actions.Override.delete, [], function(error) {
+			if (!error) {
+				return reply({
+					msg: 'OK'
+				});
+			}
+			else {
+				return reply(Boom.wrap(error, 500));
+			}
 		});
 	}
 };

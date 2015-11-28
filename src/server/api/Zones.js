@@ -42,10 +42,15 @@ var handlers = {
 		};
 
 		return container.push(container.actions.Zones.create, [zone], function(error, payload) {
-			return reply({
-				msg: error ? error : 'OK',
-				zones: error ? undefined : payload.zones
-			});
+			if (!error) {
+				return reply({
+					msg: 'OK',
+					zones: payload.zones
+				}).code(201);
+			}
+			else {
+				return reply(Boom.wrap(error, 500));
+			}
 		});
 	},
 	update: function(req, reply) {
@@ -60,10 +65,15 @@ var handlers = {
 		};
 
 		return container.push(container.actions.Zones.update, [zone], function(error, payload) {
-			return reply({
-				msg: error ? error : 'OK',
-				zones: error ? undefined : payload.zones
-			});
+			if (!error) {
+				return reply({
+					msg: 'OK',
+					zones: payload.zones
+				}).code(202);
+			}
+			else {
+				return reply(Boom.wrap(error, 500));
+			}
 		});
 	},
 	delete: function(req, reply) {
@@ -71,9 +81,14 @@ var handlers = {
 		var zoneId = req.params.zoneId;
 
 		container.push(container.actions.Zones.delete, [zoneId], function(err) {
-			return reply({
-				msg: err ? err : 'Ok'
-			});
+			if (!error) {
+				return reply({
+					msg: 'OK'
+				});
+			}
+			else {
+				return reply(Boom.wrap(error, 500));
+			}
 		});
 	}
 };
@@ -103,7 +118,7 @@ var endpoints = [
 		}
 	},
 	{
-		path: '/{zoneId}',
+		path: '/{zoneId}/',
 		method: 'PUT',
 		handler: handlers.update,
 		config: {
@@ -122,7 +137,7 @@ var endpoints = [
 		}
 	},
 	{
-		path: '/{zoneId}',
+		path: '/{zoneId}/',
 		method: 'DELETE',
 		handler: handlers.delete,
 		config: {

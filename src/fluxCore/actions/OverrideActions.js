@@ -1,8 +1,11 @@
+var assign = require('object-assign');
 
 module.exports = {
 	create: function(override) {
 		return {
-			override: override
+			override: assign({
+				created: Date.now()
+			}, override)
 		};
 	},
 

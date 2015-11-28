@@ -37,10 +37,15 @@ var handlers = {
 		};
 
 		return container.push(container.actions.Settings.update, [setting], function(error, payload) {
-			return reply({
-				msg: error ? error : 'OK',
-				settings: error ? undefined : payload.settings
-			});
+			if (!error) {
+				return reply({
+					msg: 'OK',
+					settings: payload.settings
+				}).code(202);
+			}
+			else {
+				return reply(Boom.wrap(error, 500));
+			}
 		});
 	},
 	delete: function(req, reply) {
@@ -48,9 +53,14 @@ var handlers = {
 		var settingKey = req.params.settingKey;
 
 		container.push(container.actions.Settings.delete, [settingKey], function(err) {
-			return reply({
-				msg: err ? err : 'Ok'
-			});
+			if (!error) {
+				return reply({
+					msg: 'OK'
+				});
+			}
+			else {
+				return reply(Boom.wrap(error, 500));
+			}
 		});
 	}
 };
@@ -67,7 +77,7 @@ var endpoints = [
 		}
 	},
 	{
-		path: '/{settingKey}',
+		path: '/{settingKey}/',
 		method: 'PUT',
 		handler: handlers.update,
 		config: {
@@ -82,7 +92,7 @@ var endpoints = [
 		}
 	},
 	{
-		path: '/{settingKey}',
+		path: '/{settingKey}/',
 		method: 'DELETE',
 		handler: handlers.delete,
 		config: {

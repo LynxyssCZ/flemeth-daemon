@@ -46,10 +46,15 @@ var handlers = {
 		var schedule = req.payload;
 
 		return container.push(container.actions.Schedules.create, [schedule], function(error, payload) {
-			return reply({
-				msg: error ? error : 'OK',
-				schedules: error ? undefined : payload.schedules
-			});
+			if (!error) {
+				return reply({
+					msg: 'OK',
+					schedules: payload.schedules
+				}).code(201);
+			}
+			else {
+				return reply(Boom.wrap(error, 500));
+			}
 		});
 	},
 	update: function(req, reply) {
@@ -61,10 +66,15 @@ var handlers = {
 		}, req.payload);
 
 		return container.push(container.actions.Schedules.update, [schedule], function(error, payload) {
-			return reply({
-				msg: error ? error : 'Ok',
-				schedules: error ? undefined : payload.schedules
-			});
+			if (!error) {
+				return reply({
+					msg: 'OK',
+					schedules: payload.schedules
+				}).code(202);
+			}
+			else {
+				return reply(Boom.wrap(error, 500));
+			}
 		});
 	},
 	delete: function(req, reply) {
@@ -72,9 +82,14 @@ var handlers = {
 		var scheduleId = req.params.scheduleId;
 
 		return container.push(container.actions.Schedules.delete, [scheduleId], function(error) {
-			return reply({
-				msg: error ? error : 'Ok'
-			});
+			if (!error) {
+				return reply({
+					msg: 'OK'
+				});
+			}
+			else {
+				return reply(Boom.wrap(error, 500));
+			}
 		});
 	}
 };
@@ -103,7 +118,7 @@ var endpoints = [
 		}
 	},
 	{
-		path: '/{scheduleId}',
+		path: '/{scheduleId}/',
 		method: 'PUT',
 		handler: handlers.update,
 		config: {
@@ -118,7 +133,7 @@ var endpoints = [
 		}
 	},
 	{
-		path: '/{scheduleId}',
+		path: '/{scheduleId}/',
 		method: 'DELETE',
 		handler: handlers.delete,
 		config: {

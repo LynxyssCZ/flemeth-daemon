@@ -39,10 +39,15 @@ var handlers = {
 		};
 
 		return container.push(container.actions.Plans.create, [plan], function(error, payload) {
-			return reply({
-				msg: error ? error : 'OK',
-				plans: error ? undefined : payload.plans
-			});
+			if (!error) {
+				return reply({
+					msg: 'OK',
+					plans: payload.plans
+				}).code(201);
+			}
+			else {
+				return reply(Boom.wrap(error, 500));
+			}
 		});
 	},
 	update: function(req, reply) {
@@ -56,10 +61,15 @@ var handlers = {
 		};
 
 		return container.push(container.actions.Plans.update, [plan], function(error, payload) {
-			return reply({
-				msg: error ? error : 'OK',
-				plans: error ? undefined : payload.plans
-			});
+			if (!error) {
+				return reply({
+					msg: 'OK',
+					plans: payload.plans
+				}).code(202);
+			}
+			else {
+				return reply(Boom.wrap(error, 500));
+			}
 		});
 	},
 	delete: function(req, reply) {
@@ -67,9 +77,15 @@ var handlers = {
 		var planId = req.params.planId;
 
 		container.push(container.actions.Plans.delete, [planId], function(err) {
-			return reply({
-				msg: err ? err : 'Ok'
-			});
+			if (!error) {
+				return reply({
+					msg: 'OK',
+					plans: payload.plans
+				});
+			}
+			else {
+				return reply(Boom.wrap(error, 500));
+			}
 		});
 	}
 };
@@ -98,7 +114,7 @@ var endpoints = [
 		}
 	},
 	{
-		path: '/{planId}',
+		path: '/{planId}/',
 		method: 'PUT',
 		handler: handlers.update,
 		config: {
@@ -113,7 +129,7 @@ var endpoints = [
 		}
 	},
 	{
-		path: '/{planId}',
+		path: '/{planId}/',
 		method: 'DELETE',
 		handler: handlers.delete,
 		config: {

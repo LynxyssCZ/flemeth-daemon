@@ -13,6 +13,11 @@ var api = {
 					base: options.base.concat('/plans')
 				}
 			}, {
+				register: require('./Root'),
+				options: {
+					base: options.base.concat('')
+				}
+			}, {
 				register: require('./Sensors'),
 				options: {
 					base: options.base.concat('/sensors')

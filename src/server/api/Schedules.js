@@ -1,5 +1,6 @@
 var assign = require('object-assign');
 var Joi = require('joi');
+var Boom = require('boom');
 
 var temperature = Joi.number().min(7).precision(1).max(38);
 var scheduleIdSchema = Joi.string().lowercase().invalid('default');

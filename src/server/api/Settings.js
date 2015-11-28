@@ -1,4 +1,5 @@
 var Joi = require('joi');
+var Boom = require('boom');
 
 var SettingKeySchema = Joi.string().min(5).max(50).required();
 var SettingValueSchema = Joi.object().required();
@@ -52,7 +53,7 @@ var handlers = {
 		var container = req.server.app.container;
 		var settingKey = req.params.settingKey;
 
-		container.push(container.actions.Settings.delete, [settingKey], function(err) {
+		container.push(container.actions.Settings.delete, [settingKey], function(error) {
 			if (!error) {
 				return reply({
 					msg: 'OK'

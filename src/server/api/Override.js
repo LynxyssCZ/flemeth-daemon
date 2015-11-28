@@ -64,7 +64,7 @@ var handlers = {
 			return reply(Boom.conflict('No override active'));
 		}
 
-		return container.push(container.actions.Override.update, [override], function(error, payload) {
+		return container.push(container.actions.Override.update, [override], function(error) {
 			if (!error) {
 				return reply({
 					msg: 'OK',

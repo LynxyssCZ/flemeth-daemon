@@ -1,4 +1,5 @@
 var Joi = require('joi');
+var Boom = require('boom');
 
 var zoneSchema = Joi.object().meta({ className: 'Zone' }).keys({
 	name: Joi.string().min(5).max(50).required(),
@@ -80,7 +81,7 @@ var handlers = {
 		var container = req.server.app.container;
 		var zoneId = req.params.zoneId;
 
-		container.push(container.actions.Zones.delete, [zoneId], function(err) {
+		container.push(container.actions.Zones.delete, [zoneId], function(error) {
 			if (!error) {
 				return reply({
 					msg: 'OK'

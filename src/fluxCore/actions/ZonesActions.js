@@ -75,14 +75,6 @@ module.exports = {
 
 var IntSize = Math.pow(2, 32);
 
-function mean(array) {
-	var sum = 0, i;
-	for (i = 0; i < array.length; i++) {
-		sum += array[i];
-	}
-	return array.length ? sum / array.length : 0;
-}
-
 function generateKey() {
 	return 'loading_' + (Math.random()*IntSize).toString(16);
 }

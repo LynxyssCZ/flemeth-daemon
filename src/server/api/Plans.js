@@ -1,4 +1,5 @@
 var Joi = require('joi');
+var Boom = require('boom');
 
 var planIdSchema = Joi.string().lowercase().invalid('default');
 
@@ -76,11 +77,10 @@ var handlers = {
 		var container = req.server.app.container;
 		var planId = req.params.planId;
 
-		container.push(container.actions.Plans.delete, [planId], function(err) {
+		container.push(container.actions.Plans.delete, [planId], function(error) {
 			if (!error) {
 				return reply({
-					msg: 'OK',
-					plans: payload.plans
+					msg: 'OK'
 				});
 			}
 			else {

@@ -36,12 +36,24 @@ Flemeth.prototype.init = function (next) {
 
 Flemeth.prototype.start = function (next) {
 	this.logger.info('Flemeth daemon starting');
+	var container = this.container;
+
 	Async.series([
 		this.thermostat.start.bind(this.thermostat),
 		this.server.start.bind(this.server)
 	], function(err) {
 		next(err);
+		container.push(container.actions.Sensors.readFrame, [{
+			reader: 'mock',
+			samples: [{
+				sensorId: 'mock sensor',
+				type: 'temp',
+				value: 20,
+				time: Date.now()
+			}]
+		}]);
 	});
+
 };
 
 Flemeth.prototype.stop = function (next) {

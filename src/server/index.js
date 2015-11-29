@@ -53,6 +53,12 @@ Server.prototype.init = function (next) {
 				},
 				authorization: false
 			}
+		},
+		{
+			register: require('flemeth-web'),
+			options: {
+				base: ''
+			}
 		}
 	], function(err) {
 		next(err);

@@ -82,6 +82,7 @@ var handlers = {
 		return container.push(container.actions.Override.delete, [], function(error) {
 			if (!error) {
 				return reply({
+					override: container.getState('Override'),
 					msg: 'OK'
 				});
 			}

@@ -8,8 +8,6 @@ function OverrideStore(type, payload, state) {
 
 	switch (type) {
 		case OverrideActions.create.actionType:
-			state = create(payload.override, state);
-			break;
 		case OverrideActions.update.actionType:
 			state = update(payload.override, state);
 			break;
@@ -23,11 +21,12 @@ function OverrideStore(type, payload, state) {
 module.exports = OverrideStore;
 
 function getDefaultState() {
-	return false;
-}
-
-function create(data) {
-	return Map(data);
+	return Map({
+		reason: null,
+		value: null,
+		length: null,
+		created: null
+	});
 }
 
 function update(data, state) {

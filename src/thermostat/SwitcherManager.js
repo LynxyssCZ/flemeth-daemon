@@ -50,7 +50,7 @@ SwitcherManager.prototype.update = function() {
 	var realValue = state.Switcher.get('realValue');
 	var nextValue = state.Switcher.get('nextValue');
 
-	if (override) {
+	if (override.get('value') !== null) {
 		value = override.get('value');
 	}
 

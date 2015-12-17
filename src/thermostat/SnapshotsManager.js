@@ -1,3 +1,4 @@
+'use strict';
 var SnapshotsManager = function(options) {
 	this.logger = options.logger.child({ component: 'SnapshotsManager' });
 	this.container = options.container;
@@ -16,42 +17,54 @@ SnapshotsManager.prototype.start = function (next) {
 		self.update();
 	}, this.updatePeriod);
 
-	next();
-	self.update();
+	global.setImmediate(next);
+	// self.update();
 };
 
 SnapshotsManager.prototype.stop = function (next) {
 	this.logger.info('Stopping snapshots manager');
 	global.clearInterval(this.updateTaskId);
 
-	next();
+	global.setImmediate(next);
 };
 
 SnapshotsManager.prototype.update = function() {
-	var self = this;
 	var state = this.container.getState(['Zones', 'Sensors']);
 
 	var now = Date.now();
+	var prevUpdate = (now - this.updatePeriod * 5);
+
 	var zonesData = state.Zones.filter(function(zone) {
-		return zone.get('id') !== 'global' && zone.get('value') > 0;
+		return zone.get('lastUpdate') > prevUpdate;
 	}).map(function(zone) {
 		return {
 			zoneId: zone.get('id'),
-			temp: zone.get('value'),
-			time: now
+			temp: zone.get('value')
 		};
 	}).toArray();
 
-	this.container.push(this.container.actions.ZonesTemps.writeBatch, [zonesData], function() {
-		var sensorsData = state.Sensors.map(function(sensor) {
-			return {
-				sensorId: sensor.get('id'),
-				value: sensor.get('average'),
-				meta: sensor.get('meta'),
-				time: now
-			};
-		}).toArray();
+	var sensorsData = state.Sensors.filter(function(sensor) {
+		return sensor.get('lastUpdate') > prevUpdate;
+	}).map(function(sensor) {
+		return {
+			sensorId: sensor.get('id'),
+			value: sensor.get('average'),
+			meta: sensor.get('meta')
+		};
+	}).toArray();
 
-		self.container.push(self.container.actions.SensorsValues.writeBatch, [sensorsData]);
-	});
+	var batch = [
+		{
+			type: 'zones_temps',
+			data: zonesData,
+			time: now
+		},
+		{
+			type: 'sensors_values',
+			data: sensorsData,
+			time: now
+		}
+	];
+
+	this.container.push(this.container.actions.Snapshots.writeBatch, [batch]);
 };

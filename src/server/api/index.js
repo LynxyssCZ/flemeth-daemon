@@ -18,14 +18,14 @@ var api = {
 					base: options.base.concat('')
 				}
 			}, {
+				register: require('./Schedules'),
+				options: {
+					base: options.base.concat('/schedules')
+				}
+			}, {
 				register: require('./Sensors'),
 				options: {
 					base: options.base.concat('/sensors')
-				}
-			}, {
-				register: require('./SensorsValues'),
-				options: {
-					base: options.base.concat('/sensorsvalues')
 				}
 			}, {
 				register: require('./Settings'),
@@ -33,9 +33,9 @@ var api = {
 					base: options.base.concat('/settings')
 				}
 			}, {
-				register: require('./Schedules'),
+				register: require('./Snapshots'),
 				options: {
-					base: options.base.concat('/schedules')
+					base: options.base.concat('/snapshots')
 				}
 			}, {
 				register: require('./Switcher'),
@@ -51,11 +51,6 @@ var api = {
 				register: require('./Zones'),
 				options: {
 					base: options.base.concat('/zones')
-				}
-			}, {
-				register: require('./ZonesTemps'),
-				options: {
-					base: options.base.concat('/zonestemps')
 				}
 			}
 		], function(err) {

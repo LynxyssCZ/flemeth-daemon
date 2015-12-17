@@ -28,15 +28,16 @@
         ]
     },
     "env": {
-        "node": true,
-        "browser": true
+        "node": true
     },
     "extends": "eslint:recommended",
     "ecmaFeatures": {
-        "jsx": true,
+        "arrowFunctions": true,
+        "classes": true,
+        "spread": true,
+        "destructuring": true,
+        "blockBindings": true,
         "experimentalObjectRestSpread": true
     },
-    "plugins": [
-        "react"
-    ]
+    "plugins": []
 }

@@ -29,12 +29,34 @@ SnapshotsManager.prototype.stop = function (next) {
 };
 
 SnapshotsManager.prototype.update = function() {
-	var state = this.container.getState(['Zones', 'Sensors']);
+	var state = this.container.getState(['Zones', 'Sensors', 'TempChecker']);
 
 	var now = Date.now();
 	var prevUpdate = (now - this.updatePeriod * 5);
 
-	var zonesData = state.Zones.filter(function(zone) {
+	var batch = [
+		{
+			type: 'zones_temps',
+			data: this.processZones(state.Zones, prevUpdate),
+			time: now
+		},
+		{
+			type: 'sensors_values',
+			data: this.processSensors(state.Sensors, prevUpdate),
+			time: now
+		},
+		{
+			type: 'temp_checker',
+			data: this.processTempChecker(state.TempChecker, state.Zones, prevUpdate),
+			time: now
+		}
+	];
+
+	this.container.push(this.container.actions.Snapshots.writeBatch, [batch]);
+};
+
+SnapshotsManager.prototype.processZones = function (zones, prevUpdate) {
+	return zones.filter(function(zone) {
 		return zone.get('lastUpdate') > prevUpdate;
 	}).map(function(zone) {
 		return {
@@ -42,8 +64,10 @@ SnapshotsManager.prototype.update = function() {
 			temp: zone.get('value')
 		};
 	}).toArray();
+};
 
-	var sensorsData = state.Sensors.filter(function(sensor) {
+SnapshotsManager.prototype.processSensors = function (sensors, prevUpdate) {
+	return sensors.filter(function(sensor) {
 		return sensor.get('lastUpdate') > prevUpdate;
 	}).map(function(sensor) {
 		return {
@@ -52,19 +76,29 @@ SnapshotsManager.prototype.update = function() {
 			meta: sensor.get('meta')
 		};
 	}).toArray();
+};
 
-	var batch = [
-		{
-			type: 'zones_temps',
-			data: zonesData,
-			time: now
-		},
-		{
-			type: 'sensors_values',
-			data: sensorsData,
-			time: now
+SnapshotsManager.prototype.processTempChecker = function (tempChecker, zones) {
+	var data = zones.reduce(function(result, zone) {
+		var weight = zone.get('priority');
+		var value = zone.get('value');
+
+		if (weight && value) {
+			result = {
+				valuesSum: result.valuesSum + (weight * value),
+				weightsSum: result.weightsSum + weight
+			};
 		}
-	];
 
-	this.container.push(this.container.actions.Snapshots.writeBatch, [batch]);
+		return result;
+	}, {
+		valuesSum: 0,
+		weightsSum: 0
+	});
+
+	return {
+		temp: data.weightsSum ? (data.valuesSum / data.weightsSum) : null,
+		target: tempChecker.get('target'),
+		hysteresis: tempChecker.get('hysteresis')
+	};
 };

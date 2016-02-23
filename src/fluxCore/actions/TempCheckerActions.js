@@ -2,8 +2,8 @@ module.exports = {
 	changeTarget: function(newTarget) {
 		return {
 			tempChecker: {
-				target: newTarget.value,
-				hysteresis: newTarget.hysteresis
+				target: newTarget.temp,
+				hysteresis: newTarget.hyst
 			}
 		};
 	},

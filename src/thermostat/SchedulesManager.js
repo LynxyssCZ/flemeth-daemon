@@ -35,7 +35,7 @@ SchedulesManager.prototype.stop = function(next) {
 };
 
 SchedulesManager.prototype.getTarget = function (time, schedule) {
-	var changes = schedule.get('changes') || [];
+	var changes = schedule.get('changes')[time.getDay()] || [];
 	var minute = time.getHours() * 60 + time.getMinutes();
 
 	var relevant = changes.filter(function(change) {
@@ -45,53 +45,54 @@ SchedulesManager.prototype.getTarget = function (time, schedule) {
 	}).reverse();
 
 	var target = {
-		value: schedule.get('startTemp'),
-		hysteresis: schedule.get('hysteresis') || 2.0
+		temp: schedule.get('startTemp'),
+		hyst: schedule.get('startHyst')
 	};
 
 	if (relevant.length) {// Some relevant changes are left
-		target = {
-			value: this.getValue(minute, relevant, target.value),
-			hysteresis: schedule.get('hysteresis') || 2.0
-		};
+		target = this.getValue(minute, relevant, target);
 	}
 
 	return target;
 };
 
-SchedulesManager.prototype.getValue = function (minute, relevant, defaultValue) {
-	var prevValue = (relevant.length === 2) ? relevant[1].newValue : defaultValue; // Strict 2 items or GTFO
-	var value = relevant[0].newValue;
+SchedulesManager.prototype.getValue = function (minute, relevant, baseValue) {
+	var prevValue = (relevant.length === 2) ? relevant[1] : baseValue; // Strict 2 items or GTFO
+	var value = {
+		temp: relevant[0].newTemp,
+		hyst: relevant[0].newHyst
+	};
 
 	if (relevant[0].startTime + relevant[0].length > minute) {
-		value = prevValue + (value - prevValue)/relevant[0].length * (minute - relevant[0].startTime);
+		var coef = relevant[0].length * (minute - relevant[0].startTime);
+
+		value = {
+			temp: prevValue.temp + (value.temp - prevValue.temp)/coef,
+			hyst: prevValue.hyst + (value.hyst - prevValue.hyst)/coef
+		};
 	}
 
 	return value;
 };
 
-SchedulesManager.prototype.getCurrentPlan = function (planSettings, plans) {
-	if (planSettings) {
-		return plans.get(planSettings.get('value').active);
+SchedulesManager.prototype.getCurrentSchedule = function (schedulesSettings, schedules) {
+	if (schedulesSettings) {
+		return schedules.get(schedulesSettings.get('value').active);
 	}
 };
 
 SchedulesManager.prototype.update = function () {
-	var state = this.container.getState(['Schedules', 'Plans', 'Settings', 'TempChecker']),
+	var state = this.container.getState(['Schedules', 'Settings', 'TempChecker']),
 		now = new Date(),
-		currentPlan = this.getCurrentPlan(state.Settings.get('plans'), state.Plans),
-		schedule;
+		currentSchedule = this.getCurrentSchedule(state.Settings.get('schedules'), state.Schedules);
 
-	if (currentPlan && currentPlan.has('schedules')) {
-		schedule = state.Schedules.get(currentPlan.get('schedules')[now.getDay()]) || state.Schedules.get('default');
-	}
-	else {
-		schedule = state.Schedules.get('default');
+	if (!currentSchedule || !currentSchedule.has('changes')) {
+		currentSchedule = state.Schedules.get('default');
 	}
 
-	var target = this.getTarget(now, schedule);
+	var target = this.getTarget(now, currentSchedule);
 
-	if (target.value !== state.TempChecker.get('target') || target.hysteresis !== state.TempChecker.get('hysteresis')) {
+	if (target.temp !== state.TempChecker.get('target') || target.hyst !== state.TempChecker.get('hysteresis')) {
 		this.container.push(this.container.actions.TempChecker.changeTarget, [target]);
 	}
 };

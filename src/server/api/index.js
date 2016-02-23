@@ -8,11 +8,6 @@ var api = {
 					base: options.base.concat('/override')
 				}
 			}, {
-				register: require('./Plans'),
-				options: {
-					base: options.base.concat('/plans')
-				}
-			}, {
 				register: require('./Root'),
 				options: {
 					base: options.base.concat('')

@@ -3,19 +3,24 @@ var Joi = require('joi');
 var Boom = require('boom');
 
 var temperature = Joi.number().min(7).precision(1).max(38);
+var hysteresis = Joi.number().precision(2).min(0).max(5).default(2);
 var scheduleIdSchema = Joi.string().lowercase().invalid('default');
 
-var changeSchema = Joi.object().meta({ className: 'Change' }).keys({
-	startTime: Joi.number().integer().min(0).max(1440).required(),
-	newValue: temperature.required(),
-	length: Joi.number().integer().positive().max(15).default(15)
+var simpleChangeSchema = Joi.object().meta({ className: 'Change' }).keys({
+	newTemp: temperature.optional(),
+	newHyst: hysteresis.optional(),
+	length: Joi.number().integer().positive().max(45).default(15)
+}).or('newTemp', 'newHyst');
+
+var changeSchema = simpleChangeSchema.keys({
+	startTime: Joi.number().integer().min(0).max(1440).required()
 });
 
 var scheduleSchema = Joi.object().meta({ className: 'Schedule' }).keys({
 	name: Joi.string().min(5).max(50).required(),
 	startTemp: temperature.default(20.5),
-	hysteresis: Joi.number().precision(2).min(0).max(5).default(2),
-	changes: Joi.array().items(changeSchema).required().unique()
+	startHyst: hysteresis,
+	changes: Joi.array().items(Joi.array().items(changeSchema).unique().max(1440)).length(7).optional()
 });
 
 var schedulesApi = {
@@ -95,6 +100,15 @@ var handlers = {
 	}
 };
 
+var changesHandlers = {
+	insert: function insertChange(req, reply) {
+		return reply(Boom.notImplemented());
+	},
+	remove: function removeChange(req, reply) {
+		return reply(Boom.notImplemented());
+	}
+};
+
 var endpoints = [
 	{
 		path: '/',
@@ -144,6 +158,40 @@ var endpoints = [
 				params: {
 					scheduleId: scheduleIdSchema.required()
 				}
+			}
+		}
+	},
+	{
+		path: '/{scheduleId}/changes/{day}/{time}/',
+		method: 'PUT',
+		handler: changesHandlers.insert,
+		config: {
+			description: 'Insert a change into schedule',
+			tags: ['api', 'schedules', 'changes'],
+			validate: {
+				params: {
+					scheduleId: scheduleIdSchema.required(),
+					day: Joi.number().min(0).max(1439).required(),
+					time: Joi.number().min(0).max(10079).required()
+				},
+				payload: simpleChangeSchema
+			}
+		}
+	},
+	{
+		path: '/{scheduleId}/changes/{day}/{time}/',
+		method: 'DELETE',
+		handler: changesHandlers.remove,
+		config: {
+			description: 'Remove a change from schedule',
+			tags: ['api', 'schedules', 'changes'],
+			validate: {
+				params: {
+					scheduleId: scheduleIdSchema.required(),
+					day: Joi.number().min(0).max(1439).required(),
+					time: Joi.number().min(0).max(10079).required()
+				},
+				payload: simpleChangeSchema
 			}
 		}
 	}

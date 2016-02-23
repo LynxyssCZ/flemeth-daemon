@@ -31,8 +31,8 @@ function getDefaultState() {
 			id: 'default',
 			name: 'default',
 			startTemp: 20.5,
-			hysteresis: 2,
-			changes: []
+			startHyst: 2,
+			changes: [[], [], [], [], [], [], []]
 		})
 	});
 }
@@ -42,7 +42,7 @@ function createSchedule(scheduleData) {
 		id: scheduleData.id.toString(),
 		name: scheduleData.name,
 		startTemp: scheduleData.startTemp,
-		hysteresis: scheduleData.hysteresis,
+		startHyst: scheduleData.startHyst,
 		changes: scheduleData.changes
 	});
 }

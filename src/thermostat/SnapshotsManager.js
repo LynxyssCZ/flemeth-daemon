@@ -99,6 +99,7 @@ SnapshotsManager.prototype.processTempChecker = function (tempChecker, zones) {
 	return {
 		temp: data.weightsSum ? (data.valuesSum / data.weightsSum) : null,
 		target: tempChecker.get('target'),
-		hysteresis: tempChecker.get('hysteresis')
+		hysteresis: tempChecker.get('hysteresis'),
+		state: tempChecker.get('state')
 	};
 };

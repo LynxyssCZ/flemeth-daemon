@@ -7,7 +7,6 @@ module.exports = {
 		return Promise.props({
 			settings: fetchCollection(this.db, 'Settings'),
 			zones: fetchCollection(this.db, 'Zones'),
-			plans: fetchCollection(this.db, 'Plans'),
 			schedules: fetchCollection(this.db, 'Schedules')
 		});
 	}

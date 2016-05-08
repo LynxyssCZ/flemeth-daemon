@@ -1,11 +1,8 @@
-var assign = require('object-assign');
-var Promise = require('bluebird');
-
+'use strict';
 
 module.exports = {
-	updateValues: function(zonesValues) {
-
-		var zones = zonesValues.map(function(zone) {
+	updateValues: function updateZonesValues(zonesValues) {
+		const zones = zonesValues.map(function(zone) {
 			return {
 				id: zone.id,
 				value: zone.value,
@@ -13,63 +10,38 @@ module.exports = {
 			};
 		});
 
-		return {
-			zones: zones
-		};
+		return { zones: zones };
 	},
-	update: function(zoneData) {
-		var Zone = this.db.getModel('Zones');
+	update: function* updateZoneData(zoneData) {
+		yield { zones: [ zoneData ] };
 
-		var data = {};
-		data.id = zoneData.id;
-
-		return [
-			{ zones: [ zoneData ] },
-			Zone.forge(data)
+		yield this.db.getModel('Zones').forge({ id: zoneData.id })
 			.fetch({require: true})
-			.then(function(model) {
-				return model.save(zoneData);
-			})
+			.then(function(model) { return model.save(zoneData); })
 			.then(function(zone) {
 				return { zones: [zone.toJSON()] };
-			})
-		];
+			});
 	},
-	create: function(initialData) {
-		var mockId = generateKey();
+	create: function* createNewZone(initialData) {
+		yield { zones: [Object.assign({ id: generateKey() }, initialData)] };
 
-		return [
-			{
-				zones: [assign({ id: mockId }, initialData)]
-			},
-			this.db.getModel('Zones').forge(initialData).save()
-				.then(function(zone) {
-					if (zone) {
-						return {
-							zones: [zone.toJSON()]
-						};
-					}
-				})
-		];
+		yield this.db.getModel('Zones')
+			.forge(initialData).save()
+			.then(function(zone) {
+				if (zone) {
+					return { zones: [zone.toJSON()] };
+				}
+			});
 	},
-	delete: function(zoneIds) {
-		var Zone = this.db.getModel('Zones');
-		zoneIds = Array.isArray(zoneIds) ? zoneIds : [zoneIds];
+	delete: function* removeZone(zoneId) {
+		yield { deletedZones: [zoneId] };
 
-		var zonePromises = zoneIds.map(function(zoneId) {
-			var data = {};
-			data.id = zoneId;
-
-			return Zone.forge(data).destroy();
-		});
-
-		return [
-			{deletedZones: zoneIds},
-			Promise.all(zonePromises)
+		yield this.db.getModel('Zones')
+			.forge({ id: zoneId })
+			.destroy()
 			.then(function() {
-				return {deletedZones: zoneIds};
-			})
-		];
+				return { deletedZones: [zoneId] };
+			});
 	}
 };
 

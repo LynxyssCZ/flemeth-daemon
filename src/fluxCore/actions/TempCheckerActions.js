@@ -1,5 +1,5 @@
 module.exports = {
-	changeTarget: function(newTarget) {
+	changeTarget: function changeTemperatureTarget(newTarget) {
 		return {
 			tempChecker: {
 				target: newTarget.temp,

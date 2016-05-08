@@ -19,7 +19,7 @@ module.exports = switcherApi;
 var handlers = {
 	getRaw: function(req, reply) {
 		return reply({
-			switcher: req.server.app.container.getState('Switcher')
+			switcher: req.server.app.container.getSlice('Switcher')
 		});
 	}
 };

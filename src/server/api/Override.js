@@ -29,7 +29,7 @@ module.exports = overrideApi;
 var handlers = {
 	getRaw: function(req, reply) {
 		return reply({
-			override: req.server.app.container.getState('Override')
+			override: req.server.app.container.getSlice('Override')
 		});
 	},
 	create: function(req, reply) {
@@ -60,7 +60,7 @@ var handlers = {
 			length: req.payload.length
 		};
 
-		if (!container.getState('Override')) {
+		if (!container.getSlice('Override')) {
 			return reply(Boom.conflict('No override active'));
 		}
 
@@ -68,7 +68,7 @@ var handlers = {
 			if (!error) {
 				return reply({
 					msg: 'OK',
-					override: container.getState('Override')
+					override: container.getSlice('Override')
 				}).code(202);
 			}
 			else {
@@ -82,7 +82,7 @@ var handlers = {
 		return container.push(container.actions.Override.delete, [], function(error) {
 			if (!error) {
 				return reply({
-					override: container.getState('Override'),
+					override: container.getSlice('Override'),
 					msg: 'OK'
 				});
 			}

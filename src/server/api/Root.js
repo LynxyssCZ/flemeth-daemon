@@ -18,7 +18,7 @@ module.exports = rootApi;
 
 var handlers = {
 	getDashboard: function(req, reply) {
-		var state = req.server.app.container.getState([
+		var state = req.server.app.container.getSlice([
 			'Override',
 			'Switcher',
 			'TempChecker',

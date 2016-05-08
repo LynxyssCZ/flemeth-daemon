@@ -1,5 +1,5 @@
 module.exports = {
-	switch: function(nextValue, forced) {
+	switch: function toggleSwitcher(nextValue, forced) {
 		return {
 			switcher: {
 				forced: forced,
@@ -8,7 +8,7 @@ module.exports = {
 		};
 	},
 
-	lock: function() {
+	lock: function lockSwitcher() {
 		return {
 			switcher: {
 				locked: true
@@ -16,7 +16,7 @@ module.exports = {
 		};
 	},
 
-	unlock: function() {
+	unlock: function unlockSwitcher() {
 		return {
 			switcher: {
 				locked: false

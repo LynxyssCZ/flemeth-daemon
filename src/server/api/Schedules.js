@@ -44,7 +44,7 @@ module.exports = schedulesApi;
 var handlers = {
 	getRaw: function(req, reply) {
 		return reply({
-			schedules: req.server.app.container.getState('Schedules').toArray()
+			schedules: req.server.app.container.getSlice('Schedules').toArray()
 		});
 	},
 	create: function(req, reply) {

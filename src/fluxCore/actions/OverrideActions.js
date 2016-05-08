@@ -1,21 +1,19 @@
-var assign = require('object-assign');
-
 module.exports = {
-	create: function(override) {
+	create: function createOverride(override) {
 		return {
-			override: assign({
+			override: Object.assign({
 				created: Date.now()
 			}, override)
 		};
 	},
 
-	update: function(override) {
+	update: function updateOverride(override) {
 		return {
 			override: override
 		};
 	},
 
-	delete: function() {
+	delete: function deleteOverride() {
 		return {};
 	}
 };

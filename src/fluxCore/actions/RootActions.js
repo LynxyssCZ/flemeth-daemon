@@ -1,13 +1,16 @@
-var Promise = require('bluebird');
-
-
 module.exports = {
-	loadFromDB: function() {
+	loadFromDB: function loadFromDB() {
 		// TODO: Add all stores to rehydrate after implementation
-		return Promise.props({
-			settings: fetchCollection(this.db, 'Settings'),
-			zones: fetchCollection(this.db, 'Zones'),
-			schedules: fetchCollection(this.db, 'Schedules')
+		return Promise.all([
+			fetchCollection(this.db, 'Settings'),
+			fetchCollection(this.db, 'Zones'),
+			fetchCollection(this.db, 'Schedules')
+		]).then((values) => {
+			return {
+				settings: values[0],
+				zones: values[1],
+				schedules: values[2]
+			};
 		});
 	}
 };

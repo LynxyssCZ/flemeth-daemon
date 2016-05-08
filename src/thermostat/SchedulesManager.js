@@ -82,7 +82,7 @@ SchedulesManager.prototype.getCurrentSchedule = function (schedulesSettings, sch
 };
 
 SchedulesManager.prototype.update = function () {
-	var state = this.container.getState(['Schedules', 'Settings', 'TempChecker']),
+	var state = this.container.getSlice(['Schedules', 'Settings', 'TempChecker']),
 		now = new Date(),
 		currentSchedule = this.getCurrentSchedule(state.Settings.get('schedules'), state.Schedules);
 

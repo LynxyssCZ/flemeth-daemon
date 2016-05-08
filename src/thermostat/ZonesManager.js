@@ -23,7 +23,7 @@ ZonesManager.prototype.stop = function(next) {
 };
 
 ZonesManager.prototype.updateZonesValues = function () {
-	var state = this.container.getState(['Zones', 'Sensors']);
+	var state = this.container.getSlice(['Zones', 'Sensors']);
 
 	var zonesValues = state.Zones.map(function(zone) {
 		var sensorsValue = this.getSensorsValue(zone.get('id') === 'global' ? '*' : zone.get('sensors'), state.Sensors);

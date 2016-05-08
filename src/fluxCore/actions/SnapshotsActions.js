@@ -1,5 +1,5 @@
 module.exports = {
-	read: function(fromTs, toTs, types) {
+	read: function readSnaphots(fromTs, toTs, types) {
 		var temps = this.db.getCollection('Snapshots').forge()
 			.query('whereBetween', 'time', [fromTs, toTs]);
 
@@ -14,7 +14,7 @@ module.exports = {
 				};
 			});
 	},
-	write: function(type, data, time) {
+	write: function writeSnapshots(type, data, time) {
 		return this.db.getModel('Snapshots').forge({
 			type: type,
 			data: data,
@@ -27,7 +27,7 @@ module.exports = {
 			}
 		});
 	},
-	writeBatch: function(data) {
+	writeBatch: function writeSnapsotsBatch(data) {
 		var snapshots = this.db.getCollection('Snapshots').forge(data);
 
 		return snapshots.invokeThen('save')

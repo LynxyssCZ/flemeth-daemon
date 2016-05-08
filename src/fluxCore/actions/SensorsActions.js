@@ -1,11 +1,10 @@
-var assign = require('object-assign');
-
 module.exports = {
-	readFrame: function(frame) {
+	readFrame: function readSensorFrame(frame) {
 		var reader = frame.reader;
 		var samples = frame.samples;
+
 		var sensors = samples.map(function(sample) {
-			return assign({
+			return Object.assign({
 				reader: reader
 			}, sample);
 		});
@@ -14,7 +13,7 @@ module.exports = {
 			sensors: sensors
 		};
 	},
-	purge: function(ttl) {
+	purge: function purgeSensors(ttl) {
 		//TODO: Implement in store
 		return {
 			purgeSensors: {

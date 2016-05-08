@@ -19,7 +19,7 @@ module.exports = sensorsApi;
 var handlers = {
 	getRaw: function(req, reply) {
 		return reply({
-			sensors: req.server.app.container.getState('Sensors').toArray()
+			sensors: req.server.app.container.getSlice('Sensors').toArray()
 		});
 	}
 };

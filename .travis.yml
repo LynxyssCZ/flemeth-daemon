@@ -1,18 +1,14 @@
 language: node_js
 node_js:
-  - "4.1"
-  - "0.12"
+  - "5.1"
 env:
-  - CXX=g++-4.8
+  - CXX=g++-4.9
 addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
     packages:
-      - g++-4.8
-
-before_script:
-  - npm install -g mocha
+      - g++-4.9
 
 after_success:
   - npm run lint

@@ -1,6 +1,4 @@
-var tagActions = require('fluxerino').Utils.tagActions;
-
-module.exports = tagActions({
+module.exports = {
 	Override: require('./OverrideActions'),
 	Root: require('./RootActions'),
 	Schedules: require('./SchedulesActions'),
@@ -10,4 +8,4 @@ module.exports = tagActions({
 	Switcher: require('./SwitcherActions'),
 	TempChecker: require('./TempCheckerActions'),
 	Zones: require('./ZonesActions')
-});
+};

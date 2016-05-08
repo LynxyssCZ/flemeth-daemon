@@ -30,7 +30,7 @@ module.exports = zonesApi;
 var handlers = {
 	getRaw: function(req, reply) {
 		return reply({
-			zones: req.server.app.container.getState('Zones').toArray()
+			zones: req.server.app.container.getSlice('Zones').toArray()
 		});
 	},
 	create: function(req, reply) {

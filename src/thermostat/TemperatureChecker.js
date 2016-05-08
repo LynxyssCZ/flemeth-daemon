@@ -22,7 +22,7 @@ TemperatureChecker.prototype.stop = function(next) {
 };
 
 TemperatureChecker.prototype.update = function () {
-	var state = this.container.getState(['Zones', 'TempChecker']);
+	var state = this.container.getSlice(['Zones', 'TempChecker']);
 	var zonesMean = this.getZonesMean(state.Zones);
 	var target = state.TempChecker.get('target');
 	var hysteresis = state.TempChecker.get('hysteresis');

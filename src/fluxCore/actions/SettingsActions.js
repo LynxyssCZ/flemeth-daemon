@@ -1,10 +1,9 @@
 module.exports = {
-	update: function(settingData) {
+	update: function* updateSettings(settingData) {
 		var Setting = this.db.getModel('Settings');
 
-		return [
-			{ settings: [ settingData ] },
-			Setting.forge({ key: settingData.key })
+		yield { settings: [ settingData ] };
+		yield Setting.forge({ key: settingData.key })
 			.fetch()
 			.then(function(model) {
 				if (model) {
@@ -16,31 +15,26 @@ module.exports = {
 			})
 			.then(function(setting) {
 				return { settings: [setting.toJSON()] };
-			})
-		];
+			});
 	},
-	create: function(settingData) {
-		return [
-			{ settings: [settingData] },
-			this.db.getModel('Settings').forge(settingData).save()
-				.then(function(setting) {
-					if (setting) {
-						return {
-							settings: [setting.toJSON()]
-						};
-					}
-				})
-		];
+	create: function* createSetting(settingData) {
+		yield { settings: [settingData] };
+
+		yield this.db.getModel('Settings').forge(settingData).save()
+			.then(function(setting) {
+				if (setting) {
+					return { settings: [setting.toJSON()] };
+				}
+			});
 	},
-	delete: function(settingKey) {
+	delete: function* deleteSetting(settingKey) {
 		var Setting = this.db.getModel('Settings');
 
-		return [
-			{ deletedSettings: [settingKey] },
-			Setting.forge().where({key: settingKey}).destroy()
-				.then(function() {
-					return {deletedSettings: [settingKey]};
-				})
-		];
+		yield { deletedSettings: [settingKey] };
+
+		yield Setting.forge().where({key: settingKey}).destroy()
+			.then(function() {
+				return {deletedSettings: [settingKey]};
+			});
 	}
 };

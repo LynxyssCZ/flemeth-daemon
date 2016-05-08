@@ -19,7 +19,7 @@ module.exports = tempCheckerApi;
 var handlers = {
 	getRaw: function(req, reply) {
 		return reply({
-			tempChecker: req.server.app.container.getState('TempChecker')
+			tempChecker: req.server.app.container.getSlice('TempChecker')
 		});
 	}
 };

@@ -41,7 +41,7 @@ SwitcherManager.prototype.stop = function (next) {
 };
 
 SwitcherManager.prototype.update = function() {
-	var state = this.container.getState(['Switcher', 'TempChecker', 'Override']);
+	var state = this.container.getSlice(['Switcher', 'TempChecker', 'Override']);
 	this.logger.debug('Switcher update');
 
 	var override = state.Override;
@@ -92,7 +92,7 @@ SwitcherManager.prototype.setupUnlock = function (duration) {
 
 SwitcherManager.prototype.unlock = function (next) {
 	delete this.unlockTask;
-	var state = this.container.getState('Switcher');
+	var state = this.container.getSlice('Switcher');
 
 	// Value didn't change, only unlock
 	if (state.get('nextValue') === state.get('realValue')) {

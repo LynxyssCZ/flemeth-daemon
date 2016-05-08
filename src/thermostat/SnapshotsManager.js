@@ -29,7 +29,7 @@ SnapshotsManager.prototype.stop = function (next) {
 };
 
 SnapshotsManager.prototype.update = function() {
-	var state = this.container.getState(['Zones', 'Sensors', 'TempChecker']);
+	var state = this.container.getSlice(['Zones', 'Sensors', 'TempChecker']);
 
 	var now = Date.now();
 	var prevUpdate = (now - this.updatePeriod * 5);
@@ -98,6 +98,7 @@ SnapshotsManager.prototype.processTempChecker = function (tempChecker, zones) {
 
 	return {
 		temp: data.weightsSum ? (data.valuesSum / data.weightsSum) : null,
+		state: tempChecker.get('state'),
 		target: tempChecker.get('target'),
 		hysteresis: tempChecker.get('hysteresis'),
 		state: tempChecker.get('state')

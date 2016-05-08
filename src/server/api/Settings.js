@@ -25,7 +25,7 @@ module.exports = settingsApi;
 var handlers = {
 	getRaw: function(req, reply) {
 		return reply({
-			settings: req.server.app.container.getState('Settings').toArray()
+			settings: req.server.app.container.getSlice('Settings').toArray()
 		});
 	},
 	update: function(req, reply) {

@@ -1,25 +1,18 @@
-var Map = require('immutable').Map;
-var SwitcherActions = require('../actions').Switcher;
+'use strict';
+const Map = require('immutable').Map;
+const actionTag = require('fluxerino').Utils.actionTag;
+const SwitcherActions = require('../actions/SwitcherActions');
 
-function SwitcherStore(type, payload, state) {
-	if (!state) {
-		state = getDefaultState();
+const SwitcherStore = {
+	'Lifecycle.Init': getDefaultState,
+	[actionTag(SwitcherActions.switch)]: updateSwitcher,
+	[actionTag(SwitcherActions.lock)]: function lockSwitcher(payload, state) {
+		return updateLock(true, state);
+	},
+	[actionTag(SwitcherActions.unlock)]: function unlockSwitcher(payload, state) {
+		return updateLock(false, state);
 	}
-
-	switch (type) {
-		case SwitcherActions.switch.actionType:
-			state = updateSwitcher(payload.switcher, state);
-			break;
-		case SwitcherActions.lock.actionType:
-			state = updateLock(true, state);
-			break;
-		case SwitcherActions.unlock.actionType:
-			state = updateLock(false, state);
-			break;
-	}
-
-	return state;
-}
+};
 module.exports = SwitcherStore;
 
 function getDefaultState() {

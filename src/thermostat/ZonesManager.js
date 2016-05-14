@@ -8,9 +8,9 @@ module.exports = ZonesManager;
 
 ZonesManager.prototype.start = function(next) {
 	this.logger.info('Starting zones manager');
-	this.sensorsSubscriptionKey = this.container.subscribe([
+	this.sensorsSubscriptionKey = this.container.subscribe(this.updateZonesValues.bind(this), [
 		'Sensors'
-	], this.updateZonesValues.bind(this));
+	]);
 
 	next();
 };

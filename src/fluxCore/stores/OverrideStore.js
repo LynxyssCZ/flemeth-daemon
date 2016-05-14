@@ -1,24 +1,19 @@
-var Map = require('immutable').Map;
-var OverrideActions = require('../actions').Override;
+'use strict';
+const Map = require('immutable').Map;
+const OverrideActions = require('../actions/OverrideActions');
+const actionTag = require('fluxerino').Utils.actionTag;
 
-function OverrideStore(type, payload, state) {
-	if (!state) {
-		state = getDefaultState();
-	}
-
-	switch (type) {
-		case OverrideActions.create.actionType:
-		case OverrideActions.update.actionType:
-			state = update(payload.override, state);
-			break;
-		case OverrideActions.delete.actionType:
-			state = getDefaultState();
-			break;
-	}
-
-	return state;
-}
+const OverrideStore = {
+	'Lifecycle.Init': getDefaultState,
+	[actionTag(OverrideActions.create)]: updateOverride,
+	[actionTag(OverrideActions.update)]: updateOverride,
+	[actionTag(OverrideActions.delete)]: getDefaultState
+};
 module.exports = OverrideStore;
+
+function updateOverride(payload, state) {
+	return state.merge(payload.override);
+}
 
 function getDefaultState() {
 	return Map({
@@ -27,8 +22,4 @@ function getDefaultState() {
 		length: null,
 		created: null
 	});
-}
-
-function update(data, state) {
-	return state.merge(data);
 }

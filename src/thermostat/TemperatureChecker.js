@@ -7,9 +7,9 @@ module.exports = TemperatureChecker;
 
 TemperatureChecker.prototype.start = function(next) {
 	this.logger.info('Starting temperature checker');
-	this.sensorsSubscriptionKey = this.container.subscribe([
+	this.sensorsSubscriptionKey = this.container.subscribe(this.update.bind(this), [
 		'Zones'
-	], this.update.bind(this));
+	]);
 
 	next();
 };

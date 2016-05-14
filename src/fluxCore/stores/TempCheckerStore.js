@@ -1,23 +1,13 @@
-var Map = require('immutable').Map;
-var TempCheckerActions = require('../actions').TempChecker;
+'use strict';
+const Map = require('immutable').Map;
+const actionTag = require('fluxerino').Utils.actionTag;
+const TempCheckerActions = require('../actions/TempCheckerActions');
 
-function TempCheckerStore(type, payload, state) {
-	if (!state) {
-		state = getDefaultState();
-	}
-
-	switch (type) {
-		case TempCheckerActions.changeTarget.actionType:
-			state = updateTarget(payload.tempChecker, state);
-			break;
-		case TempCheckerActions.updateState.actionType:
-			state = updateState(payload.tempChecker, state);
-			break;
-	}
-
-	return state;
-}
-
+const TempCheckerStore = {
+	'Lifecycle.Init': getDefaultState,
+	[actionTag(TempCheckerActions.changeTarget)]: updateTarget,
+	[actionTag(TempCheckerActions.updateState)]: updateState
+};
 module.exports = TempCheckerStore;
 
 function getDefaultState() {
@@ -30,7 +20,9 @@ function getDefaultState() {
 }
 
 
-function updateState(newState, state) {
+function updateState(payload, state) {
+	const newState = payload.tempChecker;
+
 	if (typeof newState.rising !== 'undefined') {
 		state = state.set('rising', newState.rising);
 	}
@@ -42,7 +34,9 @@ function updateState(newState, state) {
 	return state;
 }
 
-function updateTarget(newTarget, state) {
+function updateTarget(payload, state) {
+	const newTarget = payload.tempChecker;
+
 	if (typeof newTarget.target !== 'undefined') {
 		state = state.set('target', newTarget.target);
 	}

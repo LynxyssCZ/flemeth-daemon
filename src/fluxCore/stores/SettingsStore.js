@@ -1,25 +1,16 @@
-var Map = require('immutable').Map;
-var RootActions = require('../actions').Root;
-var SettingsActions = require('../actions').Settings;
+'use strict';
+const Map = require('immutable').Map;
+const actionTag = require('fluxerino').Utils.actionTag;
+const RootActions = require('../actions/RootActions');
+const SettingsActions = require('../actions/SettingsActions');
 
-function SettingsStore(type, payload, state) {
-	if (!state) {
-		state = getDefaultState();
-	}
-
-	switch (type) {
-		case RootActions.loadFromDB.actionType:
-		case SettingsActions.create.actionType:
-		case SettingsActions.update.actionType:
-			state = updateSettings(payload.settings, state);
-			break;
-		case SettingsActions.delete.actionType:
-			state = deleteSettings(payload.deletedSettings, state);
-			break;
-	}
-
-	return state;
-}
+const SettingsStore = {
+	'Lifecycle.Init': getDefaultState,
+	[actionTag(RootActions.loadFromDB)]: updateSettings,
+	[actionTag(SettingsActions.create)]: updateSettings,
+	[actionTag(SettingsActions.update)]: updateSettings,
+	[actionTag(SettingsActions.delete)]: deleteSettings
+};
 
 module.exports = SettingsStore;
 
@@ -29,18 +20,20 @@ function getDefaultState() {
 	});
 }
 
-function deleteSettings(ids, state) {
-	ids.forEach(function(settingId) {
+function deleteSettings(payload, state) {
+	payload.deletedSettings.forEach(function(settingId) {
 		state = state.delete(settingId);
 	});
 
 	return state;
 }
 
-function updateSettings(settings, state) {
+function updateSettings(payload, state) {
+	const settings = payload.settings;
+
 	if (settings) {
 		settings.forEach(function(setting) {
-			var newSetting;
+			let newSetting;
 			if (state.has(setting.key)) {
 				newSetting = state.get(setting.key).merge(Map(setting));
 			}

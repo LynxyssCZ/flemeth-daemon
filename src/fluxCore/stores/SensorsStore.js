@@ -1,40 +1,30 @@
-var Map = require('immutable').Map;
+'use strict';
+const Map = require('immutable').Map;
+const SensorsActions = require('../actions/SensorsActions');
+const actionTag = require('fluxerino').Utils.actionTag;
+const VALUES = 5;
 
-var VALUES = 5;
+const SensorsStore = {
+	'Lifecycle.Init': function getDefaultState() {
+		return Map();
+	},
+	[actionTag(SensorsActions.readFrame)]: function readFrame(payload, state) {
+		payload.sensors.forEach(function(sensor) {
+			let newSensor;
+			if (sensor && state.has(sensor.sensorId)) {
+				newSensor = updateSensor(state.get(sensor.sensorId), sensor);
+			}
+			else if (sensor) {
+				newSensor = createSensor(sensor);
+			}
 
-function SensorsStore(type, payload, state) {
-	if (!state) {
-		state = getDefaultState();
+			state = state.set(newSensor.get('id'), newSensor);
+		});
+
+		return state;
 	}
-
-	if (type === 'Sensors.readFrame') {
-		state = update(payload.sensors, state);
-	}
-
-	return state;
-}
-
+};
 module.exports = SensorsStore;
-
-function getDefaultState() {
-	return Map();
-}
-
-function update(sensors, state) {
-	sensors.forEach(function(sensor) {
-		var newSensor;
-		if (sensor && state.has(sensor.sensorId)) {
-			newSensor = updateSensor(state.get(sensor.sensorId), sensor);
-		}
-		else if (sensor) {
-			newSensor = createSensor(sensor);
-		}
-
-		state = state.set(newSensor.get('id'), newSensor);
-	});
-
-	return state;
-}
 
 function createSensor(initialData) {
 	return Map({

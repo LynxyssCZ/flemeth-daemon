@@ -21,9 +21,9 @@ SwitcherManager.prototype.start = function (next) {
 		self.setupUnlock(self.lockTime);
 		self.update();
 
-		self.sensorsSubscriptionKey = self.container.subscribe([
+		self.sensorsSubscriptionKey = self.container.subscribe(self.update.bind(self), [
 			'TempChecker', 'Override'
-		], self.update.bind(self));
+		]);
 
 		next(error);
 	});

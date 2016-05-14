@@ -1,29 +1,17 @@
-var Map = require('immutable').Map;
-var RootActions = require('../actions').Root;
-var SchedulesActions = require('../actions').Schedules;
+'use strict';
+const Map = require('immutable').Map;
+const RootActions = require('../actions/RootActions');
+const SchedulesActions = require('../actions/SchedulesActions');
+const actionTag = require('fluxerino').Utils.actionTag;
 
-
-function SchedulesStore(type, payload, state) {
-	if (!state) {
-		state = getDefaultState();
-	}
-
-	switch (type) {
-		case RootActions.loadFromDB.actionType:
-		case SchedulesActions.create.actionType:
-		case SchedulesActions.update.actionType:
-			state = updateSchedules(payload.schedules, state);
-			break;
-		case SchedulesActions.delete.actionType:
-			state = removeSchedules(payload.deletedSchedules, state);
-			break;
-	}
-
-	return state;
-}
-
+const SchedulesStore = {
+	'Lifecycle.Init': getDefaultState,
+	[actionTag(RootActions.loadFromDB)]: updateSchedules,
+	[actionTag(SchedulesActions.create)]: updateSchedules,
+	[actionTag(SchedulesActions.update)]: updateSchedules,
+	[actionTag(SchedulesActions.delete)]: removeSchedules
+};
 module.exports = SchedulesStore;
-
 
 function getDefaultState() {
 	return Map({
@@ -47,10 +35,12 @@ function createSchedule(scheduleData) {
 	});
 }
 
-function updateSchedules(schedules, state) {
+function updateSchedules(payload, state) {
+	const schedules = payload.schedules;
+
 	if (schedules) {
 		schedules.forEach(function(schedule) {
-			var newSchedule;
+			let newSchedule;
 
 			if (state.has(schedule.id)) {
 				newSchedule = state.get(schedule.id).merge(Map(schedule));
@@ -66,8 +56,8 @@ function updateSchedules(schedules, state) {
 	return state;
 }
 
-function removeSchedules(schedules, state) {
-	schedules.forEach(function(scheduleId) {
+function removeSchedules(payload, state) {
+	payload.deletedSchedules.forEach(function(scheduleId) {
 		state = state.delete(scheduleId);
 	});
 

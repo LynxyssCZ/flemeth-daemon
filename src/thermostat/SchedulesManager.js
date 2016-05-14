@@ -11,9 +11,9 @@ module.exports = SchedulesManager;
 SchedulesManager.prototype.start = function(next) {
 	var self = this;
 	this.logger.info('Starting schedules manager');
-	this.sensorsSubscriptionKey = this.container.subscribe([
+	this.sensorsSubscriptionKey = this.container.subscribe(this.update.bind(this), [
 		'Schedules', 'Plans', 'Settings'
-	], this.update.bind(this));
+	]);
 
 	this.updateTaskId = global.setInterval(function() {
 		self.update();
@@ -84,15 +84,20 @@ SchedulesManager.prototype.getCurrentSchedule = function (schedulesSettings, sch
 SchedulesManager.prototype.update = function () {
 	var state = this.container.getSlice(['Schedules', 'Settings', 'TempChecker']),
 		now = new Date(),
+		currentSchedule;
+
+	if (state.Schedules && state.Settings && state.TempChecker) {
 		currentSchedule = this.getCurrentSchedule(state.Settings.get('schedules'), state.Schedules);
 
-	if (!currentSchedule || !currentSchedule.has('changes')) {
-		currentSchedule = state.Schedules.get('default');
+		if (!currentSchedule || !currentSchedule.has('changes')) {
+			currentSchedule = state.Schedules.get('default');
+		}
+
+		var target = this.getTarget(now, currentSchedule);
+
+		if (target.temp !== state.TempChecker.get('target') || target.hyst !== state.TempChecker.get('hysteresis')) {
+			this.container.push(this.container.actions.TempChecker.changeTarget, [target]);
+		}
 	}
 
-	var target = this.getTarget(now, currentSchedule);
-
-	if (target.temp !== state.TempChecker.get('target') || target.hyst !== state.TempChecker.get('hysteresis')) {
-		this.container.push(this.container.actions.TempChecker.changeTarget, [target]);
-	}
 };

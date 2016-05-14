@@ -27,8 +27,9 @@ class Flemeth {
 
 	init(next) {
 		Async.series([
-			this.server.init.bind(this.server),
 			this.initDB.bind(this),
+			this.container.init.bind(this.container),
+			this.server.init.bind(this.server),
 			this.loadPersistance.bind(this)
 		], next);
 	}
@@ -59,7 +60,7 @@ class Flemeth {
 		this.container = new Core({
 			logger: this.logger,
 			db: FlemDb
-		});
+		}, this.logger);
 	}
 
 	loadPersistance(next) {

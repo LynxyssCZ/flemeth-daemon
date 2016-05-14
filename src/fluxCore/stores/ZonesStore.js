@@ -1,31 +1,17 @@
-var Map = require('immutable').Map;
-var ZonesActions = require('../actions').Zones;
-var RootActions = require('../actions').Root;
+'use strict';
+const Map = require('immutable').Map;
+const actionTag = require('fluxerino').Utils.actionTag;
+const ZonesActions = require('../actions/ZonesActions');
+const RootActions = require('../actions/RootActions');
 
-
-function ZonesStore(type, payload, state) {
-	if (!state) {
-		state = getDefaultState();
-	}
-
-	switch (type) {
-		case RootActions.loadFromDB.actionType:
-			state = createZones(payload.zones, state);
-			break;
-		case ZonesActions.update.actionType:
-		case ZonesActions.updateValues.actionType:
-			state = updateZones(payload.zones, state);
-			break;
-		case ZonesActions.create.actionType:
-			state = createZones(payload.zones, state);
-			break;
-		case ZonesActions.delete.actionType:
-			state = deleteZones(payload.deletedZones, state);
-			break;
-	}
-
-	return state;
-}
+const ZonesStore = {
+	'Lifecycle.Init': getDefaultState,
+	[actionTag(RootActions.loadFromDB)]: createZones,
+	[actionTag(ZonesActions.create)]: createZones,
+	[actionTag(ZonesActions.update)]: updateZones,
+	[actionTag(ZonesActions.updateValues)]: updateZones,
+	[actionTag(ZonesActions.delete)]: deleteZones
+};
 module.exports = ZonesStore;
 
 function getDefaultState() {
@@ -39,19 +25,19 @@ function getDefaultState() {
 	});
 }
 
-function deleteZones(zones, state) {
-	zones.forEach(function(zoneId) {
+function deleteZones(payload, state) {
+	payload.deletedZones.forEach(function(zoneId) {
 		state = state.delete(zoneId);
 	});
 
 	return state;
 }
 
-function updateZones(zones, state) {
-	zones.filter(function(zone) {
+function updateZones(payload, state) {
+	payload.zones.filter(function(zone) {
 		return state.has(zone.id);	// Filter only existing zones
 	}).forEach(function(zone) {
-		var newZone = state.get(zone.id).merge(Map(zone));
+		const newZone = state.get(zone.id).merge(Map(zone));
 
 		state = state.set(newZone.get('id'), newZone);
 	});
@@ -59,9 +45,11 @@ function updateZones(zones, state) {
 	return state;
 }
 
-function createZones(zones, state) {
+function createZones(payload, state) {
+	const zones = payload.zones;
+
 	return zones.reduce(function(zones, zoneData) {
-		var newZone = createZone(zoneData);
+		const newZone = createZone(zoneData);
 
 		return zones.set(newZone.get('id'), newZone);
 	}, state);

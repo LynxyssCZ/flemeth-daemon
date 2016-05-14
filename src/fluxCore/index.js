@@ -1,17 +1,28 @@
 'use strict';
-var Fluxerino = require('fluxerino');
-var actions = require('./actions');
+const Fluxerino = require('fluxerino');
+const actions = require('./actions');
+const stores = require('./stores');
+
 
 class Container extends Fluxerino.Container {
-	constructor(context) {
+	constructor(context, logger) {
 		super(context);
 
+		this.logger = logger.child({component: 'FluxCore'});
 		this.actions = actions;
-		this.init();
+
+		Object.keys(stores).forEach(function registerStore(storeKey) {
+			this.addStore(storeKey, stores[storeKey]);
+		}, this);
 	}
 
-	init() {
-		this.push('Lifecycle.Init');
+	init(next) {
+		this.push('Lifecycle.Init', [], next);
+	}
+
+	onTransactionProgress(transaction) {
+		this.logger.debug(transaction.type, transaction.payload);
+		super.onTransactionProgress(transaction);
 	}
 }
 

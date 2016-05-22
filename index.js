@@ -1,34 +1,28 @@
+'use strict';
 require('dotenv').load();
-var bunyan = require('bunyan');
-var Async = require('async');
-var FlemethSettings = require('./flemethSettings');
-var Flemeth = require('./src');
 
-var log = bunyan.createLogger({name: 'Flemeth', level: process.env.LOG_LEVEL});
-var settings = new FlemethSettings({
-	logger: log,
-	mockGpio: process.env.MOCK_GPIO === 'true'
+const bunyan = require('bunyan');
+const Async = require('async');
+
+const FlemethSettings = require('./flemethSettings');
+const Flemeth = require('./src');
+
+const log = bunyan.createLogger({name: 'Flemeth', level: process.env.LOG_LEVEL});
+const settings = new FlemethSettings({
+	logger: log
 });
 
-// TODO: Load settings from file or so
-var flemeth = new Flemeth(settings.get());
+const flemeth = new Flemeth(settings.get());
 
-var clear = function() {
+const clear = function() {
 	flemeth.stop(function() {
 		log.info('All Stopped');
-		settings.destroy();
-		log.info('Settings destroyed, the way is clear, Flemeth is exiting.');
+		log.info('The way is clear, Flemeth is exiting.');
 		process.exit();
 	});
 };
-process.on('SIGINT', clear);
-process.on('uncaughtException', function (err) {
-	log.error('Some unexpected error occured', err);
-	log.error(err.stack);
-	clear();
-});
 
-var start = function() {
+const start = function() {
 	Async.series([
 		flemeth.init.bind(flemeth),
 		flemeth.start.bind(flemeth)
@@ -42,5 +36,12 @@ var start = function() {
 		}
 	});
 };
+
+process.on('SIGINT', clear);
+process.on('uncaughtException', function (err) {
+	log.error('Some unexpected error occured', err);
+	log.error(err.stack);
+	clear();
+});
 
 start();

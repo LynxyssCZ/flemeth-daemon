@@ -1,7 +1,7 @@
 'use strict';
 const Map = require('immutable').Map;
 const actionTag = require('fluxerino').Utils.actionTag;
-const RootActions = require('../actions/RootActions');
+const RootActions = require('../../RootActions');
 const SettingsActions = require('../actions/SettingsActions');
 
 const SettingsStore = {

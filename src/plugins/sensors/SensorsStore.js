@@ -1,6 +1,6 @@
 'use strict';
 const Map = require('immutable').Map;
-const SensorsActions = require('../actions/SensorsActions');
+const SensorsActions = require('./SensorsActions');
 const actionTag = require('fluxerino').Utils.actionTag;
 const VALUES = 5;
 

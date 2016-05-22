@@ -2,7 +2,7 @@
 const Map = require('immutable').Map;
 const actionTag = require('fluxerino').Utils.actionTag;
 const ZonesActions = require('../actions/ZonesActions');
-const RootActions = require('../actions/RootActions');
+const RootActions = require('../../RootActions');
 
 const ZonesStore = {
 	'Lifecycle.Init': getDefaultState,

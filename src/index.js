@@ -1,36 +1,40 @@
 'use strict';
-var assign = require('object-assign');
-var Async = require('async');
-var Core = require('./fluxCore');
-var Server = require('./server');
-var Thermostat = require('./thermostat');
-var FlemDb = require('./db');
+const Async = require('async');
+const FluxCore = require('./fluxCore');
+const Server = require('./Server');
+const FlemDb = require('./db');
+const plugins = require('./plugins');
+const RootActions = require('./RootActions');
 
-class Flemeth {
+const RinCore = require('./RinCore');
+
+class Flemeth extends RinCore{
 	constructor(options) {
-		this.logger = options.logger;
-		this.createContainer();
-		this.dbOptions = options.db;
+		const flemDb = new FlemDb(options.db);
+		const fluxCore = new FluxCore({
+			logger: options.logger,
+			db: flemDb
+		}, options.logger);
 
-		this.thermostat = new Thermostat(assign({
-			logger: this.logger,
-			container: this.container,
-			db: FlemDb
-		}, options.thermostat));
-
-		this.server = new Server(assign({
-			logger: this.logger,
-			container: this.container,
-			db: FlemDb
-		}, options.server));
+		super({
+			flux: fluxCore,
+			db: flemDb,
+			server: new Server(Object.assign({
+				logger: options.logger,
+				container: fluxCore,
+				db: flemDb
+			}, options.server)),
+			logger: options.logger
+		});
 	}
 
 	init(next) {
 		Async.series([
-			this.initDB.bind(this),
-			this.container.init.bind(this.container),
-			this.server.init.bind(this.server),
-			this.loadPersistance.bind(this)
+			this.server.init.bind(this.server),	// Init server, just register some internal plugins onto it
+			this.registerPlugin.bind(this),		// Plugins first, they register flux stores and db tables
+			this.db.init.bind(this.db),			// Init the DB, run the migrations loop
+			this.flux.init.bind(this.flux),		// Init the fluxcore, this puts state
+			this.loadPersistance.bind(this)		// Collect and load persisting data into stores
 		], next);
 	}
 
@@ -38,8 +42,8 @@ class Flemeth {
 		this.logger.info('Flemeth daemon starting');
 
 		Async.series([
-			this.thermostat.start.bind(this.thermostat),
-			this.server.start.bind(this.server)
+			this.server.start.bind(this.server),
+			super.start.bind(this)
 		], next);
 	}
 
@@ -47,24 +51,46 @@ class Flemeth {
 		this.logger.info('Flemeth daemon stoping.');
 
 		Async.series([
-			this.thermostat.stop.bind(this.thermostat),
-			this.server.stop.bind(this.server)
+			this.server.stop.bind(this.server),
+			super.stop.bind(this)
 		], next);
 	}
 
-	initDB(next) {
-		return FlemDb.config(this.dbOptions, next);
-	}
+	registerPlugin(next) {
+		super.register([{
+			name: 'FlemethApi',
+			class: plugins.FlemethApi,
+			options: {
+				apiPrefix: '/api'
+			}
+		}, {
+			name: 'ApiDocs',
+			class: plugins.ApiDocs,
+			options: {
+				apiTags: plugins.FlemethApi.attributes.swaggerSpecs.tags,
+				apiPrefix: '/api',
+				apiVersion: plugins.FlemethApi.attributes.version
+			}
+		}, {
+			name: 'Thermostat',
+			class: plugins.Thermostat,
+			options: {
 
-	createContainer() {
-		this.container = new Core({
-			logger: this.logger,
-			db: FlemDb
-		}, this.logger);
+			}
+		}], next);
 	}
 
 	loadPersistance(next) {
-		this.container.push(this.container.actions.Root.loadFromDB, [], next);
+		this.flux.push(RootActions.loadFromDB, [[{
+			modelName: 'Settings',
+			key: 'settings'
+		}, {
+			modelName: 'Zones',
+			key: 'zones'
+		}, {
+			modelName: 'Schedules',
+			key: 'schedules'
+		}]], next);
 	}
 }
 

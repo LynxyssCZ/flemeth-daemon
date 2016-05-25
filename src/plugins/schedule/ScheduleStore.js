@@ -1,15 +1,14 @@
 'use strict';
 const Map = require('immutable').Map;
-const RootActions = require('../../RootActions');
-const SchedulesActions = require('../actions/SchedulesActions');
+const ScheduleActions = require('./ScheduleActions');
 const actionTag = require('fluxerino').Utils.actionTag;
 
 const SchedulesStore = {
 	'Lifecycle.Init': getDefaultState,
-	[actionTag(RootActions.loadFromDB)]: updateSchedules,
-	[actionTag(SchedulesActions.create)]: updateSchedules,
-	[actionTag(SchedulesActions.update)]: updateSchedules,
-	[actionTag(SchedulesActions.delete)]: removeSchedules
+	'Flemeth.loadFromDB': updateSchedules,
+	[actionTag(ScheduleActions.create)]: updateSchedules,
+	[actionTag(ScheduleActions.update)]: updateSchedules,
+	[actionTag(ScheduleActions.delete)]: removeSchedules
 };
 module.exports = SchedulesStore;
 

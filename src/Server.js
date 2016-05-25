@@ -4,14 +4,8 @@ var Hapi = require('hapi');
 class Server {
 	constructor(options) {
 		this.logger = options.logger.child({component: 'Server'});
-		this.container = options.container;
-
 		this.server = new Hapi.Server(options.serverConfig);
 		this.server.connection(options.connection);
-
-		// TODO: Ponder the idea of pairing server to core app in there
-		this.server.app.container = options.container;
-		this.server.app.db = options.db;
 	}
 
 	init(next) {
@@ -24,14 +18,14 @@ class Server {
 	}
 
 	start(next) {
-		this.logger.info('Server starting');
+		this.logger.info('Starting');
 		this.server.start(function (err) {
 			next(err);
 		});
 	}
 
 	stop(next) {
-		this.logger.info('Server stoping');
+		this.logger.info('Stoping');
 		this.server.stop(function(err) {
 			next(err);
 		});

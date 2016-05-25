@@ -1,17 +1,24 @@
-module.exports = {
-	loadFromDB: function loadFromDB(persistentStores) {
-		return Promise.all(
-			persistentStores.map((store) => {
-				return fetchCollection(this.db, store.modelName);
-			})
-		).then((values) => {
-			return values.reduce((values, value, index) => {
-				values[persistentStores[index].key] = value;
+'use strict';
+const actionTag = require('fluxerino').Utils.actionTag;
 
-				return values;
-			}, {});
-		});
-	}
+const loadFromDB = function loadFromDB(persistentStores) {
+	return Promise.all(
+		persistentStores.map((store) => {
+			return fetchCollection(this.db, store.modelName);
+		})
+	).then((values) => {
+		return values.reduce((values, value, index) => {
+			values[persistentStores[index].key] = value;
+
+			return values;
+		}, {});
+	});
+};
+
+actionTag(loadFromDB, 'Flemeth.loadFromDB');
+
+module.exports = {
+	loadFromDB: loadFromDB
 };
 
 function fetchCollection(db, modelName) {

@@ -1,7 +1,7 @@
 module.exports = {
 	Override: require('./OverrideActions'),
 	Root: require('./RootActions'),
-	Schedules: require('./SchedulesActions'),
+	// Schedules: require('./SchedulesActions'),
 	// Sensors: require('./SensorsActions'),
 	Snapshots: require('./SnapshotsActions'),
 	Settings: require('./SettingsActions'),

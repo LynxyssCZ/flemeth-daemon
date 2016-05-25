@@ -1,12 +1,12 @@
 'use strict';
 const Async = require('async');
-const FluxCore = require('./fluxCore');
+const FluxCore = require('./FluxCore');
+const FlemDb = require('./FlemDb');
 const Server = require('./Server');
-const FlemDb = require('./db');
+const RinCore = require('./RinCore');
+
 const plugins = require('./plugins');
 const RootActions = require('./RootActions');
-
-const RinCore = require('./RinCore');
 
 class Flemeth extends RinCore{
 	constructor(options) {
@@ -26,14 +26,17 @@ class Flemeth extends RinCore{
 			}, options.server)),
 			logger: options.logger
 		});
+
+		this.persistance_info = [];
+		this.addMethod('core.addPersistance', this.addPersistance.bind(this));
 	}
 
 	init(next) {
 		Async.series([
 			this.server.init.bind(this.server),	// Init server, just register some internal plugins onto it
-			this.registerPlugin.bind(this),		// Plugins first, they register flux stores and db tables
+			this.registerPlugins.bind(this),	// Plugins first, they register flux stores and db tables
 			this.db.init.bind(this.db),			// Init the DB, run the migrations loop
-			this.flux.init.bind(this.flux),		// Init the fluxcore, this puts state
+			this.flux.init.bind(this.flux),		// Init the fluxcore, this flushes stores with init action
 			this.loadPersistance.bind(this)		// Collect and load persisting data into stores
 		], next);
 	}
@@ -56,7 +59,14 @@ class Flemeth extends RinCore{
 		], next);
 	}
 
-	registerPlugin(next) {
+	addPersistance(modelName, storeKey) {
+		this.persistance_info.push({
+			modelName: modelName,
+			key: storeKey
+		});
+	}
+
+	registerPlugins(next) {
 		super.register([{
 			name: 'FlemethApi',
 			class: plugins.FlemethApi,
@@ -81,16 +91,12 @@ class Flemeth extends RinCore{
 	}
 
 	loadPersistance(next) {
-		this.flux.push(RootActions.loadFromDB, [[{
-			modelName: 'Settings',
-			key: 'settings'
-		}, {
-			modelName: 'Zones',
-			key: 'zones'
-		}, {
-			modelName: 'Schedules',
-			key: 'schedules'
-		}]], next);
+		if (this.persistance_info.length) {
+			this.flux.push(RootActions.loadFromDB, [this.persistance_info], next);
+		}
+		else {
+			next();
+		}
 	}
 }
 

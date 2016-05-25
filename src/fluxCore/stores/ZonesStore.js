@@ -2,11 +2,10 @@
 const Map = require('immutable').Map;
 const actionTag = require('fluxerino').Utils.actionTag;
 const ZonesActions = require('../actions/ZonesActions');
-const RootActions = require('../../RootActions');
 
 const ZonesStore = {
 	'Lifecycle.Init': getDefaultState,
-	[actionTag(RootActions.loadFromDB)]: createZones,
+	'Flemeth.loadFromDB': createZones,
 	[actionTag(ZonesActions.create)]: createZones,
 	[actionTag(ZonesActions.update)]: updateZones,
 	[actionTag(ZonesActions.updateValues)]: updateZones,

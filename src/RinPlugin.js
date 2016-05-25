@@ -7,11 +7,9 @@ class RinPlugin {
 		this.app = app;
 
 		// Properties from app
-		this.db = app.db;
-		this.flux = app.flux;
-		this.server = app.server;
-		this.logger = app.logger;
+		Object.assign(this, app.appContext);
 		this.plugins = app.plugins;
+		this.methods = app.methods;
 	}
 
 	getChild(plugin) {
@@ -28,22 +26,6 @@ class RinPlugin {
 			this.app.registering = false;
 			next(err);
 		});
-	}
-
-	registerStore(key, store) {
-		if (!this.app.registering) {
-			throw new Error('Adding stores is allowed only in init phase');
-		}
-
-		this.app.registerStore(key, store);
-	}
-
-	registerTable(name, model, migrationsDir) {
-		if (!this.app.registering) {
-			throw new Error('Adding tables is allowed only in init phase');
-		}
-
-		this.app.registerTable(name, model, migrationsDir);
 	}
 
 	addHook(event, handler) {

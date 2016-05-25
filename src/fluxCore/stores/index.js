@@ -1,6 +1,6 @@
 module.exports = {
 	Override: require('./OverrideStore'),
-	Schedules: require('./SchedulesStore'),
+	// Schedules: require('./SchedulesStore'),
 	// Sensors: require('./SensorsStore'),
 	Settings: require('./SettingsStore'),
 	Switcher: require('./SwitcherStore'),

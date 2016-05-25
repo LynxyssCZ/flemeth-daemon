@@ -1,12 +1,11 @@
 'use strict';
 const Map = require('immutable').Map;
 const actionTag = require('fluxerino').Utils.actionTag;
-const RootActions = require('../../RootActions');
 const SettingsActions = require('../actions/SettingsActions');
 
 const SettingsStore = {
 	'Lifecycle.Init': getDefaultState,
-	[actionTag(RootActions.loadFromDB)]: updateSettings,
+	'Flemeth.loadFromDB': updateSettings,
 	[actionTag(SettingsActions.create)]: updateSettings,
 	[actionTag(SettingsActions.update)]: updateSettings,
 	[actionTag(SettingsActions.delete)]: deleteSettings

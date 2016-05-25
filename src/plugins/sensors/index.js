@@ -7,7 +7,7 @@ class SensorsManager {
 		this.logger = app.logger.child({component: 'SensorsManager'});
 		this.flux = app.flux;
 		app.addMethod('sensors.readFrame', this.readSensorFrame.bind(this));
-		app.registerStore('Sensors', store);
+		app.flux.addStore('Sensors', store);
 	}
 
 	readSensorFrame(reader, frame, next) {

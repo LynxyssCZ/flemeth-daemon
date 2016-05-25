@@ -14,8 +14,8 @@ class Thermostat {
 			name: 'zonesManager',
 			class: require('./zones')
 		}, {
-			name: 'schedulesManager',
-			class: require('./schedules'),
+			name: 'scheduleManager',
+			class: require('./schedule'),
 			options: {
 				updatePeriod: this.options.updatePeriod
 			}

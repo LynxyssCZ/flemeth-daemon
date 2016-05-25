@@ -4,10 +4,7 @@ const RinPlugin = require('./RinPlugin');
 
 class RinCore {
 	constructor(context) {
-		this.db = context.db;
-		this.flux = context.flux;
-		this.server = context.server;
-		this.logger = context.logger;
+		this.appContext = context || {};
 		this.registeredPlugins = {};
 		this.plugins = {};
 		this.methods = {};
@@ -17,6 +14,8 @@ class RinCore {
 		};
 
 		this.rootPlugin = new RinPlugin(this, '');
+
+		Object.assign(this, context);
 	}
 
 	start(next) {
@@ -39,14 +38,6 @@ class RinCore {
 
 	register(plugins, next) {
 		return this.rootPlugin.register(plugins, next);
-	}
-
-	registerStore(key, store) {
-		this.flux.addStore(key, store);
-	}
-
-	registerTable(name, model, migrationsDir) {
-		this.db.registerTable(name, model, migrationsDir);
 	}
 
 	addHook(event, handler) {

@@ -34,7 +34,7 @@
     "hapi-swaggered": "^2.6.0",
     "hapi-swaggered-ui": "^2.3.1",
     "immutable": "^3.8.1",
-    "inert": "^3.2.1",
+    "inert": "^4.0.0",
     "joi": "^8.1.0",
     "knex": "^0.11.3",
     "mocha": "^2.4.5",
@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "chai": "^3.4.1",
-    "eslint": "^1.10.2",
+    "eslint": "^2.10.2",
     "gulp": "^3.9.0",
     "mocha": "^2.4.5"
   }

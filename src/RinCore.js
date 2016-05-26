@@ -5,7 +5,9 @@ const RinPlugin = require('./RinPlugin');
 class RinCore {
 	constructor(context) {
 		this.appContext = context || {};
-		this.registeredPlugins = {};
+		this.pluginInstances = {};
+		this.extensionsLog = [];
+
 		this.plugins = {};
 		this.methods = {};
 		this.hooks = {
@@ -13,8 +15,7 @@ class RinCore {
 			'lifecycle.stop': []
 		};
 
-		this.rootPlugin = new RinPlugin(this, '');
-
+		this.rootPlugin = new RinPlugin(this, '', context);
 		Object.assign(this, context);
 	}
 
@@ -40,17 +41,20 @@ class RinCore {
 		return this.rootPlugin.register(plugins, next);
 	}
 
-	addHook(event, handler) {
+	addHook(event, handler, plugin) {
 		if (!this.hooks.hasOwnProperty(event)) {
 			this.hooks[event] = new Array();
 		}
 
 		this.hooks[event].push(handler);
+		this.logPluginExtension(plugin, 'hook', event);
 	}
 
-	addMethod(name, method) {
+	addMethod(name, method, plugin) {
 		const path = name.split('.');
 		const length = path.length;
+
+		this.logPluginExtension(plugin, 'method', name);
 
 		return path.reduce((stub, key, index) => {
 			if (!stub.hasOwnProperty(key)) {
@@ -67,6 +71,15 @@ class RinCore {
 		}
 
 		this.plugins[plugin][key] = value;
+		this.logPluginExtension(plugin, 'value', key);
+	}
+
+	logPluginExtension(pluginName, extensionType, extensionValue) {
+		this.extensionsLog.push({
+			source: pluginName,
+			type: extensionType,
+			value: extensionValue
+		});
 	}
 }
 

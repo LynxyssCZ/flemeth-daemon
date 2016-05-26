@@ -35,7 +35,7 @@ class FlemethApi {
 		this.logger.debug({
 			method: 'api.addEndpoint',
 			endpoint: endpoint
-		});
+		}, 'Endpoint registered');
 
 		this.server.route(this.getRoutes(
 			definition,

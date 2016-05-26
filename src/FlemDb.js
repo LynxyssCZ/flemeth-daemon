@@ -2,23 +2,40 @@
 const Knex = require('knex');
 const Bookshelf = require('bookshelf');
 
+// IDEA: Plugin-ize DB, server and Flux core
 class FlemDB {
-	constructor(knexConfig) {
-		this.knex = new Knex(knexConfig);
+	constructor(knexConfig, logger) {
+		this.logger = logger.child({component: 'FlemDB'});
+		this.knexConfig = knexConfig;
+
+		this.knex = new Knex(this.knexConfig);
+
 		this.bookshelf = Bookshelf(this.knex);
 		this.bookshelf.plugin(['virtuals', 'registry', 'visibility', 'bookshelf-camelcase']);
+
 		this.models = {};
 	}
 
 	init(next) {
+		if (this.knex === undefined) {
+			this.knex = new Knex(this.knexConfig);
+			this.bookshelf.knex = this.knex;
+		}
+
 		return this._upgradeAllSchemas()
-			.then(function() {
+			.then(() => {
+				this.logger.info('Initialized');
 				next(null);
 			}).catch(next);
 	}
 
-	stop() {
+	stop(next) {
+		this.logger.info('Cleaning up');
+
 		this.knex.destroy();
+		this.knex = undefined;
+
+		next();
 	}
 
 	getModel(name) {

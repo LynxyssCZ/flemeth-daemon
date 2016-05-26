@@ -10,7 +10,7 @@ const RootActions = require('./RootActions');
 
 class Flemeth extends RinCore{
 	constructor(options) {
-		const flemDb = new FlemDb(options.db);
+		const flemDb = new FlemDb(options.db, options.logger);
 		const fluxCore = new FluxCore({
 			logger: options.logger,
 			db: flemDb
@@ -20,9 +20,7 @@ class Flemeth extends RinCore{
 			flux: fluxCore,
 			db: flemDb,
 			server: new Server(Object.assign({
-				logger: options.logger,
-				container: fluxCore,
-				db: flemDb
+				logger: options.logger
 			}, options.server)),
 			logger: options.logger
 		});
@@ -43,6 +41,10 @@ class Flemeth extends RinCore{
 
 	start(next) {
 		this.logger.info('Flemeth daemon starting');
+		this.logger.debug({
+			registeredPlugins: Object.keys(this.pluginInstances),
+			coreExtensions: this.extensionsLog
+		}, 'Extension data');
 
 		Async.series([
 			this.server.start.bind(this.server),
@@ -54,6 +56,7 @@ class Flemeth extends RinCore{
 		this.logger.info('Flemeth daemon stoping.');
 
 		Async.series([
+			this.db.stop.bind(this.db),
 			this.server.stop.bind(this.server),
 			super.stop.bind(this)
 		], next);

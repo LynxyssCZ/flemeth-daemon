@@ -2,18 +2,21 @@
 const Async = require('async');
 
 class RinPlugin {
-	constructor(app, name) {
+	constructor(app, name, appContext) {
 		this.name = name;
 		this.app = app;
 
 		// Properties from app
-		Object.assign(this, app.appContext);
+		Object.assign(this, appContext);
+		this._appContext = appContext;
+
+		// Exposed stuff
 		this.plugins = app.plugins;
 		this.methods = app.methods;
 	}
 
 	getChild(plugin) {
-		return new RinPlugin(this.app, plugin);
+		return new RinPlugin(this.app, plugin, this._appContext);
 	}
 
 	register(plugins, next) {
@@ -28,12 +31,17 @@ class RinPlugin {
 		});
 	}
 
+	mergeContext(newContext) {
+		this._appContext = Object.assign({}, this._appContext, newContext);
+		Object.assign(this, this._appContext);
+	}
+
 	addHook(event, handler) {
 		if (!this.app.registering) {
 			throw new Error('Adding hooks is allowed only in init phase');
 		}
 
-		this.app.addHook(event, handler);
+		this.app.addHook(event, handler, this.name);
 	}
 
 	addMethod(name, method) {
@@ -41,7 +49,7 @@ class RinPlugin {
 			throw new Error('Adding methods is allowed only in init phase');
 		}
 
-		this.app.addMethod(name, method);
+		this.app.addMethod(name, method, this.name);
 	}
 
 	expose(key, value) {
@@ -53,10 +61,14 @@ class RinPlugin {
 	}
 
 	_registerPlugin(plugin, next) {
+		if (this.app.pluginInstances[plugin.name]) {
+			throw new Error('Registering plugins multiple times is not supported');
+		}
+
 		if (plugin.class && plugin.name) {
 			const pluginInstance = new plugin.class(this.getChild(plugin.name), plugin.options);
 
-			this.app.registeredPlugins[plugin.name] = pluginInstance;
+			this.app.pluginInstances[plugin.name] = pluginInstance;
 
 			if (pluginInstance.init) {
 				pluginInstance.init(next);

@@ -18,6 +18,9 @@ class ScheduleManager {
 		app.db.registerModel('Change', changeModel);
 		this.app.methods.api.addEndpoint('schedule', ScheduleApi);
 
+		this.app.addHook('lifecycle.start', this.onAppStart.bind(this));
+		this.app.addHook('lifecycle.stop', this.onAppStop.bind(this));
+
 		this.updatePeriod = options.updatePeriod;
 		this.updateTaskId = null;
 	}
@@ -38,12 +41,16 @@ class ScheduleManager {
 	}
 
 	// Hooks
-	onAppstart(next) {
+	onAppStart(payload, next) {
+		this.logger.info('Starting');
 
+		next();
 	}
 
-	onAppEnd(next) {
+	onAppStop(payload, next) {
+		this.logger.info('Stopping');
 
+		next();
 	}
 
 	updateTarget() {

@@ -5,7 +5,5 @@ module.exports = {
 	connection: {
 		filename: path.join(__dirname, 'databases/flemeth.sqlite')
 	},
-	migrations: {
-		tableName: 'knex_migrations'
-	}
+	useNullAsDefault: true
 };

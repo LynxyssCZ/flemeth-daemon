@@ -11,6 +11,14 @@ class Container extends Fluxerino.Container {
 	init(next) {
 		this.push('Lifecycle.Init', [], next);
 	}
+
+	addStore(key, store) {
+		this.logger.debug({
+			key: key
+		}, 'Store registered');
+
+		super.addStore(key, store);
+	}
 }
 
 module.exports = Container;

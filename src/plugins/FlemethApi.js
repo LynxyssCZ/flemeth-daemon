@@ -15,7 +15,7 @@ class FlemethApi {
 
 	init(next) {
 		this.logger.info('Initializing');
-		this.app.server.register([{
+		this.app.methods.server.register([{
 			register: this.registerToServer
 		}], next);
 	}
@@ -23,8 +23,8 @@ class FlemethApi {
 	registerToServer(server, options, next) {
 		server.bind({
 			app: this.app,
-			flux: this.app.flux,
-			db: this.app.db
+			flux: this.app.methods.flux,
+			db: this.app.methods.db
 		});
 
 		this.server = server;

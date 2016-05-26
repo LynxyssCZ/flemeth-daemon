@@ -2,10 +2,16 @@
 var Hapi = require('hapi');
 
 class Server {
-	constructor(options) {
-		this.logger = options.logger.child({component: 'Server'});
+	constructor(app, options) {
+		this.logger = app.logger.child({component: 'Server'});
+		this.app = app;
+
 		this.server = new Hapi.Server(options.serverConfig);
 		this.server.connection(options.connection);
+
+		this.app.addMethod('server.register', this.register.bind(this));
+		this.app.addHook('core.startInternals', this.onAppStart.bind(this));
+		this.app.addHook('lifecycle.stop', this.onAppStop.bind(this));
 	}
 
 	init(next) {
@@ -17,14 +23,14 @@ class Server {
 		}, next);
 	}
 
-	start(next) {
+	onAppStart(payload, next) {
 		this.logger.info('Starting');
 		this.server.start(function (err) {
 			next(err);
 		});
 	}
 
-	stop(next) {
+	onAppStop(payload, next) {
 		this.logger.info('Stoping');
 		this.server.stop(function(err) {
 			next(err);

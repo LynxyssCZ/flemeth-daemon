@@ -11,7 +11,7 @@ module.exports = function register(Bookshelf) {
 		table.increments('id').primary();
 		table.integer('day');
 		table.integer('start_time');
-		table.integer('length');
+		table.integer('change_length');
 		table.float('new_temp');
 		table.float('new_hyst');
 		table.boolean('is_active');

@@ -5,9 +5,11 @@ const store = require('./SensorsStore');
 class SensorsManager {
 	constructor(app) {
 		this.logger = app.logger.child({component: 'SensorsManager'});
-		this.flux = app.flux;
+		this.flux = app.methods.flux;
+
+		app.methods.flux.addStore('Sensors', store);
+
 		app.addMethod('sensors.readFrame', this.readSensorFrame.bind(this));
-		app.flux.addStore('Sensors', store);
 	}
 
 	readSensorFrame(reader, frame, next) {

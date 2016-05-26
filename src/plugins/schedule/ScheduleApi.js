@@ -2,27 +2,58 @@
 const Joi = require('joi');
 const Boom = require('boom');
 
-const temperature = Joi.number().min(7).precision(1).max(38);
-const hysteresis = Joi.number().precision(2).min(0).max(5).default(2);
-
 const simpleChangeSchema = Joi.object().meta({ className: 'Change' }).keys({
-	newTemp: temperature.optional(),
-	newHyst: hysteresis.optional(),
-	length: Joi.number().integer().positive().max(45).default(15),
+	newTemp: Joi.number().min(7).precision(1).max(38).optional().default(21.5),
+	newHyst: Joi.number().precision(2).min(0).max(5).optional().default(2),
+	changeLength: Joi.number().integer().positive().max(45).default(15),
+	isActive: Joi.boolean().default(true),
 	tag: Joi.string().optional()
 }).or('newTemp', 'newHyst');
 
 const handlers = {
 	getRaw: function(req, reply) {
 		return reply({
-			schedule: this.flux.getSlice('Schedule').toArray()
+			schedule: this.flux.getSlice('Schedule').toJS()
 		});
 	},
 	insert: function insertChange(req, reply) {
-		return reply(Boom.notImplemented());
+		const change = req.payload;
+		const day = req.params.day;
+		const startTime = req.params.startTime;
+
+		return this.app.methods.schedule.insert(Object.assign({
+			day: day,
+			startTime: startTime
+		}, change), (error, payload) => {
+			if (!error) {
+				return reply({
+					msg: 'OK',
+					scheduleChanges: payload.scheduleChanges
+				}).code(201);
+			}
+			else {
+				return reply(Boom.wrap(error, 500));
+			}
+		});
 	},
 	remove: function removeChange(req, reply) {
-		return reply(Boom.notImplemented());
+		const day = req.params.day;
+		const startTime = req.params.startTime;
+
+		return this.app.methods.schedule.remove({
+			day: day,
+			startTime: startTime
+		}, (error, payload) => {
+			if (!error) {
+				return reply({
+					msg: 'OK',
+					deletedScheduleChanges: payload.deletedScheduleChanges
+				}).code(201);
+			}
+			else {
+				return reply(Boom.wrap(error, 500));
+			}
+		});
 	}
 };
 
@@ -39,7 +70,7 @@ module.exports = {
 			}
 		},
 		{
-			path: '/{day}/{time}/',
+			path: '/{day}/{startTime}/',
 			method: 'PUT',
 			handler: handlers.insert,
 			config: {
@@ -48,14 +79,14 @@ module.exports = {
 				validate: {
 					params: {
 						day: Joi.number().min(0).max(6).required(),
-						time: Joi.number().min(0).max(1439).required()
+						startTime: Joi.number().min(0).max(1439).required()
 					},
 					payload: simpleChangeSchema
 				}
 			}
 		},
 		{
-			path: '/{day}/{time}/',
+			path: '/{day}/{startTime}/',
 			method: 'DELETE',
 			handler: handlers.remove,
 			config: {
@@ -64,9 +95,8 @@ module.exports = {
 				validate: {
 					params: {
 						day: Joi.number().min(0).max(6).required(),
-						time: Joi.number().min(0).max(1439).required()
-					},
-					payload: simpleChangeSchema
+						startTime: Joi.number().min(0).max(1439).required()
+					}
 				}
 			}
 		}

@@ -7,7 +7,7 @@ class ApiDocs {
 
 	init(next) {
 		this.logger.info('Initializing');
-		this.app.server.register([
+		this.app.methods.server.register([
 			require('vision'),
 			require('inert'),
 			{

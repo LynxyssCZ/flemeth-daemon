@@ -4,32 +4,39 @@ const Bookshelf = require('bookshelf');
 
 // IDEA: Plugin-ize DB, server and Flux core
 class FlemDB {
-	constructor(knexConfig, logger) {
-		this.logger = logger.child({component: 'FlemDB'});
-		this.knexConfig = knexConfig;
+	constructor(app, options) {
+		this.app = app;
+		this.logger = app.logger.child({component: 'FlemDB'});
+		this.knexConfig = options;
+		this.models = {};
 
 		this.knex = new Knex(this.knexConfig);
-
 		this.bookshelf = Bookshelf(this.knex);
 		this.bookshelf.plugin(['virtuals', 'registry', 'visibility', 'bookshelf-camelcase']);
 
-		this.models = {};
+		this.app.addMethod('db.registerModel', this.registerModel.bind(this));
+		this.app.addMethod('db.getModel', this.getModel.bind(this));
+		this.app.addMethod('db.getCollection', this.getCollection.bind(this));
+		this.app.addHook('core.startInternals', this.onAppStart.bind(this));
+		this.app.addHook('lifecycle.stop', this.onAppStop.bind(this));
 	}
 
-	init(next) {
+	onAppStart(payload, next) {
+		this.logger.info('Starting migrations');
+
 		if (this.knex === undefined) {
 			this.knex = new Knex(this.knexConfig);
 			this.bookshelf.knex = this.knex;
 		}
 
 		return this._upgradeAllSchemas()
-			.then(() => {
-				this.logger.info('Initialized');
-				next(null);
-			}).catch(next);
+		.then(() => {
+			this.logger.info('Migrations done');
+			next(null);
+		}).catch(next);
 	}
 
-	stop(next) {
+	onAppStop(paylod, next) {
 		this.logger.info('Cleaning up');
 
 		this.knex.destroy();

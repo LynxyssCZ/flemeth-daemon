@@ -5,60 +5,66 @@ const actionTag = require('fluxerino').Utils.actionTag;
 
 const SchedulesStore = {
 	'Lifecycle.Init': getDefaultState,
-	'Flemeth.loadFromDB': updateSchedules,
-	[actionTag(ScheduleActions.create)]: updateSchedules,
-	[actionTag(ScheduleActions.update)]: updateSchedules,
-	[actionTag(ScheduleActions.delete)]: removeSchedules
+	'Flemeth.loadFromDB': updateSchedule,
+	[actionTag(ScheduleActions.insert)]: updateSchedule,
+	[actionTag(ScheduleActions.delete)]: removechanges
 };
 module.exports = SchedulesStore;
 
+
 function getDefaultState() {
 	return Map({
-		default: createSchedule({
-			id: 'default',
-			name: 'default',
-			startTemp: 20.5,
-			startHyst: 2,
-			changes: [[], [], [], [], [], [], []]
-		})
+		0: Map({}),
+		1: Map({}),
+		2: Map({}),
+		3: Map({}),
+		4: Map({}),
+		5: Map({}),
+		6: Map({})
 	});
 }
 
-function createSchedule(scheduleData) {
+function createChange(changeData) {
 	return Map({
-		id: scheduleData.id.toString(),
-		name: scheduleData.name,
-		startTemp: scheduleData.startTemp,
-		startHyst: scheduleData.startHyst,
-		changes: scheduleData.changes
+		id: changeData.id,
+		day: changeData.day,
+		startTime: changeData.startTime,
+		changeLength: changeData.changeLength,
+		newTemp: changeData.newTemp,
+		newHyst: changeData.newHyst,
+		isActive: changeData.isActive,
+		tag: changeData.tag
 	});
 }
 
-function updateSchedules(payload, state) {
-	const schedules = payload.schedules;
+function updateSchedule(payload, state) {
+	const changes = payload.scheduleChanges;
 
-	if (schedules) {
-		schedules.forEach(function(schedule) {
-			let newSchedule;
-
-			if (state.has(schedule.id)) {
-				newSchedule = state.get(schedule.id).merge(Map(schedule));
-			}
-			else {
-				newSchedule = createSchedule(schedule);
-			}
-
-			state = state.set(newSchedule.get('id'), newSchedule);
-		});
+	if (changes.length === 1) {
+		return state.mergeIn([changes[0].day, changes[0].startTime], createChange(changes[0]));
 	}
 
-	return state;
+	return state.withMutations((state) => {
+		changes.forEach((change) => {
+			state.mergeIn([change.day, change.startTime], createChange(change));
+		});
+	});
 }
 
-function removeSchedules(payload, state) {
-	payload.deletedSchedules.forEach(function(scheduleId) {
-		state = state.delete(scheduleId);
-	});
+function removechanges(payload, state) {
+	const removedChanges = payload.deletedScheduleChanges;
 
-	return state;
+	if (payload.scheduleChanges) {
+		return updateSchedule(payload, state);
+	}
+
+	if (removedChanges.length === 1) {
+		return state.deleteIn([removedChanges[0].day, removedChanges[0].startTime]);
+	}
+
+	return state.withMutations((state) => {
+		removedChanges.forEach((change) => {
+			state.deleteIn([change.day, change.startTime], change);
+		});
+	});
 }

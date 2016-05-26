@@ -1,6 +1,6 @@
 module.exports = {
 	Settings: require('./settings'),
-	FlemethApi: require('./flemethApi'),
+	FlemethApi: require('./FlemethApi'),
 	ApiDocs: require('./ApiDocs'),
 	Thermostat: require('./Thermostat')
 };

@@ -14,8 +14,8 @@ const api = {
 	register: function (server, options, next) {
 		server.bind({
 			app: options.app,
-			flux: options.app.flux,
-			db: options.app.db
+			flux: options.app.methods.flux,
+			db: options.app.methods.db
 		});
 
 		Object.keys(apiDefinitions).forEach((key) => {

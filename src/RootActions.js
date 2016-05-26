@@ -4,7 +4,11 @@ const actionTag = require('fluxerino').Utils.actionTag;
 const loadFromDB = function loadFromDB(persistentStores) {
 	return Promise.all(
 		persistentStores.map((store) => {
-			return fetchCollection(this.db, store.modelName);
+			if (store.isModel) {
+				return Promise.reject('Nope, can\'t do right now');
+			}
+
+			return fetchCollection(this.app.methods.db, store.modelName);
 		})
 	).then((values) => {
 		return values.reduce((values, value, index) => {

@@ -10,32 +10,19 @@ const RootActions = require('./RootActions');
 
 class Flemeth extends RinCore{
 	constructor(options) {
-		const flemDb = new FlemDb(options.db, options.logger);
-		const fluxCore = new FluxCore({
-			logger: options.logger,
-			db: flemDb
-		}, options.logger);
-
 		super({
-			flux: fluxCore,
-			db: flemDb,
-			server: new Server(Object.assign({
-				logger: options.logger
-			}, options.server)),
 			logger: options.logger
 		});
 
+		this.options = options;
 		this.persistance_info = [];
 		this.addMethod('core.addPersistance', this.addPersistance.bind(this));
 	}
 
 	init(next) {
 		Async.series([
-			this.server.init.bind(this.server),	// Init server, just register some internal plugins onto it
-			this.registerPlugins.bind(this),	// Plugins first, they register flux stores and db tables
-			this.db.init.bind(this.db),			// Init the DB, run the migrations loop
-			this.flux.init.bind(this.flux),		// Init the fluxcore, this flushes stores with init action
-			this.loadPersistance.bind(this)		// Collect and load persisting data into stores
+			this.registerInternals.bind(this),	// Register internals
+			this.registerPlugins.bind(this)		// Plugins first, they register flux stores and db tables
 		], next);
 	}
 
@@ -47,7 +34,9 @@ class Flemeth extends RinCore{
 		}, 'Extension data');
 
 		Async.series([
-			this.server.start.bind(this.server),
+			this.process.bind(this, 'core.startInternals', null), // Start internals first (this is nearly an ugly hack, but oh well...)
+			// Can be alternativelly solved by registering a hook for lifecycle.start after registering all internals to load persistence there
+			this.loadPersistance.bind(this),	// Collect and load persisting data into stores
 			super.start.bind(this)
 		], next);
 	}
@@ -55,18 +44,30 @@ class Flemeth extends RinCore{
 	stop(next) {
 		this.logger.info('Flemeth daemon stoping.');
 
-		Async.series([
-			this.db.stop.bind(this.db),
-			this.server.stop.bind(this.server),
-			super.stop.bind(this)
-		], next);
+		return super.stop(next);
 	}
 
-	addPersistance(modelName, storeKey) {
+	addPersistance(modelName, storeKey, isModel) {
 		this.persistance_info.push({
 			modelName: modelName,
-			key: storeKey
+			key: storeKey,
+			isModel: isModel
 		});
+	}
+
+	registerInternals(next) {
+		super.register([{
+			name: 'FluxCore',
+			class: FluxCore
+		}, {
+			name: 'HapiServer',
+			class: Server,
+			options: this.options.server
+		}, {
+			name: 'FlemDB',
+			class: FlemDb,
+			options: this.options.db
+		}], next);
 	}
 
 	registerPlugins(next) {
@@ -95,7 +96,7 @@ class Flemeth extends RinCore{
 
 	loadPersistance(next) {
 		if (this.persistance_info.length) {
-			this.flux.push(RootActions.loadFromDB, [this.persistance_info], next);
+			this.methods.flux.push(RootActions.loadFromDB, [this.persistance_info], next);
 		}
 		else {
 			next();

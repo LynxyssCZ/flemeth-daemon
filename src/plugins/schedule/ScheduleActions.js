@@ -1,50 +1,34 @@
 module.exports = {
-	create: function* createChange(change) {
+	insert: function* insertChange(change) {
 		yield {
-			changes: [Object.assign({
-				id: generateKey()
-			}, change)]
+			scheduleChanges: [change]
 		};
 
-		yield this.db.getModel('Change').forge(change).save()
-				.then(function(scheduleModel) {
-					return {changes: [scheduleModel.toJSON()]};
-				});
-	},
+		const ChangeModel = this.app.methods.db.getModel('Change');
 
-	update: function* updateChange(change) {
-		yield {changes: [change]};
-
-		yield this.db.getModel('Change')
-			.forge({id: change.id})
-			.fetch({required: true})
-			.then(function(scheduleModel) {
-				return scheduleModel.save(change);
+		yield ChangeModel.forge({day: change.day, startTime: change.startTime})
+			.fetch({ require: true })
+			.then(function(changeModel) {
+				return changeModel.save(change);
 			})
-			.then(function(scheduleModel) {
-				return {
-					changes: [scheduleModel.toJSON()]
-				};
+			.catch(function() {
+				return new ChangeModel(change).save();
+			})
+			.then(function(changeModel) {
+				return {scheduleChanges: [changeModel.toJSON()]};
 			});
 	},
 
-	delete: function* deleteChange(changeId) {
-		yield {deletedChanges: [changeId]};
+	delete: function* deleteChange(change) {
+		yield {scheduleChanges: [change]};
 
-		yield this.db.getModel('Change')
-			.forge({id: changeId})
+		yield this.app.methods.db.getModel('Change')
+			.where({day: change.day, startTime: change.startTime})
 			.destroy()
 			.then(function() {
 				return {
-					deletedChanges: [changeId]
+					deletedScheduleChanges: [change]
 				};
 			});
 	}
 };
-
-
-var IntSize = Math.pow(2, 32);
-
-function generateKey() {
-	return 'loading_' + (Math.random()*IntSize).toString(16);
-}

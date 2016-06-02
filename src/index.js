@@ -1,12 +1,7 @@
 'use strict';
 const Async = require('async');
-const FluxCore = require('./FluxCore');
-const FlemDb = require('./FlemDb');
-const Server = require('./Server');
 const RinCore = require('./RinCore');
 
-const plugins = require('./plugins');
-const RootActions = require('./RootActions');
 
 class Flemeth extends RinCore{
 	constructor(options) {
@@ -15,8 +10,7 @@ class Flemeth extends RinCore{
 		});
 
 		this.options = options;
-		this.persistance_info = [];
-		this.addMethod('core.addPersistance', this.addPersistance.bind(this));
+		this.persistence_info = [];
 	}
 
 	init(next) {
@@ -33,12 +27,7 @@ class Flemeth extends RinCore{
 			coreExtensions: this.extensionsLog
 		}, 'Extension data');
 
-		Async.series([
-			this.process.bind(this, 'core.startInternals', null), // Start internals first (this is nearly an ugly hack, but oh well...)
-			// Can be alternativelly solved by registering a hook for lifecycle.start after registering all internals to load persistence there
-			this.loadPersistance.bind(this),	// Collect and load persisting data into stores
-			super.start.bind(this)
-		], next);
+		return super.start(next);
 	}
 
 	stop(next) {
@@ -47,60 +36,49 @@ class Flemeth extends RinCore{
 		return super.stop(next);
 	}
 
-	addPersistance(modelName, storeKey, isModel) {
-		this.persistance_info.push({
-			modelName: modelName,
-			key: storeKey,
-			isModel: isModel
-		});
-	}
-
 	registerInternals(next) {
 		super.register([{
 			name: 'FluxCore',
-			class: FluxCore
+			class: require('./FluxCore')
 		}, {
 			name: 'HapiServer',
-			class: Server,
+			class: require('./Server'),
 			options: this.options.server
 		}, {
+			name: 'FlemethApi',
+			class: require('./FlemethApi'),
+			options: {
+				apiPrefix: '/api'
+			}
+		}, {
 			name: 'FlemDB',
-			class: FlemDb,
+			class: require('./FlemDb'),
 			options: this.options.db
+		}, {
+			name: 'Persistence',
+			class: require('./Persistence')
 		}], next);
 	}
 
 	registerPlugins(next) {
 		super.register([{
-			name: 'FlemethApi',
-			class: plugins.FlemethApi,
-			options: {
-				apiPrefix: '/api'
-			}
+			name: 'Settings',
+			class: require('./settings')
 		}, {
 			name: 'ApiDocs',
-			class: plugins.ApiDocs,
+			class: require('./ApiDocs'),
 			options: {
-				apiTags: plugins.FlemethApi.attributes.swaggerSpecs.tags,
+				apiTags: require('./FlemethApi').attributes.swaggerSpecs.tags,
 				apiPrefix: '/api',
-				apiVersion: plugins.FlemethApi.attributes.version
+				apiVersion: require('./FlemethApi').attributes.version
 			}
 		}, {
 			name: 'Thermostat',
-			class: plugins.Thermostat,
+			class: require('./thermostat'),
 			options: {
 
 			}
 		}], next);
-	}
-
-	loadPersistance(next) {
-		if (this.persistance_info.length) {
-			this.methods.flux.push(RootActions.loadFromDB, [this.persistance_info], next);
-		}
-		else {
-			next();
-		}
 	}
 }
 

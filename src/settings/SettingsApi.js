@@ -1,25 +1,21 @@
-var Joi = require('joi');
-var Boom = require('boom');
+'use strict';
+const Joi = require('joi');
+const Boom = require('boom');
 
-var SettingKeySchema = Joi.string().min(5).max(50).required();
-var SettingValueSchema = Joi.object().required();
+const SettingKeySchema = Joi.string().min(5).max(50).required();
+const SettingValueSchema = Joi.object().required();
 
-var handlers = {
+const handlers = {
 	getRaw: function(req, reply) {
 		return reply({
 			settings: this.flux.getSlice('Settings').toArray()
 		});
 	},
 	update: function(req, reply) {
-		var container = this.flux;
-		var settingKey = req.params.settingKey;
-
-		var setting = {
-			key: settingKey,
+		return  this.app.methods.settings.set({
+			key: req.params.settingKey,
 			value: req.payload
-		};
-
-		return container.push(container.actions.Settings.update, [setting], function(error, payload) {
+		}, function(error, payload) {
 			if (!error) {
 				return reply({
 					msg: 'OK',
@@ -32,10 +28,7 @@ var handlers = {
 		});
 	},
 	delete: function(req, reply) {
-		var container = this.flux;
-		var settingKey = req.params.settingKey;
-
-		container.push(container.actions.Settings.delete, [settingKey], function(error) {
+		this.app.methods.settings.remove(req.params.settingKey, function(error) {
 			if (!error) {
 				return reply({
 					msg: 'OK'

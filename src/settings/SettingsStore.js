@@ -1,7 +1,7 @@
 'use strict';
 const Map = require('immutable').Map;
 const actionTag = require('fluxerino').Utils.actionTag;
-const SettingsActions = require('../actions/SettingsActions');
+const SettingsActions = require('./SettingsActions');
 
 const SettingsStore = {
 	'Lifecycle.Init': getDefaultState,

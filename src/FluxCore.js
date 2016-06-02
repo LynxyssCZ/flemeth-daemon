@@ -15,7 +15,7 @@ class FluxCore {
 		this.app.addMethod('flux.subscribe', this.container.subscribe.bind(this.container));
 		this.app.addMethod('flux.unsubscribe', this.container.unsubscribe.bind(this.container));
 		this.app.addMethod('flux.push', this.container.push.bind(this.container));
-		this.app.addHook('core.startInternals', this.onAppStart.bind(this));
+		this.app.addHook('lifecycle.start', this.onAppStart.bind(this));
 	}
 
 	addStore(key, store) {

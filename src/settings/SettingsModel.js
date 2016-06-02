@@ -1,11 +1,11 @@
 module.exports = function register(Bookshelf) {
-	var Setting = Bookshelf.Model.extend({
+	const Setting = Bookshelf.Model.extend({
 		tableName: 'settings',
 		hidden: ['id', 'raw_value', 'rawValue'],
 		virtuals: {
 			value: {
 				get: function() {
-					var rawValue = this.get('rawValue');
+					const rawValue = this.get('rawValue');
 
 					if (rawValue) {
 						// FIXME: YOLO
@@ -28,11 +28,24 @@ module.exports = function register(Bookshelf) {
 		}
 	});
 
-	var Settings = Bookshelf.Collection.extend({
+	const Settings = Bookshelf.Collection.extend({
 		model: Setting
 	});
 
+	const tableCreate = function createTable(table) {
+		table.increments('id').primary();
+		table.string('key').unique();
+		table.string('raw_value');
+	};
+
+	const updateSchema = function updateSchedulesSchema(currentVersion, knex) {
+		return knex.schema.dropTableIfExists('settings')
+			.createTable('settings', tableCreate);
+	};
+
 	return {
+		version: 1,
+		update: updateSchema,
 		Model: Bookshelf.model('Setting', Setting),
 		Collection: Bookshelf.collection('Settings', Settings)
 	};

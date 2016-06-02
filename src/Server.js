@@ -10,7 +10,7 @@ class Server {
 		this.server.connection(options.connection);
 
 		this.app.addMethod('server.register', this.register.bind(this));
-		this.app.addHook('core.startInternals', this.onAppStart.bind(this));
+		this.app.addHook('lifecycle.start', this.onAppStart.bind(this));
 		this.app.addHook('lifecycle.stop', this.onAppStop.bind(this));
 	}
 

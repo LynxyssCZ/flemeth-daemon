@@ -17,7 +17,7 @@ class ScheduleManager {
 
 		this.app.methods.flux.addStore('Schedule', store);
 		this.app.methods.db.registerModel('Change', changeModel);
-		this.app.methods.core.addPersistance('Change', 'scheduleChanges');
+		this.app.methods.persistence.add('Change', 'scheduleChanges');
 		this.app.methods.api.addEndpoint('schedule', ScheduleApi);
 
 		this.updatePeriod = options.updatePeriod;

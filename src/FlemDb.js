@@ -17,7 +17,7 @@ class FlemDB {
 		this.app.addMethod('db.registerModel', this.registerModel.bind(this));
 		this.app.addMethod('db.getModel', this.getModel.bind(this));
 		this.app.addMethod('db.getCollection', this.getCollection.bind(this));
-		this.app.addHook('core.startInternals', this.onAppStart.bind(this));
+		this.app.addHook('lifecycle.start', this.onAppStart.bind(this));
 		this.app.addHook('lifecycle.stop', this.onAppStop.bind(this));
 	}
 

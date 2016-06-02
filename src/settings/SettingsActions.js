@@ -1,6 +1,6 @@
 module.exports = {
 	update: function* updateSettings(settingData) {
-		var Setting = this.db.getModel('Settings');
+		var Setting = this.app.methods.db.getModel('Setting');
 
 		yield { settings: [ settingData ] };
 		yield Setting.forge({ key: settingData.key })
@@ -20,7 +20,7 @@ module.exports = {
 	create: function* createSetting(settingData) {
 		yield { settings: [settingData] };
 
-		yield this.db.getModel('Settings').forge(settingData).save()
+		yield this.app.methods.db.getModel('Setting').forge(settingData).save()
 			.then(function(setting) {
 				if (setting) {
 					return { settings: [setting.toJSON()] };
@@ -28,7 +28,7 @@ module.exports = {
 			});
 	},
 	delete: function* deleteSetting(settingKey) {
-		var Setting = this.db.getModel('Settings');
+		var Setting = this.app.methods.db.getModel('Setting');
 
 		yield { deletedSettings: [settingKey] };
 

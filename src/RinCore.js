@@ -6,7 +6,7 @@ class RinCore {
 	constructor(context) {
 		this.appContext = context || {};
 		this.pluginInstances = {};
-		this.extensionsLog = [];
+		this.pluginTree = {};
 
 		this.plugins = {};
 		this.methods = {};
@@ -16,7 +16,12 @@ class RinCore {
 		};
 
 		this.rootPlugin = new RinPlugin(this, '', context);
+		this.rootPlugin.setPluginTreeNode(this.pluginTree);
 		Object.assign(this, context);
+	}
+
+	getPluginTree() {
+		return this.pluginTree;
 	}
 
 	start(next) {
@@ -41,20 +46,17 @@ class RinCore {
 		return this.rootPlugin.register(plugins, next);
 	}
 
-	addHook(event, handler, plugin) {
+	addHook(event, handler) {
 		if (!this.hooks.hasOwnProperty(event)) {
 			this.hooks[event] = new Array();
 		}
 
 		this.hooks[event].push(handler);
-		this.logPluginExtension(plugin, 'hook', event);
 	}
 
-	addMethod(name, method, plugin) {
+	addMethod(name, method) {
 		const path = name.split('.');
 		const length = path.length;
-
-		this.logPluginExtension(plugin, 'method', name);
 
 		return path.reduce((stub, key, index) => {
 			if (!stub.hasOwnProperty(key)) {
@@ -71,15 +73,6 @@ class RinCore {
 		}
 
 		this.plugins[plugin][key] = value;
-		this.logPluginExtension(plugin, 'value', key);
-	}
-
-	logPluginExtension(pluginName, extensionType, extensionValue) {
-		this.extensionsLog.push({
-			source: pluginName,
-			type: extensionType,
-			value: extensionValue
-		});
 	}
 }
 

@@ -15,8 +15,26 @@ class RinPlugin {
 		this.methods = app.methods;
 	}
 
-	getChild(plugin) {
-		return new RinPlugin(this.app, plugin, this._appContext);
+	setPluginTreeNode(node) {
+		this.pluginTreeNode = node;
+	}
+
+	createChild(pluginName) {
+		const childPlugin = new RinPlugin(this.app, pluginName, this._appContext);
+		const childNode = {
+			name: pluginName
+		};
+
+		if (this.pluginTreeNode.children) {
+			this.pluginTreeNode.children.push(childNode);
+		}
+		else {
+			this.pluginTreeNode.children = [childNode];
+		}
+
+		childPlugin.setPluginTreeNode(childNode);
+
+		return childPlugin;
 	}
 
 	register(plugins, next) {
@@ -34,6 +52,7 @@ class RinPlugin {
 	mergeContext(newContext) {
 		this._appContext = Object.assign({}, this._appContext, newContext);
 		Object.assign(this, this._appContext);
+		this.pluginTreeNode.extendsContext = true;
 	}
 
 	addHook(event, handler) {
@@ -42,6 +61,7 @@ class RinPlugin {
 		}
 
 		this.app.addHook(event, handler, this.name);
+		this._logExtension('hook', event);
 	}
 
 	addMethod(name, method) {
@@ -50,6 +70,7 @@ class RinPlugin {
 		}
 
 		this.app.addMethod(name, method, this.name);
+		this._logExtension('method', name);
 	}
 
 	expose(key, value) {
@@ -58,6 +79,7 @@ class RinPlugin {
 		}
 
 		this.app.expose(this.name, key, value);
+		this._logExtension('value', key);
 	}
 
 	_registerPlugin(plugin, next) {
@@ -66,7 +88,7 @@ class RinPlugin {
 		}
 
 		if (plugin.class && plugin.name) {
-			const pluginInstance = new plugin.class(this.getChild(plugin.name), plugin.options);
+			const pluginInstance = new plugin.class(this.createChild(plugin.name), plugin.options);
 
 			this.app.pluginInstances[plugin.name] = pluginInstance;
 
@@ -79,6 +101,21 @@ class RinPlugin {
 		}
 		else {
 			next('Malformed plugin registration');
+		}
+	}
+
+	_logExtension(type, value) {
+		if (this.pluginTreeNode.extensions) {
+			this.pluginTreeNode.extensions.push({
+				type: type,
+				value: value
+			});
+		}
+		else {
+			this.pluginTreeNode.extensions = [{
+				type: type,
+				value: value
+			}];
 		}
 	}
 }

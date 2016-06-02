@@ -23,8 +23,7 @@ class Flemeth extends RinCore{
 	start(next) {
 		this.logger.info('Flemeth daemon starting');
 		this.logger.debug({
-			registeredPlugins: Object.keys(this.pluginInstances),
-			coreExtensions: this.extensionsLog
+			pluginTree: this.getPluginTree()
 		}, 'Extension data');
 
 		return super.start(next);

@@ -1,5 +1,7 @@
+'use strict';
+
 module.exports = {
-	insert: function* insertChange(change) {
+	* insert(change) {
 		yield {
 			scheduleChanges: [change]
 		};
@@ -19,7 +21,7 @@ module.exports = {
 			});
 	},
 
-	delete: function* deleteChange(change) {
+	* delete(change) {
 		yield {scheduleChanges: [change]};
 
 		yield this.app.methods.db.getModel('Change')
@@ -30,5 +32,12 @@ module.exports = {
 					deletedScheduleChanges: [change]
 				};
 			});
+	},
+
+	changeTarget(newTarget) {
+		return { scheduleTarget: {
+			temperature: newTarget.newTemp,
+			hysteresis: newTarget.newHyst
+		}};
 	}
 };

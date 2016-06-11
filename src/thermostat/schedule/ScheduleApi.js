@@ -11,12 +11,17 @@ const simpleChangeSchema = Joi.object().meta({ className: 'Change' }).keys({
 }).or('newTemp', 'newHyst');
 
 const handlers = {
-	getRaw: function(req, reply) {
+	changesGetRaw(req, reply) {
 		return reply({
 			schedule: this.flux.getSlice('Schedule').toJS()
 		});
 	},
-	insert: function insertChange(req, reply) {
+	targetGetRaw(req, reply) {
+		return reply({
+			scheduleTarget: this.flux.getSlice('ScheduleTarget').toJS()
+		});
+	},
+	changesInsert(req, reply) {
 		const change = req.payload;
 		const day = req.params.day;
 		const startTime = req.params.startTime;
@@ -36,7 +41,7 @@ const handlers = {
 			}
 		});
 	},
-	remove: function removeChange(req, reply) {
+	changesRemove(req, reply) {
 		const day = req.params.day;
 		const startTime = req.params.startTime;
 
@@ -60,9 +65,9 @@ const handlers = {
 module.exports = {
 	endpoints: [
 		{
-			path: '/',
+			path: '/changes/',
 			method: 'GET',
-			handler: handlers.getRaw,
+			handler: handlers.changesGetRaw,
 			config: {
 				description: 'Get all changes.',
 				notes: ['Returns all', 'No filtering', 'Raw from core'],
@@ -70,9 +75,19 @@ module.exports = {
 			}
 		},
 		{
-			path: '/{day}/{startTime}/',
+			path: '/target/',
+			method: 'GET',
+			handler: handlers.targetGetRaw,
+			config: {
+				description: 'Get current target.',
+				notes: ['Raw from core'],
+				tags: ['api', 'schedule', 'target']
+			}
+		},
+		{
+			path: '/changes/{day}/{startTime}/',
 			method: 'PUT',
-			handler: handlers.insert,
+			handler: handlers.changesInsert,
 			config: {
 				description: 'Insert a change into schedule',
 				tags: ['api', 'schedule', 'changes'],
@@ -86,9 +101,9 @@ module.exports = {
 			}
 		},
 		{
-			path: '/{day}/{startTime}/',
+			path: '/changes/{day}/{startTime}/',
 			method: 'DELETE',
-			handler: handlers.remove,
+			handler: handlers.changesRemove,
 			config: {
 				description: 'Remove a change from schedule',
 				tags: ['api', 'schedule', 'changes'],

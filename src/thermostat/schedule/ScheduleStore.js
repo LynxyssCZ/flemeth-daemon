@@ -41,12 +41,12 @@ function updateSchedule(payload, state) {
 	const changes = payload.scheduleChanges;
 
 	if (changes.length === 1) {
-		return state.mergeIn([changes[0].day, changes[0].startTime], createChange(changes[0]));
+		return state.mergeIn([changes[0].day.toString(), changes[0].startTime.toString()], createChange(changes[0]));
 	}
 
 	return state.withMutations((state) => {
 		changes.forEach((change) => {
-			state.mergeIn([change.day, change.startTime], createChange(change));
+			state.mergeIn([change.day.toString(), change.startTime.toString()], createChange(change));
 		});
 	});
 }

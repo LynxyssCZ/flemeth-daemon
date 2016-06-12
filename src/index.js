@@ -10,7 +10,6 @@ class Flemeth extends RinCore{
 		});
 
 		this.options = options;
-		this.persistence_info = [];
 	}
 
 	init(next) {

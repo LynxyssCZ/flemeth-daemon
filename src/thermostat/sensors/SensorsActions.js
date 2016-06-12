@@ -1,16 +1,14 @@
 module.exports = {
 	readFrame: function readSensorFrame(frame) {
-		var reader = frame.reader;
-		var samples = frame.samples;
-
-		var sensors = samples.map(function(sample) {
-			return Object.assign({
-				reader: reader
-			}, sample);
-		});
+		const reader = frame.reader;
+		const samples = frame.samples;
 
 		return {
-			sensors: sensors
+			sensors: samples.map((sample) => {
+				return Object.assign({
+					reader: reader
+				}, sample);
+			})
 		};
 	},
 	purge: function purgeSensors(ttl) {

@@ -1,5 +1,5 @@
 'use strict';
-var Hapi = require('hapi');
+const Hapi = require('hapi');
 
 class Server {
 	constructor(app, options) {

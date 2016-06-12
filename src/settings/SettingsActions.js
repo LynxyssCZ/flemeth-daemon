@@ -1,6 +1,6 @@
 module.exports = {
 	update: function* updateSettings(settingData) {
-		var Setting = this.app.methods.db.getModel('Setting');
+		const Setting = this.app.methods.db.getModel('Setting');
 
 		yield { settings: [ settingData ] };
 		yield Setting.forge({ key: settingData.key })
@@ -28,7 +28,7 @@ module.exports = {
 			});
 	},
 	delete: function* deleteSetting(settingKey) {
-		var Setting = this.app.methods.db.getModel('Setting');
+		const Setting = this.app.methods.db.getModel('Setting');
 
 		yield { deletedSettings: [settingKey] };
 

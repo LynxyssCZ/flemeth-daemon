@@ -60,7 +60,7 @@ class FlemDB {
 	_createSchemaVersionTable(table) {
 		table.string('name').primary();
 		table.integer('version');
-		table.dateTime('last_update');
+		table.dateTime('updated');
 	}
 
 	_upgradeAllSchemas() {
@@ -82,7 +82,7 @@ class FlemDB {
 							.where({name: model})
 							.update({
 								version: this.models[model].version,
-								last_update: Date.now()
+								updated: Date.now()
 							});
 						}
 						else {
@@ -90,7 +90,7 @@ class FlemDB {
 							.insert({
 								name: model,
 								version: this.models[model].version,
-								last_update: Date.now()
+								updated: Date.now()
 							});
 						}
 					});

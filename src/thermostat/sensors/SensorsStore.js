@@ -48,7 +48,7 @@ function updateSensor(sensor, updateData) {
 }
 
 function updateTempSensor(sensor, updateData) {
-	var values = sensor.get('values').slice(0, VALUES);
+	const values = sensor.get('values').slice(0, VALUES);
 	values.unshift(updateData.value);
 
 	return sensor
@@ -59,8 +59,9 @@ function updateTempSensor(sensor, updateData) {
 }
 
 function mean(array) {
-	var sum = 0, i;
-	for (i = 0; i < array.length; i++) {
+	let sum = 0;
+
+	for (let i = array.length - 1; i >= 0; i--) {
 		sum += array[i];
 	}
 	return array.length ? sum / array.length : 0;

@@ -14,6 +14,11 @@ class PersistenceManager {
 	}
 
 	addPersistence(modelName, storeKey, isModel) {
+		this.app.logExtensionUsage('Persistence', {
+			modelName: modelName,
+			storeKey: storeKey,
+			isModel: isModel
+		});
 		this.persistentModels.push({
 			modelName: modelName,
 			key: storeKey,

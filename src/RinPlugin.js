@@ -19,6 +19,10 @@ class RinPlugin {
 		this.pluginTreeNode = node;
 	}
 
+	getPluginTreeNode() {
+		return this.pluginTreeNode;
+	}
+
 	createChild(pluginName) {
 		const childPlugin = new RinPlugin(this.app, pluginName, this._appContext);
 		const childNode = {
@@ -45,6 +49,7 @@ class RinPlugin {
 		this.app.registering = true;
 		Async.each(plugins, this._registerPlugin.bind(this), (err) => {
 			this.app.registering = false;
+			this.app.currentNode = undefined;
 			next(err);
 		});
 	}
@@ -82,14 +87,36 @@ class RinPlugin {
 		this._logExtension('value', key);
 	}
 
+	logExtensionUsage(type, value) {
+		if (!this.app.registering) {
+			throw new Error('Extensing other plugins is allowed only in init phase');
+		}
+
+		const extension = {
+			time: Date.now(),
+			provider: this.name,
+			type: type,
+			value: value
+		};
+
+		if (this.app.currentNode.extensions) {
+			this.app.currentNode.extensions.push(extension);
+		}
+		else {
+			this.app.currentNode.extensions = [extension];
+		}
+	}
+
 	_registerPlugin(plugin, next) {
 		if (this.app.pluginInstances[plugin.name]) {
 			throw new Error('Registering plugins multiple times is not supported');
 		}
 
 		if (plugin.class && plugin.name) {
-			const pluginInstance = new plugin.class(this.createChild(plugin.name), plugin.options);
+			const child = this.createChild(plugin.name);
+			this.app.currentNode = child.getPluginTreeNode();
 
+			const pluginInstance = new plugin.class(child, plugin.options);
 			this.app.pluginInstances[plugin.name] = pluginInstance;
 
 			if (pluginInstance.init) {
@@ -105,17 +132,17 @@ class RinPlugin {
 	}
 
 	_logExtension(type, value) {
+		const extension = {
+			time: Date.now(),
+			type: type,
+			value: value
+		};
+
 		if (this.pluginTreeNode.extensions) {
-			this.pluginTreeNode.extensions.push({
-				type: type,
-				value: value
-			});
+			this.pluginTreeNode.extensions.push(extension);
 		}
 		else {
-			this.pluginTreeNode.extensions = [{
-				type: type,
-				value: value
-			}];
+			this.pluginTreeNode.extensions = [extension];
 		}
 	}
 }

@@ -29,7 +29,7 @@ class RinCore {
 	}
 
 	stop(next) {
-		this.process('lifecycle.stop', null, next);
+		this.processReverse('lifecycle.stop', null, next);
 	}
 
 	process(event, payload, next) {
@@ -38,6 +38,16 @@ class RinCore {
 		}
 
 		Async.reduce(this.hooks[event], payload, (payload, hook, next) => {
+			hook(payload, next);
+		}, next);
+	}
+
+	processReverse(event, payload, next) {
+		if (!this.hooks.hasOwnProperty(event)) {
+			return next(null, payload);
+		}
+
+		Async.reduceRight(this.hooks[event], payload, (payload, hook, next) => {
 			hook(payload, next);
 		}, next);
 	}

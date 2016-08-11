@@ -19,9 +19,7 @@ class FluxCore {
 	}
 
 	addStore(key, store) {
-		this.logger.debug({
-			key: key
-		}, 'Store registered');
+		this.app.logExtensionUsage('Store', key);
 
 		this.container.addStore(key, store);
 	}

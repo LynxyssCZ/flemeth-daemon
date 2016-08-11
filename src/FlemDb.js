@@ -54,6 +54,7 @@ class FlemDB {
 	}
 
 	registerModel(name, model) {
+		this.app.logExtensionUsage('Model', name);
 		this.models[name] = model(this.bookshelf);
 	}
 

@@ -59,7 +59,7 @@ function removechanges(payload, state) {
 	}
 
 	if (removedChanges.length === 1) {
-		return state.deleteIn([removedChanges[0].day, removedChanges[0].startTime]);
+		return state.deleteIn([removedChanges[0].day.toString(), removedChanges[0].startTime.toString()]);
 	}
 
 	return state.withMutations((state) => {

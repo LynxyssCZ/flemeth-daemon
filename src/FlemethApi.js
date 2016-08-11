@@ -32,10 +32,7 @@ class FlemethApi {
 	}
 
 	addEndpoint(endpoint, definition) {
-		this.logger.debug({
-			method: 'api.addEndpoint',
-			endpoint: endpoint
-		}, 'Endpoint registered');
+		this.app.logExtensionUsage('Endpoint', endpoint);
 
 		this.server.route(this.getRoutes(
 			definition,

@@ -22,7 +22,9 @@ module.exports = {
 	},
 
 	* delete(change) {
-		yield {scheduleChanges: [change]};
+		yield {scheduleChanges: [
+			Object.assign({ deleting: true }, change)
+		]};
 
 		yield this.app.methods.db.getModel('Change')
 			.where({day: change.day, startTime: change.startTime})

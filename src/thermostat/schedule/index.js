@@ -31,8 +31,8 @@ class ScheduleManager {
 		this.flux.push(actions.insert, [changeData], next);
 	}
 
-	removeChange(changeId, next) {
-		this.flux.push(actions.delete, [changeId], next);
+	removeChange(changeData, next) {
+		this.flux.push(actions.delete, [changeData], next);
 	}
 
 	// Hooks
@@ -69,10 +69,24 @@ class ScheduleManager {
 		const day = now.getDay().toString();
 		const minute = now.getHours() * 60 + now.getMinutes();
 		const scheduleSettings = state.Settings.get('schedule');
+		let defaultTarget;
 
-		if (state.Schedule && scheduleSettings) {
+		if (scheduleSettings) {
+			defaultTarget = {
+				newTemp: scheduleSettings.get('value').defaultTemp,
+				newHyst: scheduleSettings.get('value').defaultHyst
+			};
+		}
+		else {
+			defaultTarget = {
+				newTemp: 20.5,
+				newHyst: 0.5
+			};
+		}
+
+		if (state.Schedule) {
 			const relevantChanges = this.getRelevantChanges(day, minute, state.Schedule);
-			const newTarget = this.getTarget(minute, relevantChanges, scheduleSettings.get('value').defaultTarget);
+			const newTarget = this.getTarget(minute, relevantChanges, defaultTarget);
 
 			if (newTarget.newTemp !== state.ScheduleTarget.get('temperature') || newTarget.newHyst !== state.ScheduleTarget.get('hysteresis')) {
 				this.flux.push(actions.changeTarget, [newTarget]);

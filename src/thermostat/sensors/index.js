@@ -1,6 +1,7 @@
 'use strict';
 const actions = require('./SensorsActions');
 const store = require('./SensorsStore');
+const SensorsApi = require('./SensorsApi');
 
 class SensorsManager {
 	constructor(app) {
@@ -8,6 +9,7 @@ class SensorsManager {
 		this.flux = app.methods.flux;
 
 		app.methods.flux.addStore('Sensors', store);
+		app.methods.api.addEndpoint('sensors', SensorsApi);
 
 		app.addMethod('sensors.readFrame', this.readSensorFrame.bind(this));
 	}

@@ -16,6 +16,11 @@ const handlers = {
 			zones: this.flux.getSlice('Zones').toArray()
 		});
 	},
+	getMean: function(req, reply) {
+		return reply({
+			zonesMean: this.flux.getSlice('ZonesMean').toJS()
+		});
+	},
 	create: function(req, reply) {
 		const zone = {
 			name: req.payload.name,
@@ -82,6 +87,15 @@ module.exports = {
 			config: {
 				description: 'Base zones getter.',
 				notes: ['Returns all', 'No filtering', 'Raw from core'],
+				tags: ['api', 'zones']
+			}
+		},
+		{
+			path: '/mean',
+			method: 'GET',
+			handler: handlers.getMean,
+			config: {
+				description: 'Get current zones mean value',
 				tags: ['api', 'zones']
 			}
 		},

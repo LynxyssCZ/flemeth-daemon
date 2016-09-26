@@ -73,9 +73,7 @@ class Flemeth extends RinCore{
 		}, {
 			name: 'Thermostat',
 			class: require('./thermostat'),
-			options: {
-
-			}
+			options: this.options.thermostat
 		}], next);
 	}
 }

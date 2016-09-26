@@ -26,6 +26,7 @@
     "boom": "^4.0.0",
     "bunyan": "^1.8.1",
     "dotenv": "^2.0.0",
+    "flemeth-arduino": "github:lynxysscz/flemeth-arduino",
     "flemeth-web": "github:lynxysscz/flemeth-web",
     "fluxerino": "github:lynxysscz/fluxerino",
     "gulp": "^3.9.1",

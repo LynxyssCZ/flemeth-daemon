@@ -12,6 +12,13 @@ module.exports = {
 
 		return { zones: zones };
 	},
+	updateMean(temperature, zonesCount) {
+		// return {}
+		return {
+			temperature: temperature,
+			zonesCount: zonesCount
+		};
+	},
 	* update(zoneData) {
 		yield { zones: [ zoneData ] };
 

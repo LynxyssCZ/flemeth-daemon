@@ -19,8 +19,8 @@ function getDefaultState() {
 		global: Map({
 			id: 'global',
 			value: null,
-			priority: 0,
-			name: 'Global zone (for debugging purposes only)'
+			priority: 0.01,
+			name: 'Global zone'
 		})
 	});
 }

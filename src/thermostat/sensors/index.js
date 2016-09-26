@@ -14,10 +14,9 @@ class SensorsManager {
 		app.addMethod('sensors.readFrame', this.readSensorFrame.bind(this));
 	}
 
-	readSensorFrame(reader, frame, next) {
+	readSensorFrame(frame, next) {
 		this.logger.debug({
 			method: 'readSensorFrame',
-			reader: reader,
 			frame: frame
 		});
 

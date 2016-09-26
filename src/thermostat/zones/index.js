@@ -1,5 +1,6 @@
 'use strict';
 const ZonesStore = require('./ZonesStore');
+const ZonesMeanStore = require('./ZonesMeanStore');
 const ZonesActions = require('./ZonesActions');
 const ZonesApi = require('./ZonesApi');
 const ZoneModel = require('./ZoneModel');
@@ -17,7 +18,7 @@ class ZonesManager {
 		this.app.addHook('lifecycle.stop', this.onAppStop.bind(this));
 
 		this.app.methods.flux.addStore('Zones', ZonesStore);
-		// this.app.methods.flux.addStore('ScheduleTarget', targetStore);
+		this.app.methods.flux.addStore('ZonesMean', ZonesMeanStore);
 		this.app.methods.db.registerModel('Zones', ZoneModel);
 		this.app.methods.persistence.add('Zones', 'zones');
 		this.app.methods.api.addEndpoint('zones', ZonesApi);
@@ -39,8 +40,12 @@ class ZonesManager {
 	onAppStart(payload, next) {
 		this.logger.info('Starting');
 
-		this.subscriptionKey = this.flux.subscribe(this.updateZones.bind(this), [
+		this.sensorsSub = this.flux.subscribe(this.updateZones.bind(this), [
 			'Sensors'
+		]);
+
+		this.zonesSub = this.flux.subscribe(this.updateMean.bind(this), [
+			'Zones'
 		]);
 
 		next();
@@ -48,11 +53,13 @@ class ZonesManager {
 
 	onAppStop(payload, next) {
 		this.logger.info('Stopping');
-		this.flux.unsubscribe(this.subscriptionKey);
+		this.flux.unsubscribe(this.sensorsSub);
+		this.flux.unsubscribe(this.zonesSub);
 		next();
 	}
 
 	updateZones() {
+		this.logger.debug('Updating Zones');
 		const state = this.flux.getSlice(['Zones', 'Sensors']);
 
 		const zonesValues = state.Zones.map(function(zone) {
@@ -68,13 +75,41 @@ class ZonesManager {
 		}, this).toArray();
 
 		if (zonesValues.length) {
-			this.flux.push(ZonesActions.update, [zonesValues]);
+			this.flux.push(ZonesActions.updateValues, [zonesValues]);
+		}
+	}
+
+	updateMean() {
+		this.logger.debug('Updating Mean');
+		const zones = this.flux.getSlice('Zones');
+
+		const data = zones.reduce(function(result, zone) {
+			const weight = zone.get('priority');
+			const value = zone.get('value');
+
+			if (weight && value) {
+				result = {
+					valuesSum: result.valuesSum + (weight * value),
+					weightsSum: result.weightsSum + weight
+				};
+			}
+
+			return result;
+		}, {
+			valuesSum: 0,
+			weightsSum: 0
+		});
+
+		if (data.weightsSum) {
+			this.flux.push(ZonesActions.updateMean, [(data.valuesSum / data.weightsSum), zones.size]);
+		}
+		else {
+			this.flux.push(ZonesActions.updateMean, [null, null]);
 		}
 	}
 
 	getSensorsValue(ids, sensors) {
 		var validIds = [];
-
 		if (ids && Array.isArray(ids)) {
 			validIds = ids.filter(function(sensorId) {
 				return sensors.has(sensorId);

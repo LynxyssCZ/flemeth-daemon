@@ -28,6 +28,12 @@ class Thermostat {
 			options: {
 				lockTime: this.options.lockTime
 			}
+		}, {
+			name: 'Flemduino',
+			class: require('flemeth-arduino'),
+			options: {
+				path: this.options.serialPath
+			}
 		}], next);
 	}
 }

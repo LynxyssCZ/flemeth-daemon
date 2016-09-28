@@ -9,7 +9,7 @@ const ZonesStore = {
 	[actionTag(ZonesActions.create)]: createZones,
 	[actionTag(ZonesActions.update)]: updateZones,
 	[actionTag(ZonesActions.updateValues)]: updateZones,
-	[actionTag(ZonesActions.delete)]: deleteZones
+	[actionTag(ZonesActions.remove)]: deleteZones
 };
 
 module.exports = ZonesStore;

@@ -59,7 +59,6 @@ class ZonesManager {
 	}
 
 	updateZones() {
-		this.logger.debug('Updating Zones');
 		const state = this.flux.getSlice(['Zones', 'Sensors']);
 
 		const zonesValues = state.Zones.map(function(zone) {
@@ -80,8 +79,8 @@ class ZonesManager {
 	}
 
 	updateMean() {
-		this.logger.debug('Updating Mean');
 		const zones = this.flux.getSlice('Zones');
+		const current = this.flux.getSlice('ZonesMean').get('temperature');
 
 		const data = zones.reduce(function(result, zone) {
 			const weight = zone.get('priority');
@@ -100,11 +99,12 @@ class ZonesManager {
 			weightsSum: 0
 		});
 
-		if (data.weightsSum) {
-			this.flux.push(ZonesActions.updateMean, [(data.valuesSum / data.weightsSum), zones.size]);
-		}
-		else {
-			this.flux.push(ZonesActions.updateMean, [null, null]);
+		let zonesMean = data.weightsSum
+			? Number((data.valuesSum / data.weightsSum).toFixed(3))
+			: null;
+
+		if (zonesMean !== current) {
+			this.flux.push(ZonesActions.updateMean, [zonesMean, zones.size]);
 		}
 	}
 

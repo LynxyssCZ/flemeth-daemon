@@ -26,9 +26,9 @@ module.exports = {
 			Object.assign({ deleting: true }, change)
 		]};
 
-		yield this.app.methods.db.getModel('Change')
-			.where({day: change.day, startTime: change.startTime})
-			.destroy()
+		const Change = this.app.methods.db.getModel('Change');
+
+		yield Change.forge().where({day: change.day, start_time: change.startTime}).destroy()
 			.then(function() {
 				return {
 					deletedScheduleChanges: [change]

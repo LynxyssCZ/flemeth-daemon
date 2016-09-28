@@ -40,7 +40,7 @@ module.exports = {
 				}
 			});
 	},
-	* delete(zoneId) {
+	* remove(zoneId) {
 		yield { deletedZones: [zoneId] };
 
 		yield this.app.methods.db.getModel('Zones')

@@ -1,4 +1,5 @@
 'use strict';
+const MINUTES_IN_DAY = 24 * 60;
 const Map = require('immutable').Map;
 const ScheduleActions = require('./ScheduleActions');
 const actionTag = require('fluxerino').Utils.actionTag;
@@ -13,15 +14,7 @@ module.exports = SchedulesStore;
 
 
 function getDefaultState() {
-	return Map({
-		0: Map({}),
-		1: Map({}),
-		2: Map({}),
-		3: Map({}),
-		4: Map({}),
-		5: Map({}),
-		6: Map({})
-	});
+	return Map({});
 }
 
 function createChange(changeData) {
@@ -29,6 +22,7 @@ function createChange(changeData) {
 		id: changeData.id,
 		day: changeData.day,
 		startTime: changeData.startTime,
+		startMinute: ((changeData.day * MINUTES_IN_DAY) + changeData.startTime),
 		changeLength: changeData.changeLength,
 		newTemp: changeData.newTemp,
 		newHyst: changeData.newHyst,
@@ -39,32 +33,37 @@ function createChange(changeData) {
 
 function updateSchedule(payload, state) {
 	const changes = payload.scheduleChanges;
+	let change;
 
 	if (changes.length === 1) {
-		return state.mergeIn([changes[0].day.toString(), changes[0].startTime.toString()], createChange(changes[0]));
+		change = createChange(changes[0]);
+		return state.mergeIn([change.get('startMinute')], change);
 	}
 
 	return state.withMutations((state) => {
-		changes.forEach((change) => {
-			state.mergeIn([change.day.toString(), change.startTime.toString()], createChange(change));
+		changes.forEach((changeData) => {
+			change = createChange(changeData);
+			state.mergeIn([change.get('startMinute')], change);
 		});
 	});
 }
 
 function removechanges(payload, state) {
-	const removedChanges = payload.deletedScheduleChanges;
-
 	if (payload.scheduleChanges) {
 		return updateSchedule(payload, state);
 	}
 
+	const removedChanges = payload.deletedScheduleChanges;
+	let startMinute;
 	if (removedChanges.length === 1) {
-		return state.deleteIn([removedChanges[0].day.toString(), removedChanges[0].startTime.toString()]);
+		startMinute = (removedChanges[0].day * MINUTES_IN_DAY + removedChanges[0].startTime);
+		return state.deleteIn([startMinute]);
 	}
 
 	return state.withMutations((state) => {
 		removedChanges.forEach((change) => {
-			state.deleteIn([change.day, change.startTime], change);
+			startMinute = (change.day * MINUTES_IN_DAY + change.startTime);
+			state.deleteIn([startMinute]);
 		});
 	});
 }

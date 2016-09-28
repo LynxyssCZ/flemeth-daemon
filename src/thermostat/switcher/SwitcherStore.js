@@ -13,8 +13,8 @@ module.exports = SwitcherStore;
 function getDefaultState() {
 	return Map({
 		locked: false,
-		realValue: false,
-		nextValue: false,
+		realValue: null,
+		nextValue: null,
 		lockStart: null
 	});
 }

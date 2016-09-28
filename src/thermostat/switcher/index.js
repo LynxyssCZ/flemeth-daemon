@@ -1,6 +1,7 @@
 'use strict';
 const actions = require('./SwitcherActions');
 const store = require('./SwitcherStore');
+const api = require('./SwitcherApi');
 
 class Switcher {
 	constructor(app, options) {
@@ -12,6 +13,7 @@ class Switcher {
 		this.unlockTaskId = null;
 
 		this.app.methods.flux.addStore('Switcher', store);
+		this.app.methods.api.addEndpoint('switcher', api);
 
 		this.app.addMethod('switcher.switch', this.switch.bind(this));
 		this.app.addMethod('switcher.forcedSwitch', this.forcedSwitch.bind(this));
@@ -22,35 +24,50 @@ class Switcher {
 	}
 
 	switch(value, next) {
-		this.logger.debug('Switching to', value);
+		const nextValue = this.flux.getSlice('Switcher').get('nextValue');
 
-		this.flux.push(actions.switch, [value, false], (error) => {
-			const locked = this.flux.getSlice('Switcher').get('locked');
+		if (value === nextValue && next) {
+			next();
+		}
+		else if (value !== nextValue) {
+			this.logger.debug('Switching to', value);
 
-			if (locked && !this.unlockTaskId) {
-				this.setupUnlock();
-			}
+			this.flux.push(actions.switch, [value, false], (error) => {
+				const locked = this.flux.getSlice('Switcher').get('locked');
 
-			if (next) {
-				next(error, locked);
-			}
-		});
+				if (locked && !this.unlockTaskId) {
+					this.setupUnlock();
+				}
+
+				if (next) {
+					next(error, locked);
+				}
+			});
+		}
+
 	}
 
 	forcedSwitch(value, next) {
-		this.logger.debug('Switching to', value);
+		const realValue = this.flux.getSlice('Switcher').get('realValue');
 
-		this.flux.push(actions.switch, [value, true], (error) => {
-			const locked = this.flux.getSlice('Switcher').get('locked');
+		if (value === realValue && next) {
+			next();
+		}
+		else if (value !== realValue) {
+			this.logger.debug('Switching to', value);
 
-			if (locked && !this.unlockTaskId) {
-				this.setupUnlock();
-			}
+			this.flux.push(actions.switch, [value, true], (error) => {
+				const locked = this.flux.getSlice('Switcher').get('locked');
 
-			if (next) {
-				next(error, locked);
-			}
-		});
+				if (locked && !this.unlockTaskId) {
+					this.setupUnlock();
+				}
+
+				if (next) {
+					next(error, locked);
+				}
+			});
+		}
 	}
 
 	setupUnlock() {
@@ -59,28 +76,49 @@ class Switcher {
 	}
 
 	unlock() {
-		this.logger.debug('Unlocking');
-		this.flux.push(actions.unlock, [], () => {
-			const locked = this.flux.getSlice('Switcher').get('locked');
+		const locked = this.flux.getSlice('Switcher').get('locked');
 
-			if (locked) {
-				this.setupUnlock();
-			}
-			else {
-				delete this.unlockTaskId;
-				this.logger.debug('Unlocked');
-			}
-		});
+		if (locked) {
+			this.logger.debug('Unlocking');
+			this.flux.push(actions.unlock, [], () => {
+				const locked = this.flux.getSlice('Switcher').get('locked');
+
+				if (locked) {
+					this.setupUnlock();
+				}
+				else {
+					delete this.unlockTaskId;
+					this.logger.debug('Unlocked');
+				}
+			});
+		}
 	}
 
 	onAppStart(payload, next) {
+		this.logger.debug('Starting');
 		this.forcedSwitch(false, (error) => {
+			this.subKey = this.flux.subscribe(this.update.bind(this), ['TempChecker']);
+			global.setTimeout(() => {
+				this.update();
+			});
+
 			next(error);
 		});
 	}
 
 	onAppStop(payload, next) {
-		global.setImmediate(next);
+		this.flux.unsubscribe(this.subKey);
+
+		this.forcedSwitch(false, (error) => {
+			next(error);
+		});
+	}
+
+	update() {
+		const shouldHeat = this.flux.getSlice('TempChecker').get('rising');
+
+		this.logger.debug('Switcher update');
+		this.switch(shouldHeat);
 	}
 }
 

@@ -66,8 +66,7 @@ class ScheduleManager {
 	updateTarget() {
 		const state = this.flux.getSlice(['Schedule', 'Settings', 'ScheduleTarget']);
 		const now = new Date();
-		const day = now.getDay().toString();
-		const minute = now.getHours() * 60 + now.getMinutes();
+		const minute = (now.getDay() * 1440) + (now.getHours() * 60 + now.getMinutes());
 		const scheduleSettings = state.Settings.get('schedule');
 		let defaultTarget;
 
@@ -85,7 +84,7 @@ class ScheduleManager {
 		}
 
 		if (state.Schedule) {
-			const relevantChanges = this.getRelevantChanges(day, minute, state.Schedule);
+			const relevantChanges = this.getRelevantChanges(minute, state.Schedule);
 			const newTarget = this.getTarget(minute, relevantChanges, defaultTarget);
 
 			if (newTarget.newTemp !== state.ScheduleTarget.get('temperature') || newTarget.newHyst !== state.ScheduleTarget.get('hysteresis')) {
@@ -94,24 +93,28 @@ class ScheduleManager {
 		}
 	}
 
-	getRelevantChanges(day, minute, schedule) {
-		const changes = schedule.get(day).toArray();
+	getRelevantChanges(minute, schedule) {
+		const changes = schedule.toArray();
 		const changesCount = changes.length;
 		let previousChange, currentChange;
 
 		changes.sort((changeA, changeB) => {
-			return changeA.get('startTime') > changeB.get('startTime') ? 1 : -1;
+			return changeA.get('startMinute') > changeB.get('startMinute') ? 1 : -1;
 		});
 
 		for (let i = 0, change; i < changesCount; i++) {
 			change = changes[i];
 
-			if (change.get('startTime') > minute) {
+			if (change.get('startMinute') > minute) {
 				break;
 			}
 
 			previousChange = currentChange;
 			currentChange = change;
+		}
+
+		if (currentChange && !previousChange) {
+			previousChange = changes[changes.length - 1];
 		}
 
 		return {
@@ -128,8 +131,8 @@ class ScheduleManager {
 			newHyst: current.newHyst
 		};
 
-		if (current.startTime + current.changeLength > minute) {
-			const coef = (minute - current.startTime) / current.changeLength;
+		if (current.startMinute + current.changeLength > minute) {
+			const coef = (minute - current.startMinute) / current.changeLength;
 
 			target.newTemp = previous.newTemp + (target.newTemp - previous.newTemp) * coef;
 			target.newHyst = previous.newHyst + (target.newHyst - previous.newHyst) * coef;

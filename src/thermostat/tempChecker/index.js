@@ -35,7 +35,31 @@ class TemperatureChecker {
 	}
 
 	updateState() {
+		const zonesMean = this.flux.getSlice('ZonesMean').get('temperature');
+		const target = this.flux.getSlice('ScheduleTarget').toJS();
+		const state = this.flux.getSlice('TempChecker').toJS();
+		let newState;
+		let rising;
 
+		if (!zonesMean || !target.temperature) {
+			return;
+		}
+
+		if (state.rising === true && zonesMean > (target.temperature + target.hysteresis)) {
+			newState = true;
+			rising = false;
+		}
+		else if (state.rising === false && zonesMean < (target.temperature - target.hysteresis)) {
+			newState = false;
+			rising = true;
+		}
+		else {
+			return;
+		}
+
+		if (newState !== state.state || rising !== state.rising) {
+			return this.flux.push(TempCheckerActions.updateState, [newState, rising]);
+		}
 	}
 }
 

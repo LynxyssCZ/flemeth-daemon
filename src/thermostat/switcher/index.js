@@ -97,7 +97,7 @@ class Switcher {
 	onAppStart(payload, next) {
 		this.logger.debug('Starting');
 		this.forcedSwitch(false, (error) => {
-			this.subKey = this.flux.subscribe(this.update.bind(this), ['TempChecker']);
+			this.subKey = this.flux.subscribe(this.update.bind(this), ['TempChecker', 'Override']);
 			global.setTimeout(() => {
 				this.update();
 			});
@@ -116,9 +116,16 @@ class Switcher {
 
 	update() {
 		const shouldHeat = this.flux.getSlice('TempChecker').get('rising');
+		const override = this.flux.getSlice('Override');
 
 		this.logger.debug('Switcher update');
-		this.switch(shouldHeat);
+
+		if (override.has('switchValue')) {
+			this.switch(override.get('switchValue'));
+		} else {
+			this.switch(shouldHeat);
+		}
+
 	}
 }
 

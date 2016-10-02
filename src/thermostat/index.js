@@ -11,6 +11,9 @@ class Thermostat {
 			name: 'sensorsManager',
 			class: require('./sensors')
 		}, {
+			name: 'overrideManager',
+			class: require('./override')
+		}, {
 			name: 'zonesManager',
 			class: require('./zones')
 		}, {

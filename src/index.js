@@ -63,6 +63,9 @@ class Flemeth extends RinCore{
 			name: 'Settings',
 			class: require('./settings')
 		}, {
+			name: 'Snapshots',
+			class: require('./snapshots')
+		}, {
 			name: 'ApiDocs',
 			class: require('./ApiDocs'),
 			options: {

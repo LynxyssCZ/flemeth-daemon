@@ -1,0 +1,18 @@
+{
+	"apps": [{
+		"name": "Flemeth-Daemon",
+		"script": "./index.js",
+		"merge_logs": true,
+		"log_file": "./flemeth-daemon.log",
+		"min_uptime": "2m",
+		"max_restarts": 200,
+		"env": {
+			"LOG_LEVEL": "DEBUG"
+		},
+		"env_production": {
+			"NODE_ENV": "production",
+			"LOG_LEVEL": "INFO",
+			"TTY": "/dev/ttyACM0"
+		}
+	}]
+}

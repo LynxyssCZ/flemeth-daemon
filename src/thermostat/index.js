@@ -37,6 +37,12 @@ class Thermostat {
 			options: {
 				path: this.options.serialPath
 			}
+		}, {
+			name: 'Flemeth-Web',
+			class: require('flemeth-web'),
+			options: {
+				base: ''
+			}
 		}], next);
 	}
 }

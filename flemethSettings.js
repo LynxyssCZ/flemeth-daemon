@@ -17,7 +17,7 @@ class FlemethSettings {
 				}
 			},
 			snapshots: {
-				snapshotPeriod: 5 * 1000
+				snapshotPeriod: 5 * 60 * 1000
 			},
 			db: require('./knexfile'),
 			thermostat: {

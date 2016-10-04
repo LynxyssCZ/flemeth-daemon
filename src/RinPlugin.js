@@ -60,6 +60,10 @@ class RinPlugin {
 		this.pluginTreeNode.extendsContext = true;
 	}
 
+	process(event, payload, next) {
+		return this.app.process(event, payload, next);
+	}
+
 	addHook(event, handler) {
 		if (!this.app.registering) {
 			throw new Error('Adding hooks is allowed only in init phase');
@@ -116,7 +120,7 @@ class RinPlugin {
 			const child = this.createChild(plugin.name);
 			this.app.currentNode = child.getPluginTreeNode();
 
-			const pluginInstance = new plugin.class(child, plugin.options);
+			const pluginInstance = new plugin.class(child, plugin.options || {});
 			this.app.pluginInstances[plugin.name] = pluginInstance;
 
 			if (pluginInstance.init) {

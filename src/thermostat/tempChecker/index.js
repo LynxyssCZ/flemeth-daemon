@@ -11,10 +11,10 @@ class TemperatureChecker {
 
 		this.app.addHook('lifecycle.start', this.onAppStart.bind(this));
 		this.app.addHook('lifecycle.stop', this.onAppStop.bind(this));
+		this.app.addHook('snapshots.collect', this.onCollectSnapshot.bind(this));
 
 		this.app.methods.flux.addStore('TempChecker', TempCheckerStore);
 		this.app.methods.api.addEndpoint('tempchecker', TempCheckerApi);
-
 	}
 
 	// Hooks
@@ -32,6 +32,26 @@ class TemperatureChecker {
 		this.logger.info('Stopping');
 		this.flux.unsubscribe(this.subscriptionKey);
 		next();
+	}
+
+	onCollectSnapshot(payload, next) {
+		const zonesMean = this.flux.getSlice('ZonesMean').get('temperature');
+		const target = this.flux.getSlice('ScheduleTarget').toJS();
+		const state = this.flux.getSlice('TempChecker').toJS();
+
+		this.logger.debug('TempChecker snapshot collection');
+
+		payload.snapshots.push({
+			type: 'temp_checker',
+			data: {
+				temp: zonesMean,
+				state: state.state,
+				target: target.temperature,
+				hysteresis: target.hysteresis
+			}
+		});
+
+		global.setTimeout(next, 0, null, payload);
 	}
 
 	updateState() {

@@ -16,6 +16,7 @@ class ZonesManager {
 		this.app.addMethod('zones.remove', this.removeZone.bind(this));
 		this.app.addHook('lifecycle.start', this.onAppStart.bind(this));
 		this.app.addHook('lifecycle.stop', this.onAppStop.bind(this));
+		this.app.addHook('snapshots.collect', this.onCollectSnapshot.bind(this));
 
 		this.app.methods.flux.addStore('Zones', ZonesStore);
 		this.app.methods.flux.addStore('ZonesMean', ZonesMeanStore);
@@ -56,6 +57,26 @@ class ZonesManager {
 		this.flux.unsubscribe(this.sensorsSub);
 		this.flux.unsubscribe(this.zonesSub);
 		next();
+	}
+
+	onCollectSnapshot(payload, next) {
+		this.logger.debug('Snapshot collection');
+
+		const zones = this.flux.getSlice('Zones').filter((zone) => {
+			return zone.get('lastUpdate') > payload.lastUpdate;
+		}).map((zone) => {
+			return {
+				zoneId: zone.get('id'),
+				temp: zone.get('value')
+			};
+		});
+
+		payload.snapshots.push({
+			type: 'zones_temps',
+			data: zones.toArray()
+		});
+
+		global.setTimeout(next, 0, null, payload);
 	}
 
 	updateZones() {
